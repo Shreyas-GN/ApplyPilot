@@ -5,14 +5,31 @@ narrow responsibility, explicit inputs/outputs, and guardrails (§6). Default LL
 is Anthropic Claude (current most-capable model) behind a provider-abstraction interface,
 so the implementation can swap providers without touching call sites.
 
-## 1. Resume Parser Agent
+## 1. Resume Parser Agent — ✅ implemented (Phase 1)
 - **Input**: uploaded resume file (PDF/DOCX).
-- **Process**: deterministic text/layout extraction first; LLM pass to structure into
-  `{ contact, experience[], education[], skills[] }`; low-confidence fields flagged rather
-  than guessed.
-- **Output**: `profiles.parsed_*` fields + a confidence map used by the UI to prompt the
-  user to confirm uncertain fields.
-- **Runs**: backend worker, triggered on upload.
+- **Process**: deterministic text extraction first (`apps/workers`, via `pdf-parse` /
+  `mammoth` — never AI, never guesses at content); the extracted text is then POSTed to
+  `services/ai`'s `/parse-resume` endpoint, which structures it into
+  `{ personal, experience[], education[], skills[], projects[], certifications[],
+  overallConfidence }`, every entry carrying its own `confidence` (0–1) and
+  `source: "ai"`.
+  - **Provider selection** (`services/ai/app/resume_parsing/service.py`): if
+    `ANTHROPIC_API_KEY` is set, a Claude-backed provider does the structuring, under a
+    system prompt that explicitly forbids inventing anything not in the source text and
+    requires a confidence score per entry. If unset (the local dev/test default), a
+    deterministic regex-based mock provider runs instead — it only ever extracts an
+    email/phone/LinkedIn/GitHub/portfolio URL it can literally find in the text, and
+    returns empty experience/education/skills/projects/certifications arrays rather than
+    inventing anything. No silent fallback between the two: if Claude is configured and
+    its call fails, that surfaces as a failed parsing job, not a quietly-downgraded result.
+  - The Node worker **never trusts the AI service's response as-is**: it re-validates the
+    returned JSON against the strict `resumeParsedDataSchema` (`packages/validators`)
+    before persisting anything.
+- **Output**: a `resume_parsed_data` row (`structuredData` JSON + `overallConfidence`,
+  `reviewStatus: "pending_review"`). The user reviews, can correct any field (which
+  re-stamps it `source: "user"`), and only `POST /resumes/:id/confirm` copies it into the
+  relational profile tables — see `DATABASE_SCHEMA.md` and `API_DESIGN.md` §3.
+- **Runs**: `apps/workers`, a BullMQ worker triggered on upload (`resume-parsing` queue).
 
 ## 2. Job Matching Agent
 - **Input**: user profile + preferences, candidate job postings (from ingestion workers).
