@@ -19,6 +19,9 @@ next-env.d.ts
 .env.local
 .env.*.local
 
+# local object storage (STORAGE_PROVIDER=local dev default)
+.local-storage/
+
 # logs
 *.log
 npm-debug.log*

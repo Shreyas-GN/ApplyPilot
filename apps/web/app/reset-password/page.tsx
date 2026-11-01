@@ -1,0 +1,91 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
+import { resetPasswordSchema } from "@applypilot/validators";
+import { api, ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
+import { TextField } from "@/components/ui/field";
+import { Alert } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
+
+function ResetPasswordForm() {
+  const router = useRouter();
+  const token = useSearchParams().get("token") ?? "";
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    const result = resetPasswordSchema.safeParse({ token, password });
+    if (!result.success) {
+      setError(result.error.issues[0]?.message ?? "Invalid input.");
+      return;
+    }
+    setError(null);
+    setSubmitting(true);
+    try {
+      await api.post("/auth/reset-password", result.data);
+      setDone(true);
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.detail : "This link may have expired. Request a new one.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (!token) {
+    return <Alert tone="error">This reset link is missing its token. Request a new one.</Alert>;
+  }
+
+  if (done) {
+    return (
+      <div className="flex flex-col gap-4">
+        <Alert tone="success">Your password has been reset. You can log in now.</Alert>
+        <Button onClick={() => router.push("/login")}>Go to login</Button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {error && <Alert tone="error">{error}</Alert>}
+      <TextField
+        label="New password"
+        type="password"
+        name="password"
+        autoComplete="new-password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        hint="At least 10 characters."
+        required
+      />
+      <Button type="submit" loading={submitting} className="w-full">
+        Reset password
+      </Button>
+    </form>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md">
+        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
+          ApplyPilot
+        </Link>
+        <Card>
+          <h1 className="mb-6 text-xl font-semibold text-slate-900">Choose a new password</h1>
+          <Suspense fallback={null}>
+            <ResetPasswordForm />
+          </Suspense>
+        </Card>
+      </div>
+    </div>
+  );
+}
