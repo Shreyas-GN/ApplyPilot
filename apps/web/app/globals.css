@@ -13,6 +13,32 @@
   --color-brand-900: #1c296d;
 
   --font-sans: var(--font-geist-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+
+  /* ApplyPilot marketing design system — "The Opportunity Field Guide" (docs/design/DESIGN.md).
+     Scoped to --ap-* tokens so the authenticated app's brand-* theme above is untouched. */
+  --color-ap-paper: #f7f4ed;
+  --color-ap-paper-deep: #eee9de;
+  --color-ap-surface: #fffdf8;
+  --color-ap-surface-muted: #f0eee7;
+  --color-ap-ink: #252820;
+  --color-ap-body: #55594f;
+  --color-ap-muted: #85877d;
+  --color-ap-line: #dcd8ce;
+  --color-ap-vermilion: #c85b3f;
+  --color-ap-vermilion-soft: #f2dfd6;
+  --color-ap-sage: #65745e;
+  --color-ap-sage-soft: #e5eadf;
+  --color-ap-butter: #e8d79c;
+
+  --font-display: var(--font-dm-serif), "Source Serif 4", Georgia, serif;
+  --font-ui: var(--font-inter), "DM Sans", system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  --radius-button: 999px;
+  --radius-panel: 20px;
+  --radius-window: 14px;
+  --radius-card: 12px;
+  --radius-input: 9px;
 }
 
 body {
@@ -24,5 +50,14 @@ body {
   body {
     color: #e2e8f0;
     background: #0b1220;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
