@@ -1,0 +1,222 @@
+// ApplyPilot database schema.
+// Source of truth for shape/intent: ../../../docs/DATABASE_SCHEMA.md — keep both in sync.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String?  @map("password_hash")
+  authProvider String   @default("password") @map("auth_provider")
+  status       String   @default("active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  profile              Profile?
+  resumes              Resume[]
+  coverLetterTemplates CoverLetterTemplate[]
+  matches              Match[]
+  applications         Application[]
+  extensionSessions    ExtensionSession[]
+  notifications        Notification[]
+  subscription         Subscription?
+  consentLogs          ConsentLog[]
+
+  @@map("users")
+}
+
+model Profile {
+  userId           String   @id @map("user_id") @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName         String?  @map("full_name")
+  phone            String?
+  location         String?
+  links            Json?
+  parsedExperience Json?    @map("parsed_experience")
+  parsedEducation  Json?    @map("parsed_education")
+  parsedSkills     Json?    @map("parsed_skills")
+  preferences      Json?
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("profiles")
+}
+
+model Resume {
+  id                  String  @id @default(uuid()) @db.Uuid
+  userId              String  @map("user_id") @db.Uuid
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versionLabel        String  @map("version_label")
+  fileUrl             String  @map("file_url")
+  parsedJson          Json?   @map("parsed_json")
+  isPrimary           Boolean @default(false) @map("is_primary")
+  sourceApplicationId String? @unique @map("source_application_id") @db.Uuid
+
+  sourceApplication        Application?  @relation("ResumeGeneratedFromApplication", fields: [sourceApplicationId], references: [id])
+  tailoredForApplications  Application[] @relation("ApplicationTailoredResume")
+  createdAt                DateTime      @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("resumes")
+}
+
+model CoverLetterTemplate {
+  id      String @id @default(uuid()) @db.Uuid
+  userId  String @map("user_id") @db.Uuid
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tone    String
+  content String
+
+  @@map("cover_letter_templates")
+}
+
+model Job {
+  id              String    @id @default(uuid()) @db.Uuid
+  source          String
+  externalId      String    @map("external_id")
+  atsType         String?   @map("ats_type")
+  title           String
+  company         String
+  location        String?
+  descriptionRaw  String?   @map("description_raw")
+  applyUrl        String?   @map("apply_url")
+  postedAt        DateTime? @map("posted_at")
+  ingestedAt      DateTime  @default(now()) @map("ingested_at")
+  rawJson         Json?     @map("raw_json")
+
+  embedding    JobEmbedding?
+  matches      Match[]
+  applications Application[]
+
+  @@unique([source, externalId])
+  @@map("jobs")
+}
+
+model JobEmbedding {
+  jobId        String @id @map("job_id") @db.Uuid
+  job          Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  // pgvector column — not type-safe through the generated client; query/write via
+  // $queryRaw / $executeRaw. See docs/AI_AGENTS.md §2 (Job Matching Agent).
+  embedding    Unsupported("vector(1536)")
+  modelVersion String @map("model_version")
+
+  @@map("job_embeddings")
+}
+
+model Match {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String   @map("job_id") @db.Uuid
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  score     Decimal
+  rationale String?
+  status    String   @default("new")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, jobId])
+  @@index([userId, status, score])
+  @@map("matches")
+}
+
+model Application {
+  id                   String    @id @default(uuid()) @db.Uuid
+  userId               String    @map("user_id") @db.Uuid
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId                String    @map("job_id") @db.Uuid
+  job                  Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  mode                 String
+  atsTier              String    @map("ats_tier")
+  status                String   @default("queued")
+  tailoredResumeId     String?   @unique @map("tailored_resume_id") @db.Uuid
+  tailoredResume       Resume?   @relation("ApplicationTailoredResume", fields: [tailoredResumeId], references: [id])
+  tailoredCoverLetter  String?   @map("tailored_cover_letter")
+  confidenceScore      Decimal?  @map("confidence_score")
+  submittedAt          DateTime? @map("submitted_at")
+  failureReason        String?   @map("failure_reason")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  generatedResume Resume?           @relation("ResumeGeneratedFromApplication")
+  events          ApplicationEvent[]
+
+  @@index([userId, status])
+  @@map("applications")
+}
+
+model ApplicationEvent {
+  id            String      @id @default(uuid()) @db.Uuid
+  applicationId String      @map("application_id") @db.Uuid
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  eventType     String      @map("event_type")
+  payload       Json?
+  actor         String
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@index([applicationId, createdAt])
+  @@map("application_events")
+}
+
+model AtsConnector {
+  name      String   @id
+  tier      String
+  config    Json?
+  enabled   Boolean  @default(true)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ats_connectors")
+}
+
+model ExtensionSession {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceLabel String?   @map("device_label")
+  tokenHash   String    @map("token_hash")
+  scopes      String[]
+  lastSeenAt  DateTime? @map("last_seen_at")
+  status      String    @default("active")
+
+  @@map("extension_sessions")
+}
+
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  payload   Json?
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model Subscription {
+  userId                    String    @id @map("user_id") @db.Uuid
+  user                      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                      String    @default("free")
+  status                    String    @default("active")
+  billingProviderCustomerId String?   @map("billing_provider_customer_id")
+  currentPeriodEnd          DateTime? @map("current_period_end")
+
+  @@map("subscriptions")
+}
+
+model ConsentLog {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consentType String    @map("consent_type")
+  grantedAt   DateTime  @default(now()) @map("granted_at")
+  revokedAt   DateTime? @map("revoked_at")
+
+  @@map("consent_logs")
+}
