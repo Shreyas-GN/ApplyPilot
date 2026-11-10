@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { forgotPasswordSchema } from "@applypilot/validators";
-import { api } from "@/lib/api-client";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { Alert } from "@/components/ui/alert";
@@ -25,7 +25,10 @@ export default function ForgotPasswordPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await api.post("/auth/forgot-password", result.data);
+      const supabase = createClient();
+      await supabase.auth.resetPasswordForEmail(result.data.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
       setSent(true);
     } catch {
       // Same response either way — no account-existence signal leaks here.

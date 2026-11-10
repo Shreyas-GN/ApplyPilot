@@ -8,8 +8,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { AuthTokensDto, AuthUserDto } from "@applypilot/shared";
-import { api, setAccessToken } from "./api-client";
+import type { AuthUserDto } from "@applypilot/shared";
+import { createClient } from "./supabase/client";
+import { ApiError } from "./api-client";
+import type { User } from "@supabase/supabase-js";
 
 interface AuthContextValue {
   user: AuthUserDto | null;
@@ -22,70 +24,112 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001/api/v1";
+function toAuthUserDto(user: User): AuthUserDto {
+  return {
+    id: user.id,
+    email: user.email ?? "",
+    emailVerified: Boolean(user.email_confirmed_at),
+    createdAt: user.created_at,
+  };
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUserDto | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     let cancelled = false;
 
-    async function bootstrap() {
+    async function initUser() {
       try {
-        const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
-          method: "POST",
-          credentials: "include",
-        });
-        if (!res.ok) return;
-        const data = (await res.json()) as { tokens: AuthTokensDto };
-        setAccessToken(data.tokens.accessToken);
-        const me = await api.get<AuthUserDto>("/auth/me");
-        if (!cancelled) setUser(me);
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+        if (!cancelled && currentUser) {
+          setUser(toAuthUserDto(currentUser));
+        }
       } catch {
-        // No valid session — the user just isn't logged in. Not an error.
+        // No valid session
       } finally {
         if (!cancelled) setLoading(false);
       }
     }
 
-    void bootstrap();
+    void initUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(toAuthUserDto(session.user));
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
     return () => {
       cancelled = true;
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const data = await api.post<{ user: AuthUserDto; tokens: AuthTokensDto }>("/auth/login", {
-      email,
-      password,
-    });
-    setAccessToken(data.tokens.accessToken);
-    setUser(data.user);
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string) => {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        throw new ApiError(error.status ?? 401, error.message);
+      }
+      if (data.user) {
+        setUser(toAuthUserDto(data.user));
+      }
+    },
+    [supabase]
+  );
 
-  const register = useCallback(async (email: string, password: string) => {
-    const data = await api.post<{ user: AuthUserDto; tokens: AuthTokensDto }>("/auth/register", {
-      email,
-      password,
-    });
-    setAccessToken(data.tokens.accessToken);
-    setUser(data.user);
-  }, []);
+  const register = useCallback(
+    async (email: string, password: string) => {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        },
+      });
+      if (error) {
+        throw new ApiError(error.status ?? 400, error.message);
+      }
+      if (data.user) {
+        setUser(toAuthUserDto(data.user));
+      }
+    },
+    [supabase]
+  );
 
   const logout = useCallback(async () => {
-    await api.post("/auth/logout").catch(() => {});
-    setAccessToken(null);
+    await supabase.auth.signOut();
     setUser(null);
-  }, []);
+  }, [supabase]);
 
   const refreshUser = useCallback(async () => {
-    const me = await api.get<AuthUserDto>("/auth/me");
-    setUser(me);
-  }, []);
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+    if (currentUser) {
+      setUser(toAuthUserDto(currentUser));
+    } else {
+      setUser(null);
+    }
+  }, [supabase]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, refreshUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

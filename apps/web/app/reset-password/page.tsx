@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import { resetPasswordSchema } from "@applypilot/validators";
-import { api, ApiError } from "@/lib/api-client";
+import { passwordSchema } from "@applypilot/validators";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { Alert } from "@/components/ui/alert";
@@ -12,7 +12,6 @@ import { Card } from "@/components/ui/card";
 
 function ResetPasswordForm() {
   const router = useRouter();
-  const token = useSearchParams().get("token") ?? "";
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -20,33 +19,39 @@ function ResetPasswordForm() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const result = resetPasswordSchema.safeParse({ token, password });
+    const result = passwordSchema.safeParse(password);
     if (!result.success) {
-      setError(result.error.issues[0]?.message ?? "Invalid input.");
+      setError(result.error.issues[0]?.message ?? "Invalid password.");
       return;
     }
     setError(null);
     setSubmitting(true);
     try {
-      await api.post("/auth/reset-password", result.data);
+      const supabase = createClient();
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: result.data,
+      });
+      if (updateError) {
+        throw updateError;
+      }
       setDone(true);
-    } catch (err) {
+    } catch (err: unknown) {
       setError(
-        err instanceof ApiError ? err.detail : "This link may have expired. Request a new one.",
+        err instanceof Error
+          ? err.message
+          : "This link may have expired. Request a new one."
       );
     } finally {
       setSubmitting(false);
     }
   }
 
-  if (!token) {
-    return <Alert tone="error">This reset link is missing its token. Request a new one.</Alert>;
-  }
-
   if (done) {
     return (
       <div className="flex flex-col gap-4">
-        <Alert tone="success">Your password has been reset. You can log in now.</Alert>
+        <Alert tone="success">
+          Your password has been reset. You can log in now.
+        </Alert>
         <Button onClick={() => router.push("/login")}>Go to login</Button>
       </div>
     );
@@ -76,11 +81,16 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
+        <Link
+          href="/"
+          className="mb-6 block text-center text-lg font-semibold text-brand-700"
+        >
           ApplyPilot
         </Link>
         <Card>
-          <h1 className="mb-6 text-xl font-semibold text-slate-900">Choose a new password</h1>
+          <h1 className="mb-6 text-xl font-semibold text-slate-900">
+            Choose a new password
+          </h1>
           <Suspense fallback={null}>
             <ResetPasswordForm />
           </Suspense>
