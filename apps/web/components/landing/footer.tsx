@@ -19,7 +19,10 @@ const COLUMNS: Array<{ title: string; links: Array<{ href: string; label: string
   },
   {
     title: "Account",
-    links: [{ href: "/login", label: "Sign in" }],
+    links: [
+      { href: "/login", label: "Sign in" },
+      { href: "/signup", label: "Create account" },
+    ],
   },
 ];
 

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createSystemHealthWorker } from "./queues/system-health.queue";
 import { createResumeParsingWorker } from "./queues/resume-parsing.queue";
 

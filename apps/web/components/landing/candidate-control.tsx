@@ -1,4 +1,8 @@
-import { Eye, FileEdit, PenLine, ShieldCheck } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Eye, FileEdit, PenLine, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const PRINCIPLES = [
   { icon: Eye, text: "Review profile information." },
@@ -8,21 +12,41 @@ const PRINCIPLES = [
 ];
 
 export function CandidateControl() {
+  const [approved, setApproved] = useState(false);
+
   return (
     <section className="bg-ap-paper py-16 sm:py-24 lg:py-28">
       <div className="mx-auto grid max-w-[1200px] gap-10 px-5 sm:px-8 lg:grid-cols-[1fr_minmax(0,420px)] lg:gap-16">
         <div className="order-2 lg:order-1">
-          <div className="rounded-panel border border-ap-line bg-ap-surface-muted p-6 sm:p-8">
-            <div className="flex items-center justify-between gap-4 rounded-card border border-ap-line bg-ap-surface px-4 py-3.5">
+          <div className="rounded-panel border border-ap-line bg-ap-surface-muted p-6 sm:p-8 shadow-xs">
+            <div className="flex items-center justify-between gap-4 rounded-card border border-ap-line bg-ap-surface px-4 py-3.5 shadow-2xs">
               <p className="font-ui text-[13px] text-ap-body">
-                Cover letter draft ready — <span className="font-medium text-ap-ink">awaiting your review</span>
+                Cover letter draft ready —{" "}
+                <span className={`font-medium ${approved ? "text-ap-sage" : "text-ap-ink"}`}>
+                  {approved ? "approved and ready to send" : "awaiting your review"}
+                </span>
               </p>
-              <span className="flex-shrink-0 rounded-full bg-ap-sage-soft px-3 py-1 font-ui text-[12px] font-medium text-ap-sage">
-                Approve
-              </span>
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setApproved((prev) => !prev)}
+                className={`flex-shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 font-ui text-[12px] font-medium transition-all ${
+                  approved
+                    ? "bg-ap-sage text-white shadow-xs"
+                    : "bg-ap-sage-soft text-ap-sage hover:bg-ap-sage hover:text-white"
+                }`}
+              >
+                {approved ? (
+                  <span className="inline-flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> Approved
+                  </span>
+                ) : (
+                  "Click to approve"
+                )}
+              </motion.button>
             </div>
             <p className="mt-3 font-mono text-[11px] text-ap-muted">
-              Nothing is sent or submitted without this step.
+              Nothing is sent or submitted without this step. Candidate consent is mandatory.
             </p>
           </div>
         </div>

@@ -41,17 +41,20 @@
   --radius-input: 9px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   color: #0f172a;
   background: #f8fafc;
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    color: #e2e8f0;
-    background: #0b1220;
-  }
+.bg-dot-pattern {
+  background-image: radial-gradient(#dcd8ce 1px, transparent 1px);
+  background-size: 24px 24px;
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   * {
