@@ -24,3 +24,4 @@ export async function GET(request: NextRequest) {
     new URL('/login?error=invalid_or_expired_token', request.url)
   );
 }
+

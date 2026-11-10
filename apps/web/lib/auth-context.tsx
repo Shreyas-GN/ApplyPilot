@@ -1,5 +1,7 @@
 "use client";
 
+import type { AuthUserDto } from "@applypilot/shared";
+import type { User } from "@supabase/supabase-js";
 import {
   createContext,
   useCallback,
@@ -8,10 +10,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { AuthUserDto } from "@applypilot/shared";
-import { createClient } from "./supabase/client";
 import { ApiError } from "./api-client";
-import type { User } from "@supabase/supabase-js";
+import { createClient } from "./supabase/client";
 
 interface AuthContextValue {
   user: AuthUserDto | null;

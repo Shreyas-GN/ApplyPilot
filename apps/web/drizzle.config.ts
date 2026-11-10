@@ -27,3 +27,4 @@ export default defineConfig({
       'postgresql://postgres.nnaxrcknrbnaukyeotvq:Makememad%401122@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres',
   },
 });
+

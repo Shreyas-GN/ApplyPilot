@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 // Kept in module state, never in localStorage/sessionStorage — the access
 // token only ever lives in memory for this tab. A hard reload loses it on

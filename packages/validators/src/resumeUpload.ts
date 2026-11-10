@@ -8,7 +8,7 @@ export const RESUME_ALLOWED_MIME_TYPES = [
 
 export const RESUME_ALLOWED_EXTENSIONS = [".pdf", ".docx"] as const;
 
-export const RESUME_MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+export const RESUME_MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024; // 4 MB
 
 export function hasAllowedResumeExtension(filename: string): boolean {
   const lower = filename.toLowerCase();
