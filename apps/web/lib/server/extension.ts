@@ -273,20 +273,7 @@ export async function captureApplicationFromExtension(
       status: row.status,
     });
 
-    return {
-      id: row.id,
-      jobId: row.jobId,
-      company: row.company,
-      title: row.title,
-      location: row.location,
-      url: row.url,
-      status: row.status as ApplicationStatus,
-      matchScore: row.matchScore,
-      notes: row.notes,
-      appliedAt: row.appliedAt ? row.appliedAt.toISOString() : null,
-      createdAt: row.createdAt.toISOString(),
-      updatedAt: row.updatedAt.toISOString(),
-    };
+    return toExtensionApplicationDto(row);
   }
 
   const [created] = await db
@@ -323,19 +310,30 @@ export async function captureApplicationFromExtension(
     status: created.status,
   });
 
+  return toExtensionApplicationDto(created);
+}
+
+function toExtensionApplicationDto(
+  row: typeof applications.$inferSelect
+): ApplicationDto {
   return {
-    id: created.id,
-    jobId: created.jobId,
-    company: created.company,
-    title: created.title,
-    location: created.location,
-    url: created.url,
-    status: created.status as ApplicationStatus,
-    matchScore: created.matchScore,
-    notes: created.notes,
-    appliedAt: created.appliedAt ? created.appliedAt.toISOString() : null,
-    createdAt: created.createdAt.toISOString(),
-    updatedAt: created.updatedAt.toISOString(),
+    id: row.id,
+    jobId: row.jobId,
+    company: row.company,
+    title: row.title,
+    location: row.location,
+    url: row.url,
+    status: row.status as ApplicationStatus,
+    matchScore: row.matchScore,
+    notes: row.notes,
+    followUpAt: row.followUpAt ? row.followUpAt.toISOString() : null,
+    checklist:
+      row.checklist && typeof row.checklist === 'object'
+        ? (row.checklist as ApplicationDto['checklist'])
+        : {},
+    appliedAt: row.appliedAt ? row.appliedAt.toISOString() : null,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
   };
 }
 

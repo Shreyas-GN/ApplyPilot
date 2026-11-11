@@ -101,6 +101,13 @@ export const employmentTypeSchema = z.enum([
   "freelance",
 ]);
 
+export const notificationPreferencesSchema = z.object({
+  followUpReminders: z.boolean(),
+  jobMatchAlerts: z.boolean(),
+  weeklyDigest: z.boolean(),
+  productUpdates: z.boolean(),
+});
+
 export const updatePreferencesSchema = z.object({
   preferredTitles: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
   preferredLocations: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
@@ -110,5 +117,6 @@ export const updatePreferencesSchema = z.object({
   expectedSalaryMax: z.number().int().min(0).max(10_000_000).optional(),
   preferredIndustries: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
   excludedCompanies: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
+  notificationPreferences: notificationPreferencesSchema.optional(),
 });
 export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>;

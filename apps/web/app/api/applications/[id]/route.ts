@@ -11,6 +11,13 @@ const updateApplicationSchema = z.object({
     .enum(['saved', 'applied', 'interviewing', 'offer', 'rejected'])
     .optional(),
   notes: z.string().trim().max(5000).nullable().optional(),
+  followUpAt: z.string().trim().max(64).nullable().optional(),
+  checklist: z
+    .object({
+      screeningPrepared: z.boolean().optional(),
+      finalReviewed: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 export async function PATCH(

@@ -82,6 +82,7 @@ export const profiles = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'::text[]`),
+    notificationPreferences: jsonb('notification_preferences'),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -411,6 +412,8 @@ export const applications = pgTable(
     status: applicationStatusEnum('status').default('saved').notNull(),
     matchScore: integer('match_score'),
     notes: text('notes'),
+    followUpAt: timestamp('follow_up_at', { withTimezone: true }),
+    checklist: jsonb('checklist'),
     appliedAt: timestamp('applied_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()

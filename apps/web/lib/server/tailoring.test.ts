@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ProfileDto } from '@/lib/types';
 import {
   buildCandidateContext,
+  buildGroundedScreeningAnswer,
   cleanJsonFence,
   draftCoverLetterWithClaude,
+  generateScreeningAnswer,
   tailorResumeWithClaude,
   type ClaudeMessagesClient,
 } from './tailoring';
@@ -195,5 +197,52 @@ describe('tailoring utilities', () => {
         mockClient
       )
     ).rejects.toThrow('AI tailoring returned an unexpected response format.');
+  });
+
+  it('builds a grounded screening answer without inventing skills when falling back deterministically', () => {
+    const res = buildGroundedScreeningAnswer(
+      SAMPLE_PROFILE,
+      {
+        company: 'Vercel',
+        title: 'Senior Full-Stack Engineer',
+        description: 'Build developer tools.',
+      },
+      'Why are you interested in working at Vercel?'
+    );
+
+    expect(res.source).toBe('grounded_fallback');
+    expect(res.answer).toContain('Vercel');
+    expect(res.answer).toContain('Analytical Engines');
+    expect(res.groundedFacts.length).toBeGreaterThan(0);
+  });
+
+  it('generates structured screening answers via injected Claude client', async () => {
+    const mockClient: ClaudeMessagesClient = {
+      messages: {
+        create: vi.fn().mockResolvedValue({
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                answer:
+                  'I bring 6 years of experience building TypeScript and PostgreSQL systems, most recently leading API architecture at Analytical Engines.',
+                groundedFacts: ['6 years experience', 'Analytical Engines'],
+              }),
+            },
+          ],
+        }),
+      },
+    };
+
+    const res = await generateScreeningAnswer(
+      SAMPLE_PROFILE,
+      { company: 'Stripe', title: 'Backend Engineer', description: 'APIs' },
+      'Describe your backend experience.',
+      mockClient
+    );
+
+    expect(res.source).toBe('claude');
+    expect(res.answer).toContain('TypeScript');
+    expect(res.groundedFacts).toContain('Analytical Engines');
   });
 });

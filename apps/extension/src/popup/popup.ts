@@ -37,6 +37,9 @@ const atsBadgeEl = document.getElementById("ats-badge")!;
 const jobSummaryEl = document.getElementById("job-summary")!;
 const apiUrlInput = document.getElementById("api-url") as HTMLInputElement;
 const tokenInput = document.getElementById("token-input") as HTMLInputElement;
+const screeningQuestionInput = document.getElementById("screening-question") as HTMLInputElement;
+const screeningResultEl = document.getElementById("screening-result")!;
+const screeningAnswerEl = document.getElementById("screening-answer")!;
 
 let activeProfile: ProfilePayload | null = null;
 let currentTabId: number | null = null;
@@ -212,6 +215,41 @@ document.getElementById("confirm-fill-btn")?.addEventListener("click", () => {
       );
     }
   );
+});
+
+document.getElementById("answer-screening-btn")?.addEventListener("click", () => {
+  const question = screeningQuestionInput.value.trim();
+  if (question.length < 3) {
+    setStatus("Enter a screening question to draft an answer.", "error");
+    return;
+  }
+  setStatus("Drafting grounded answer…");
+  chrome.runtime.sendMessage(
+    {
+      type: "APPLYPILOT_ANSWER_SCREENING",
+      payload: {
+        question,
+        company: detectedJob?.company,
+        jobTitle: detectedJob?.title,
+      },
+    },
+    (res) => {
+      if (!res?.ok || !res.data?.answer) {
+        setStatus(res?.error || "Could not draft screening answer.", "error");
+        return;
+      }
+      screeningAnswerEl.textContent = String(res.data.answer);
+      screeningResultEl.classList.remove("hidden");
+      setStatus("Answer drafted from your verified profile.", "ok");
+    }
+  );
+});
+
+document.getElementById("copy-screening-btn")?.addEventListener("click", async () => {
+  const text = screeningAnswerEl.textContent || "";
+  if (!text) return;
+  await navigator.clipboard.writeText(text);
+  setStatus("Copied answer to clipboard.", "ok");
 });
 
 document.getElementById("disconnect-btn")?.addEventListener("click", async () => {

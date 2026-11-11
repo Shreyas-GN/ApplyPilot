@@ -105,6 +105,17 @@
         <button id="confirm-fill-btn" class="primary">Fill reviewed fields</button>
       </div>
 
+      <div id="screening-card" class="card">
+        <strong style="font-size:12px;">AI Screening Question Assistant</strong>
+        <label for="screening-question" style="margin-top:6px;">Paste application question</label>
+        <input id="screening-question" type="text" placeholder="Why are you interested in this role?" />
+        <button id="answer-screening-btn" class="secondary">Draft grounded answer</button>
+        <div id="screening-result" class="hidden" style="margin-top:8px;">
+          <p id="screening-answer" style="font-size:11px;color:#1e293b;background:#f8fafc;padding:8px;border-radius:6px;border:1px solid #e2e8f0;margin-bottom:6px;"></p>
+          <button id="copy-screening-btn" class="secondary">Copy answer</button>
+        </div>
+      </div>
+
       <button id="disconnect-btn" class="danger">Disconnect</button>
     </div>
 

@@ -19,6 +19,36 @@ async function getConfig(): Promise<ExtensionConfig | null> {
   return null;
 }
 
+async function postAuthedJson(
+  path: string,
+  payload: unknown
+): Promise<{ ok: boolean; data?: unknown; error?: string }> {
+  const config = await getConfig();
+  if (!config) {
+    return { ok: false, error: "Extension is not paired." };
+  }
+
+  const res = await fetch(`${config.apiBaseUrl}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${config.token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    return {
+      ok: false,
+      error:
+        data && typeof data === "object" && "detail" in data
+          ? String((data as { detail: unknown }).detail)
+          : `HTTP ${res.status}`,
+    };
+  }
+  return { ok: true, data };
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   console.log("[ApplyPilot] extension installed");
 });
@@ -53,33 +83,26 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   if (message?.type === "APPLYPILOT_CAPTURE_APP") {
-    (async () => {
-      const config = await getConfig();
-      if (!config) {
-        sendResponse({ ok: false, error: "Extension is not paired." });
-        return;
-      }
+    postAuthedJson("/api/ext/applications", message.payload)
+      .then(sendResponse)
+      .catch((err: unknown) => {
+        sendResponse({
+          ok: false,
+          error: err instanceof Error ? err.message : "Network error",
+        });
+      });
+    return true;
+  }
 
-      const res = await fetch(`${config.apiBaseUrl}/api/ext/applications`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${config.token}`,
-        },
-        body: JSON.stringify(message.payload),
+  if (message?.type === "APPLYPILOT_ANSWER_SCREENING") {
+    postAuthedJson("/api/ext/screening", message.payload)
+      .then(sendResponse)
+      .catch((err: unknown) => {
+        sendResponse({
+          ok: false,
+          error: err instanceof Error ? err.message : "Network error",
+        });
       });
-      const data = await res.json().catch(() => null);
-      if (!res.ok) {
-        sendResponse({ ok: false, error: data?.detail || `HTTP ${res.status}` });
-        return;
-      }
-      sendResponse({ ok: true, data });
-    })().catch((err: unknown) => {
-      sendResponse({
-        ok: false,
-        error: err instanceof Error ? err.message : "Network error",
-      });
-    });
     return true;
   }
 

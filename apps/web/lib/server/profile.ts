@@ -105,6 +105,8 @@ export async function updatePreferences(
     updateData.preferredIndustries = input.preferredIndustries;
   if (input.excludedCompanies !== undefined)
     updateData.excludedCompanies = input.excludedCompanies;
+  if (input.notificationPreferences !== undefined)
+    updateData.notificationPreferences = input.notificationPreferences;
 
   await db.update(profiles).set(updateData).where(eq(profiles.id, userId));
   await recordAudit(userId, 'profile_updated', { section: 'preferences' });
@@ -483,6 +485,16 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
     expectedSalaryMax: profile.expectedSalaryMax,
     preferredIndustries: profile.preferredIndustries,
     excludedCompanies: profile.excludedCompanies,
+    notificationPreferences: {
+      followUpReminders: true,
+      jobMatchAlerts: true,
+      weeklyDigest: false,
+      productUpdates: false,
+      ...(typeof profile.notificationPreferences === 'object' &&
+      profile.notificationPreferences !== null
+        ? (profile.notificationPreferences as Record<string, boolean>)
+        : {}),
+    },
     completionPercent: computeCompletionPercent(profile),
     experience: profile.experience.map(
       (item): WorkExperienceDto => ({

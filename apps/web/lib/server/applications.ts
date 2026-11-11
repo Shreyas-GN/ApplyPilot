@@ -1,12 +1,21 @@
+import { and, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { applicationEvents, applications, jobs } from '@/lib/db/schema';
+import {
+  applicationEvents,
+  applications,
+  jobs,
+  resumes,
+  tailoredDocuments,
+} from '@/lib/db/schema';
 import type {
+  ApplicationChecklistState,
   ApplicationDto,
   ApplicationEventDto,
+  ApplicationReadiness,
   ApplicationStatus,
 } from '@/lib/types';
-import { and, desc, eq, inArray } from 'drizzle-orm';
 import { recordAudit } from './audit';
+import { getProfile } from './profile';
 
 export interface CreateApplicationInput {
   jobId?: string;
@@ -17,21 +26,89 @@ export interface CreateApplicationInput {
   status?: ApplicationStatus;
   matchScore?: number | null;
   notes?: string | null;
+  followUpAt?: string | null;
 }
 
 export interface UpdateApplicationInput {
   status?: ApplicationStatus;
   notes?: string | null;
+  followUpAt?: string | null;
+  checklist?: ApplicationChecklistState;
+}
+
+function normalizeChecklist(raw: unknown): ApplicationChecklistState {
+  if (!raw || typeof raw !== 'object') return {};
+  const obj = raw as Record<string, unknown>;
+  return {
+    screeningPrepared: Boolean(obj.screeningPrepared),
+    finalReviewed: Boolean(obj.finalReviewed),
+  };
+}
+
+function buildReadiness(params: {
+  profileComplete: boolean;
+  hasResume: boolean;
+  tailoredResume: boolean;
+  coverLetter: boolean;
+  checklist: ApplicationChecklistState;
+}): ApplicationReadiness {
+  const screeningPrepared = Boolean(params.checklist.screeningPrepared);
+  const finalReviewed = Boolean(params.checklist.finalReviewed);
+  const checks = [
+    params.profileComplete,
+    params.hasResume,
+    params.tailoredResume,
+    params.coverLetter,
+    screeningPrepared,
+    finalReviewed,
+  ];
+  return {
+    profileComplete: params.profileComplete,
+    hasResume: params.hasResume,
+    tailoredResume: params.tailoredResume,
+    coverLetter: params.coverLetter,
+    screeningPrepared,
+    finalReviewed,
+    completedCount: checks.filter(Boolean).length,
+    totalCount: checks.length,
+  };
+}
+
+async function loadReadinessContext(userId: string) {
+  const [profile, resumeRows, docRows] = await Promise.all([
+    getProfile(userId),
+    db
+      .select({ id: resumes.id })
+      .from(resumes)
+      .where(eq(resumes.userId, userId))
+      .limit(1),
+    db
+      .select({
+        applicationId: tailoredDocuments.applicationId,
+        jobId: tailoredDocuments.jobId,
+        type: tailoredDocuments.type,
+      })
+      .from(tailoredDocuments)
+      .where(eq(tailoredDocuments.userId, userId)),
+  ]);
+
+  const profileComplete = profile.completionPercent >= 70;
+  const hasResume = resumeRows.length > 0;
+
+  return { profileComplete, hasResume, docRows };
 }
 
 export async function listApplications(
   userId: string
 ): Promise<ApplicationDto[]> {
-  const rows = await db
-    .select()
-    .from(applications)
-    .where(eq(applications.userId, userId))
-    .orderBy(desc(applications.updatedAt));
+  const [rows, readinessCtx] = await Promise.all([
+    db
+      .select()
+      .from(applications)
+      .where(eq(applications.userId, userId))
+      .orderBy(desc(applications.updatedAt)),
+    loadReadinessContext(userId),
+  ]);
 
   if (rows.length === 0) return [];
 
@@ -59,14 +136,15 @@ export async function listApplications(
     eventsByApp.set(ev.applicationId, list);
   }
 
-  return rows.map((row) => toApplicationDto(row, eventsByApp.get(row.id) ?? []));
+  return rows.map((row) =>
+    toApplicationDto(row, eventsByApp.get(row.id) ?? [], readinessCtx)
+  );
 }
 
 export async function createApplication(
   userId: string,
   input: CreateApplicationInput
 ): Promise<ApplicationDto> {
-  // Prevent duplicate tracking for the same jobId
   if (input.jobId) {
     const [existing] = await db
       .select()
@@ -80,10 +158,10 @@ export async function createApplication(
       .limit(1);
 
     if (existing) {
-      return toApplicationDto(existing, []);
+      const ctx = await loadReadinessContext(userId);
+      return toApplicationDto(existing, [], ctx);
     }
 
-    // Verify job exists if jobId provided
     const [jobRow] = await db
       .select({ id: jobs.id })
       .from(jobs)
@@ -96,6 +174,7 @@ export async function createApplication(
 
   const initialStatus: ApplicationStatus = input.status ?? 'saved';
   const appliedAt = initialStatus === 'applied' ? new Date() : null;
+  const followUpAt = input.followUpAt ? new Date(input.followUpAt) : null;
 
   const created = await db.transaction(async (tx) => {
     const [app] = await tx
@@ -110,6 +189,8 @@ export async function createApplication(
         status: initialStatus,
         matchScore: input.matchScore ?? null,
         notes: input.notes?.trim() || null,
+        followUpAt:
+          followUpAt && !Number.isNaN(followUpAt.getTime()) ? followUpAt : null,
         appliedAt,
       })
       .returning();
@@ -134,14 +215,19 @@ export async function createApplication(
     status: created.status,
   });
 
-  return toApplicationDto(created, [
-    {
-      id: 'initial',
-      type: 'created',
-      description: `Added to tracker as "${initialStatus}"`,
-      createdAt: created.createdAt.toISOString(),
-    },
-  ]);
+  const ctx = await loadReadinessContext(userId);
+  return toApplicationDto(
+    created,
+    [
+      {
+        id: 'initial',
+        type: 'created',
+        description: `Added to tracker as "${initialStatus}"`,
+        createdAt: created.createdAt.toISOString(),
+      },
+    ],
+    ctx
+  );
 }
 
 export async function updateApplication(
@@ -160,8 +246,11 @@ export async function updateApplication(
   }
 
   const nextStatus = input.status ?? existing.status;
-  const statusChanged = input.status !== undefined && input.status !== existing.status;
-  const notesChanged = input.notes !== undefined && input.notes !== existing.notes;
+  const statusChanged =
+    input.status !== undefined && input.status !== existing.status;
+  const notesChanged =
+    input.notes !== undefined && input.notes !== existing.notes;
+  const followUpChanged = input.followUpAt !== undefined;
 
   const updateFields: Partial<typeof applications.$inferInsert> = {
     updatedAt: new Date(),
@@ -174,6 +263,23 @@ export async function updateApplication(
   }
   if (input.notes !== undefined) {
     updateFields.notes = input.notes?.trim() || null;
+  }
+  if (input.followUpAt !== undefined) {
+    if (!input.followUpAt) {
+      updateFields.followUpAt = null;
+    } else {
+      const parsedDate = new Date(input.followUpAt);
+      if (Number.isNaN(parsedDate.getTime())) {
+        throw new Error('Invalid follow-up date.');
+      }
+      updateFields.followUpAt = parsedDate;
+    }
+  }
+  if (input.checklist !== undefined) {
+    updateFields.checklist = {
+      ...normalizeChecklist(existing.checklist),
+      ...input.checklist,
+    };
   }
 
   const updated = await db.transaction(async (tx) => {
@@ -194,6 +300,15 @@ export async function updateApplication(
         type: 'status_change',
         description: `Moved from "${existing.status}" to "${nextStatus}"`,
       });
+    } else if (followUpChanged) {
+      await tx.insert(applicationEvents).values({
+        applicationId: appId,
+        userId,
+        type: 'follow_up',
+        description: row.followUpAt
+          ? `Scheduled follow-up for ${row.followUpAt.toLocaleDateString()}`
+          : 'Cleared follow-up reminder',
+      });
     } else if (notesChanged) {
       await tx.insert(applicationEvents).values({
         applicationId: appId,
@@ -206,11 +321,14 @@ export async function updateApplication(
     return row;
   });
 
-  const events = await db
-    .select()
-    .from(applicationEvents)
-    .where(eq(applicationEvents.applicationId, appId))
-    .orderBy(desc(applicationEvents.createdAt));
+  const [events, ctx] = await Promise.all([
+    db
+      .select()
+      .from(applicationEvents)
+      .where(eq(applicationEvents.applicationId, appId))
+      .orderBy(desc(applicationEvents.createdAt)),
+    loadReadinessContext(userId),
+  ]);
 
   return toApplicationDto(
     updated,
@@ -219,7 +337,8 @@ export async function updateApplication(
       type: e.type,
       description: e.description,
       createdAt: e.createdAt.toISOString(),
-    }))
+    })),
+    ctx
   );
 }
 
@@ -241,8 +360,26 @@ export async function deleteApplication(
 
 function toApplicationDto(
   row: typeof applications.$inferSelect,
-  events: ApplicationEventDto[]
+  events: ApplicationEventDto[],
+  ctx: {
+    profileComplete: boolean;
+    hasResume: boolean;
+    docRows: Array<{
+      applicationId: string | null;
+      jobId: string | null;
+      type: string;
+    }>;
+  }
 ): ApplicationDto {
+  const checklist = normalizeChecklist(row.checklist);
+  const matchingDocs = ctx.docRows.filter(
+    (d) =>
+      d.applicationId === row.id ||
+      (row.jobId !== null && d.jobId === row.jobId)
+  );
+  const tailoredResume = matchingDocs.some((d) => d.type === 'resume');
+  const coverLetter = matchingDocs.some((d) => d.type === 'cover_letter');
+
   return {
     id: row.id,
     jobId: row.jobId,
@@ -253,10 +390,18 @@ function toApplicationDto(
     status: row.status,
     matchScore: row.matchScore,
     notes: row.notes,
+    followUpAt: row.followUpAt ? row.followUpAt.toISOString() : null,
+    checklist,
+    readiness: buildReadiness({
+      profileComplete: ctx.profileComplete,
+      hasResume: ctx.hasResume,
+      tailoredResume,
+      coverLetter,
+      checklist,
+    }),
     appliedAt: row.appliedAt ? row.appliedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     events,
   };
 }
-

@@ -79,6 +79,7 @@ export interface ProfileDto {
   expectedSalaryMax: number | null;
   preferredIndustries: string[];
   excludedCompanies: string[];
+  notificationPreferences?: NotificationPreferences;
   completionPercent: number;
   experience: WorkExperienceDto[];
   education: EducationDto[];
@@ -86,6 +87,13 @@ export interface ProfileDto {
   projects: ProjectDto[];
   certifications: CertificationDto[];
   updatedAt: string;
+}
+
+export interface NotificationPreferences {
+  followUpReminders: boolean;
+  jobMatchAlerts: boolean;
+  weeklyDigest: boolean;
+  productUpdates: boolean;
 }
 
 export interface ResumeDto {
@@ -241,6 +249,28 @@ export interface ApplicationEventDto {
   createdAt: string;
 }
 
+export interface ApplicationChecklistState {
+  screeningPrepared?: boolean;
+  finalReviewed?: boolean;
+}
+
+export interface ApplicationReadiness {
+  profileComplete: boolean;
+  hasResume: boolean;
+  tailoredResume: boolean;
+  coverLetter: boolean;
+  screeningPrepared: boolean;
+  finalReviewed: boolean;
+  completedCount: number;
+  totalCount: number;
+}
+
+export interface ScreeningAnswerResult {
+  answer: string;
+  groundedFacts: string[];
+  source: "claude" | "grounded_fallback";
+}
+
 export interface ApplicationDto {
   id: string;
   jobId: string | null;
@@ -251,6 +281,9 @@ export interface ApplicationDto {
   status: ApplicationStatus;
   matchScore: number | null;
   notes: string | null;
+  followUpAt: string | null;
+  checklist: ApplicationChecklistState;
+  readiness?: ApplicationReadiness;
   appliedAt: string | null;
   createdAt: string;
   updatedAt: string;
