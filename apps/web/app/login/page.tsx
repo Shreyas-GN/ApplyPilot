@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { loginSchema } from "@applypilot/validators";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api-client";
@@ -19,6 +19,23 @@ export default function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    if (!err) return;
+    const message =
+      err === "invalid_or_expired_token"
+        ? "Your confirmation link is invalid or has expired. Log in or sign up again to receive a fresh link."
+        : params.get("error_description") ?? "Authentication failed. Please try again.";
+    queueMicrotask(() => {
+      if (!cancelled) setFormError(message);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();

@@ -40,7 +40,23 @@ function ProfileContent() {
   }
 
   if (error || !profile) {
-    return <p className="text-sm text-red-600">Couldn&apos;t load your profile. Please refresh.</p>;
+    return (
+      <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">
+        <p className="font-medium">Couldn&apos;t load your profile.</p>
+        <p className="mt-1 text-xs text-red-700">
+          {error ?? "Please check your connection or session and try again."}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            className="rounded-lg bg-red-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-800"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

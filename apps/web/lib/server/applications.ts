@@ -101,16 +101,15 @@ async function loadReadinessContext(userId: string) {
 export async function listApplications(
   userId: string
 ): Promise<ApplicationDto[]> {
-  const [rows, readinessCtx] = await Promise.all([
-    db
-      .select()
-      .from(applications)
-      .where(eq(applications.userId, userId))
-      .orderBy(desc(applications.updatedAt)),
-    loadReadinessContext(userId),
-  ]);
+  const rows = await db
+    .select()
+    .from(applications)
+    .where(eq(applications.userId, userId))
+    .orderBy(desc(applications.updatedAt));
 
   if (rows.length === 0) return [];
+
+  const readinessCtx = await loadReadinessContext(userId);
 
   const appIds = rows.map((r) => r.id);
   const events = await db

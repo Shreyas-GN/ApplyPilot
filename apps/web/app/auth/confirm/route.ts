@@ -11,8 +11,16 @@ function sanitizeNextPath(raw: string | null): string {
   return raw;
 }
 
+async function ensureProfileRow(userId: string) {
+  try {
+    await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
+  } catch (error) {
+    console.warn('[Auth Confirm] Profile provision warning:', error);
+  }
+}
+
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams } = request.nextUrl;
   const code = searchParams.get('code');
   const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
@@ -23,8 +31,8 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error && data.user) {
-      await db.insert(profiles).values({ id: data.user.id }).onConflictDoNothing();
-      return NextResponse.redirect(new URL(next, request.url));
+      await ensureProfileRow(data.user.id);
+      return NextResponse.redirect(new URL(next, request.nextUrl.origin));
     }
   }
 
@@ -34,12 +42,12 @@ export async function GET(request: NextRequest) {
       token_hash: tokenHash,
     });
     if (!error && data.user) {
-      await db.insert(profiles).values({ id: data.user.id }).onConflictDoNothing();
-      return NextResponse.redirect(new URL(next, request.url));
+      await ensureProfileRow(data.user.id);
+      return NextResponse.redirect(new URL(next, request.nextUrl.origin));
     }
   }
 
   return NextResponse.redirect(
-    new URL('/login?error=invalid_or_expired_token', request.url)
+    new URL('/login?error=invalid_or_expired_token', request.nextUrl.origin)
   );
 }

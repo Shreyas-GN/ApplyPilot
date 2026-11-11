@@ -386,13 +386,20 @@ export async function applyParsedResumeData(
 }
 
 async function loadProfile(userId: string): Promise<ProfileWithRelations> {
-  await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
-
-  const [profile] = await db
+  let [profile] = await db
     .select()
     .from(profiles)
     .where(eq(profiles.id, userId))
     .limit(1);
+
+  if (!profile) {
+    await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
+    [profile] = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.id, userId))
+      .limit(1);
+  }
 
   if (!profile) {
     throw new Error(`Profile not found for userId ${userId}`);

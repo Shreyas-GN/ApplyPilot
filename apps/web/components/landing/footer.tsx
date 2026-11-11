@@ -7,6 +7,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ href: string; label: string
       { href: "#product", label: "Product" },
       { href: "#how-it-works", label: "How it works" },
       { href: "#faq", label: "FAQ" },
+      { href: "/sitemap", label: "Sitemap" },
     ],
   },
   {

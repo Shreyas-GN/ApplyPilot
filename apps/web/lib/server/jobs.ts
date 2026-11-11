@@ -1,4 +1,4 @@
-import { desc, eq, ilike, or, and, gte, count } from 'drizzle-orm';
+import { desc, eq, ilike, or, and, gte, count, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   applicationEvents,
@@ -84,58 +84,72 @@ export async function syncPublicJobs(
   return { synced: totalSynced, boardsChecked: boards.length };
 }
 
+type UpsertJobRow = typeof jobs.$inferInsert;
+
+async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
+  if (rows.length === 0) return 0;
+  const dedupedMap = new Map<string, UpsertJobRow>();
+  for (const row of rows) {
+    dedupedMap.set(`${row.source}:${row.externalId}`, row);
+  }
+  const deduped = [...dedupedMap.values()];
+
+  await db
+    .insert(jobs)
+    .values(deduped)
+    .onConflictDoUpdate({
+      target: [jobs.source, jobs.externalId],
+      set: {
+        title: sql`excluded.title`,
+        location: sql`excluded.location`,
+        workMode: sql`excluded.work_mode`,
+        url: sql`excluded.url`,
+        description: sql`excluded.description`,
+        skills: sql`excluded.skills`,
+        postedAt: sql`excluded.posted_at`,
+      },
+    });
+
+  return deduped.length;
+}
+
 async function ingestGreenhouseBoard(
   slug: string,
   companyName: string
 ): Promise<number> {
   const url = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(slug)}/jobs?content=true`;
-  const res = await fetch(url, { next: { revalidate: 0 } });
+  const res = await fetch(url, {
+    next: { revalidate: 0 },
+    signal: AbortSignal.timeout(8000),
+  });
   if (!res.ok) {
     throw new Error(`Greenhouse API returned ${res.status}`);
   }
 
   const data = (await res.json()) as { jobs?: GreenhouseJob[] };
   const items = (data.jobs ?? []).slice(0, 20);
-  let count = 0;
-
-  for (const item of items) {
+  const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription = stripHtml(item.content ?? '');
     const location = item.location?.name ?? null;
     const workMode = inferWorkMode(item.title, location, cleanDescription);
     const skills = extractJobSkills(item.title, cleanDescription);
     const postedAt = item.updated_at ? new Date(item.updated_at) : null;
+    return {
+      source: 'greenhouse',
+      externalId: `${slug}:${item.id}`,
+      company: companyName,
+      title: item.title,
+      location,
+      workMode,
+      employmentType: 'full_time',
+      url: item.absolute_url,
+      description: cleanDescription.slice(0, 12000),
+      skills,
+      postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
+    };
+  });
 
-    await db
-      .insert(jobs)
-      .values({
-        source: 'greenhouse',
-        externalId: `${slug}:${item.id}`,
-        company: companyName,
-        title: item.title,
-        location,
-        workMode,
-        employmentType: 'full_time',
-        url: item.absolute_url,
-        description: cleanDescription.slice(0, 12000),
-        skills,
-        postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
-      })
-      .onConflictDoUpdate({
-        target: [jobs.source, jobs.externalId],
-        set: {
-          title: item.title,
-          location,
-          workMode,
-          url: item.absolute_url,
-          description: cleanDescription.slice(0, 12000),
-          skills,
-          postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
-        },
-      });
-    count++;
-  }
-
-  return count;
+  return upsertJobBatch(rows);
 }
 
 async function ingestLeverBoard(
@@ -143,53 +157,38 @@ async function ingestLeverBoard(
   companyName: string
 ): Promise<number> {
   const url = `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json`;
-  const res = await fetch(url, { next: { revalidate: 0 } });
+  const res = await fetch(url, {
+    next: { revalidate: 0 },
+    signal: AbortSignal.timeout(8000),
+  });
   if (!res.ok) {
     throw new Error(`Lever API returned ${res.status}`);
   }
 
   const items = ((await res.json()) as LeverPosting[]).slice(0, 20);
-  let count = 0;
-
-  for (const item of items) {
+  const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription =
       item.descriptionPlain ?? stripHtml(item.description ?? '');
     const location = item.categories?.location ?? null;
     const workMode = inferWorkMode(item.text, location, cleanDescription);
     const skills = extractJobSkills(item.text, cleanDescription);
     const postedAt = item.createdAt ? new Date(item.createdAt) : null;
+    return {
+      source: 'lever',
+      externalId: `${slug}:${item.id}`,
+      company: companyName,
+      title: item.text,
+      location,
+      workMode,
+      employmentType: item.categories?.commitment ?? 'full_time',
+      url: item.hostedUrl,
+      description: cleanDescription.slice(0, 12000),
+      skills,
+      postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
+    };
+  });
 
-    await db
-      .insert(jobs)
-      .values({
-        source: 'lever',
-        externalId: `${slug}:${item.id}`,
-        company: companyName,
-        title: item.text,
-        location,
-        workMode,
-        employmentType: item.categories?.commitment ?? 'full_time',
-        url: item.hostedUrl,
-        description: cleanDescription.slice(0, 12000),
-        skills,
-        postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
-      })
-      .onConflictDoUpdate({
-        target: [jobs.source, jobs.externalId],
-        set: {
-          title: item.text,
-          location,
-          workMode,
-          url: item.hostedUrl,
-          description: cleanDescription.slice(0, 12000),
-          skills,
-          postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
-        },
-      });
-    count++;
-  }
-
-  return count;
+  return upsertJobBatch(rows);
 }
 
 export type DiscoverJobsTab = 'for_you' | 'search' | 'adjacent' | 'saved';
@@ -215,10 +214,34 @@ function matchesSeniorityFilter(jobTitle: string, description: string, filter: s
   return true;
 }
 
+let initialJobsSeedPromise: Promise<void> | null = null;
+
+async function ensureJobsSeededIfEmpty() {
+  try {
+    const [countRow] = await db.select({ total: count() }).from(jobs);
+    if ((countRow?.total ?? 0) > 0) return;
+
+    if (!initialJobsSeedPromise) {
+      initialJobsSeedPromise = syncPublicJobs()
+        .then(() => undefined)
+        .catch((error) => {
+          console.warn('[Jobs Seed] Initial public board sync skipped:', error);
+        })
+        .finally(() => {
+          initialJobsSeedPromise = null;
+        });
+    }
+    await initialJobsSeedPromise;
+  } catch (error) {
+    console.warn('[Jobs Seed] Failed checking job catalog count:', error);
+  }
+}
+
 export async function listMatchedJobs(
   userId: string,
   options: ListJobsOptions = {}
 ): Promise<JobDto[]> {
+  await ensureJobsSeededIfEmpty();
   const {
     tab,
     q,
