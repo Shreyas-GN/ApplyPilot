@@ -50,3 +50,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ detail: message }, { status: 400 });
   }
 }
+

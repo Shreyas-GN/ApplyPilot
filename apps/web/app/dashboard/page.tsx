@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ProfileDto, ResumeDto } from "@applypilot/shared";
+import type { ProfileDto, ResumeDto } from "@/lib/types";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardHeader } from "@/components/ui/card";

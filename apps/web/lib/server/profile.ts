@@ -15,7 +15,7 @@ import type {
   ProjectDto,
   SkillDto,
   WorkExperienceDto,
-} from '@applypilot/shared';
+} from '@/lib/types';
 import type {
   ReplaceCertificationsInput,
   ReplaceEducationInput,
@@ -547,3 +547,4 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
     updatedAt: profile.updatedAt.toISOString(),
   };
 }
+

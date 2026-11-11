@@ -8,9 +8,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "echo \"(no lint rules configured yet for @applypilot/extension)\""
   },
-  "dependencies": {
-    "@applypilot/shared": "workspace:*"
-  },
   "devDependencies": {
     "@types/chrome": "0.0.287",
     "esbuild": "0.24.0",

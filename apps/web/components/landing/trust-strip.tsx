@@ -54,7 +54,7 @@ export function TrustStrip() {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-ap-line/70 pt-6">
           <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-ap-muted">
             <Zap className="h-3.5 w-3.5 text-ap-vermilion" />
-            <span>Built for modern ATS pipelines:</span>
+            <span>Structured for modern ATS standards:</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-6">

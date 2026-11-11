@@ -1,14 +1,15 @@
-import { extractText } from 'unpdf';
-import mammoth from 'mammoth';
-import Anthropic from '@anthropic-ai/sdk';
+
 import { db } from '@/lib/db';
-import { resumes, resumeParsedData } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { resumeParsedData, resumes } from '@/lib/db/schema';
+import { createAdminClient } from '@/lib/supabase/admin';
+import Anthropic from '@anthropic-ai/sdk';
 import {
   resumeParsedDataSchema,
   type ResumeParsedData,
 } from '@applypilot/validators';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { eq } from 'drizzle-orm';
+import mammoth from 'mammoth';
+import { extractText } from 'unpdf';
 
 const SYSTEM_PROMPT = `You extract structured information from resume text for a job-search product. You must follow these rules exactly:
 

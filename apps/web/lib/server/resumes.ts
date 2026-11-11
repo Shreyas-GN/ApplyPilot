@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { resumes, resumeParsedData } from '@/lib/db/schema';
-import type { ResumeDto, ResumeParsedDataDto } from '@applypilot/shared';
+import type { ResumeDto, ResumeParsedDataDto } from '@/lib/types';
 import {
   hasAllowedResumeExtension,
   RESUME_ALLOWED_MIME_TYPES,
@@ -302,7 +302,7 @@ function validateUpload(file: UploadFileInput): void {
   if (!hasAllowedResumeExtension(file.filename)) {
     throw new Error('Only .pdf and .docx files are supported.');
   }
-  if (!RESUME_ALLOWED_MIME_TYPES.includes(file.mimeType as any)) {
+  if (!(RESUME_ALLOWED_MIME_TYPES as readonly string[]).includes(file.mimeType)) {
     throw new Error('Only PDF and DOCX files are supported.');
   }
   const sniffed = sniffFileType(file.buffer);

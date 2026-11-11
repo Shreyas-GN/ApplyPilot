@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
-import type { SkillDto } from "@applypilot/shared";
+import type { SkillDto } from "@/lib/types";
 import { replaceSkillsSchema } from "@applypilot/validators";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

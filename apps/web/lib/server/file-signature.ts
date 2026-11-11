@@ -26,3 +26,4 @@ export function mimeTypeMatchesSniffedType(
   }
   return false;
 }
+

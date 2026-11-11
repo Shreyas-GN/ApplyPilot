@@ -76,7 +76,7 @@ export const profiles = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
+  () => [
     pgPolicy('profiles_owner_policy', {
       for: 'all',
       to: authenticatedRole,

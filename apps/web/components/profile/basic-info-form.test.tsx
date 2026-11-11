@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { ProfileDto } from "@applypilot/shared";
+import type { ProfileDto } from "@/lib/types";
 import { BasicInfoForm } from "./basic-info-form";
 
 const patchMock = vi.fn();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ProfileDto } from "@applypilot/shared";
+import type { ProfileDto } from "@/lib/types";
 import { updateProfileSchema, type UpdateProfileInput } from "@applypilot/validators";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

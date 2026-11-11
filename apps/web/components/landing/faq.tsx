@@ -31,9 +31,9 @@ const FAQS: Array<{ question: string; answer: string }> = [
       "Yes — reviewing and editing is the default. Any AI-suggested change is shown to you side-by-side before it's used, and you can edit or discard it.",
   },
   {
-    question: "Which job sources and application systems are supported?",
+    question: "Which résumé formats and systems are supported?",
     answer:
-      "Greenhouse, Lever, Workday, and standard ATS application formats are supported with verified parsing schemas. We publish coverage updates as new systems are integrated.",
+      "ApplyPilot currently parses PDF and DOCX résumés into a standardized, structured candidate profile. Direct integrations with major ATS platforms and job boards are actively on our roadmap.",
   },
   {
     question: "Is my personal information secure?",

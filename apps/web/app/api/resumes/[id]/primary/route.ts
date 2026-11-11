@@ -21,3 +21,4 @@ export async function POST(
     return NextResponse.json({ detail: message }, { status: 400 });
   }
 }
+

@@ -1,6 +1,6 @@
 "use client";
 
-import type { AuthUserDto } from "@applypilot/shared";
+import type { AuthUserDto } from "@/lib/types";
 import type { User } from "@supabase/supabase-js";
 import {
   createContext,

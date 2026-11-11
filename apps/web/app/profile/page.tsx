@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProfileDto } from "@applypilot/shared";
+import type { ProfileDto } from "@/lib/types";
 import {
   replaceWorkExperienceSchema,
   replaceEducationSchema,

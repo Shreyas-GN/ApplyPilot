@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { ResumeDto, ResumeParsedDataDto } from "@applypilot/shared";
+import type { ResumeDto, ResumeParsedDataDto } from "@/lib/types";
 import { resumeParsedDataSchema } from "@applypilot/validators";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";

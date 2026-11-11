@@ -51,3 +51,4 @@ export async function PATCH(
     return NextResponse.json({ detail: message }, { status: 400 });
   }
 }
+
