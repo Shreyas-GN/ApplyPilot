@@ -9,7 +9,8 @@
     "DATABASE_MIGRATION_URL",
     "ANTHROPIC_API_KEY",
     "ANTHROPIC_MODEL",
-    "NEXT_PUBLIC_APP_URL"
+    "NEXT_PUBLIC_APP_URL",
+    "CRON_SECRET"
   ],
   "tasks": {
     "build": {

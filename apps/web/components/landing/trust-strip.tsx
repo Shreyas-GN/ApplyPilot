@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderKanban, Compass, ListChecks, ShieldCheck, Zap } from "lucide-react";
+import { FolderKanban, Compass, ListChecks, Zap } from "lucide-react";
 
 const HIGHLIGHTS = [
   {

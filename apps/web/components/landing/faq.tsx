@@ -33,7 +33,7 @@ const FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "Which résumé formats and systems are supported?",
     answer:
-      "ApplyPilot currently parses PDF and DOCX résumés into a standardized, structured candidate profile. Direct integrations with major ATS platforms and job boards are actively on our roadmap.",
+      "ApplyPilot parses PDF and DOCX résumés into a structured candidate profile, ingests open roles from Greenhouse and Lever public boards, and pairs with our Chrome Extension Co-pilot to review and autofill Greenhouse and Lever applications.",
   },
   {
     question: "Is my personal information secure?",

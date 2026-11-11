@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, AlertCircle, HelpCircle, XCircle, Sparkles } from "lucide-react";
+import { CheckCircle2, AlertCircle, HelpCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UnderlineAnnotation } from "./annotation";
 
