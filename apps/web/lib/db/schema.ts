@@ -82,6 +82,22 @@ export const profiles = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'::text[]`),
+    contactEmail: text('contact_email'),
+    careerStage: text('career_stage'),
+    preferredExperienceLevel: text('preferred_experience_level'),
+    desiredRoles: text('desired_roles')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    adjacentRoles: text('adjacent_roles')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    excludedRoles: text('excluded_roles')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    intelligenceMetadata: jsonb('intelligence_metadata'),
     notificationPreferences: jsonb('notification_preferences'),
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .defaultNow()
@@ -112,6 +128,18 @@ export const workExperiences = pgTable(
     endDate: timestamp('end_date', { withTimezone: true }),
     isCurrent: boolean('is_current').default(false).notNull(),
     description: text('description'),
+    responsibilities: text('responsibilities')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    achievements: text('achievements')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    technologies: text('technologies')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     source: itemSourceEnum('source').default('user').notNull(),
     confidence: numeric('confidence', { precision: 4, scale: 3 }),
     createdAt: timestamp('created_at', { withTimezone: true })
@@ -145,6 +173,8 @@ export const educationEntries = pgTable(
     fieldOfStudy: text('field_of_study'),
     startDate: timestamp('start_date', { withTimezone: true }),
     endDate: timestamp('end_date', { withTimezone: true }),
+    graduationYear: integer('graduation_year'),
+    grade: text('grade'),
     description: text('description'),
     source: itemSourceEnum('source').default('user').notNull(),
     confidence: numeric('confidence', { precision: 4, scale: 3 }),
@@ -176,6 +206,9 @@ export const skills = pgTable(
       .references(() => authUsers.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     category: text('category'),
+    proficiency: text('proficiency'),
+    yearsOfExperience: numeric('years_of_experience', { precision: 4, scale: 1 }),
+    evidence: text('evidence'),
     source: itemSourceEnum('source').default('user').notNull(),
     confidence: numeric('confidence', { precision: 4, scale: 3 }),
     createdAt: timestamp('created_at', { withTimezone: true })
@@ -207,7 +240,18 @@ export const projects = pgTable(
       .references(() => authUsers.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     description: text('description'),
+    role: text('role'),
+    technologies: text('technologies')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    contributions: text('contributions')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     url: text('url'),
+    githubUrl: text('github_url'),
+    liveUrl: text('live_url'),
     startDate: timestamp('start_date', { withTimezone: true }),
     endDate: timestamp('end_date', { withTimezone: true }),
     source: itemSourceEnum('source').default('user').notNull(),

@@ -245,4 +245,33 @@ describe('tailoring utilities', () => {
     expect(res.answer).toContain('TypeScript');
     expect(res.groundedFacts).toContain('Analytical Engines');
   });
+
+  it('excludes unverified AI-extracted skills and roles from candidate tailoring context', () => {
+    const profileWithAi: ProfileDto = {
+      ...SAMPLE_PROFILE,
+      skills: [
+        ...SAMPLE_PROFILE.skills,
+        { id: 'sk-ai', name: 'Rust', category: 'Languages', source: 'ai', confidence: 0.55 },
+      ],
+      experience: [
+        ...SAMPLE_PROFILE.experience,
+        {
+          id: 'exp-ai',
+          company: 'Unverified Corp',
+          title: 'AI Extracted Role',
+          location: null,
+          startDate: null,
+          endDate: null,
+          isCurrent: false,
+          description: null,
+          source: 'ai',
+          confidence: 0.4,
+        },
+      ],
+    };
+
+    const ctx = buildCandidateContext(profileWithAi);
+    expect(ctx.skills).toEqual(['TypeScript', 'PostgreSQL']);
+    expect(ctx.experience.map((e) => e.company)).toEqual(['Analytical Engines']);
+  });
 });

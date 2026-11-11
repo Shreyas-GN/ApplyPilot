@@ -12,6 +12,7 @@ import type {
   CertificationDto,
   EducationDto,
   ProfileDto,
+  ProfileIntelligenceMetadataDto,
   ProjectDto,
   SkillDto,
   WorkExperienceDto,
@@ -27,6 +28,10 @@ import type {
   UpdateProfileInput,
 } from '@applypilot/validators';
 import { recordAudit } from './audit';
+import {
+  computeProfileIntelligence,
+  parseIntelligenceMetadata,
+} from './profile-intelligence';
 
 type WorkExperienceRow = typeof workExperiences.$inferSelect;
 type EducationRow = typeof educationEntries.$inferSelect;
@@ -43,46 +48,106 @@ interface ProfileWithRelations extends ProfileRow {
   certifications: CertificationRow[];
 }
 
-export async function getProfile(userId: string): Promise<ProfileDto> {
+export async function getProfile(
+  userId: string,
+  authEmail?: string | null
+): Promise<ProfileDto> {
   const profile = await loadProfile(userId);
-  return toProfileDto(profile);
+  return toProfileDto(profile, authEmail);
 }
 
 export async function updateBasicInfo(
   userId: string,
-  input: UpdateProfileInput
+  input: UpdateProfileInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
+  const [existing] = await db
+    .select({ intelligenceMetadata: profiles.intelligenceMetadata })
+    .from(profiles)
+    .where(eq(profiles.id, userId))
+    .limit(1);
+
+  const meta: ProfileIntelligenceMetadataDto = parseIntelligenceMetadata(
+    existing?.intelligenceMetadata
+  );
 
   const updateData: Partial<typeof profiles.$inferInsert> = {
     updatedAt: new Date(),
   };
 
-  if (input.fullName !== undefined) updateData.fullName = input.fullName;
-  if (input.phone !== undefined) updateData.phone = input.phone;
-  if (input.location !== undefined) updateData.location = input.location;
-  if (input.linkedinUrl !== undefined)
+  let touchedPersonal = false;
+  let touchedSummary = false;
+
+  if (input.fullName !== undefined) {
+    updateData.fullName = input.fullName || null;
+    touchedPersonal = true;
+  }
+  if (input.contactEmail !== undefined) {
+    updateData.contactEmail = input.contactEmail || null;
+    touchedPersonal = true;
+  }
+  if (input.phone !== undefined) {
+    updateData.phone = input.phone || null;
+    touchedPersonal = true;
+  }
+  if (input.location !== undefined) {
+    updateData.location = input.location || null;
+    touchedPersonal = true;
+  }
+  if (input.linkedinUrl !== undefined) {
     updateData.linkedinUrl = input.linkedinUrl || null;
-  if (input.githubUrl !== undefined)
+    touchedPersonal = true;
+  }
+  if (input.githubUrl !== undefined) {
     updateData.githubUrl = input.githubUrl || null;
-  if (input.portfolioUrl !== undefined)
+    touchedPersonal = true;
+  }
+  if (input.portfolioUrl !== undefined) {
     updateData.portfolioUrl = input.portfolioUrl || null;
-  if (input.headline !== undefined) updateData.headline = input.headline;
-  if (input.summary !== undefined) updateData.summary = input.summary;
-  if (input.yearsOfExperience !== undefined)
+    touchedPersonal = true;
+  }
+  if (input.headline !== undefined) {
+    updateData.headline = input.headline || null;
+    touchedSummary = true;
+  }
+  if (input.summary !== undefined) {
+    updateData.summary = input.summary || null;
+    touchedSummary = true;
+  }
+  if (input.careerStage !== undefined) {
+    updateData.careerStage = input.careerStage || null;
+    touchedSummary = true;
+  }
+  if (input.yearsOfExperience !== undefined) {
     updateData.yearsOfExperience = input.yearsOfExperience;
-  if (input.employmentStatus !== undefined)
-    updateData.employmentStatus = input.employmentStatus;
+    touchedSummary = true;
+  }
+  if (input.employmentStatus !== undefined) {
+    updateData.employmentStatus = input.employmentStatus || null;
+    touchedSummary = true;
+  }
+
+  if (touchedPersonal || input.confirmSection === 'personal_info') {
+    meta.personalInfoSource = 'user';
+  }
+  if (touchedSummary || input.confirmSection === 'professional_summary') {
+    meta.summarySource = 'user';
+  }
+  updateData.intelligenceMetadata = meta;
 
   await db.update(profiles).set(updateData).where(eq(profiles.id, userId));
-  await recordAudit(userId, 'profile_updated', { section: 'basic' });
+  await recordAudit(userId, 'profile_updated', {
+    section: input.confirmSection ?? 'basic',
+  });
 
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function updatePreferences(
   userId: string,
-  input: UpdatePreferencesInput
+  input: UpdatePreferencesInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
 
@@ -92,9 +157,11 @@ export async function updatePreferences(
 
   if (input.preferredTitles !== undefined)
     updateData.preferredTitles = input.preferredTitles;
+  if (input.preferredExperienceLevel !== undefined)
+    updateData.preferredExperienceLevel = input.preferredExperienceLevel || null;
   if (input.preferredLocations !== undefined)
     updateData.preferredLocations = input.preferredLocations;
-  if (input.workMode !== undefined) updateData.workMode = input.workMode;
+  if (input.workMode !== undefined) updateData.workMode = input.workMode || null;
   if (input.employmentTypes !== undefined)
     updateData.employmentTypes = input.employmentTypes;
   if (input.expectedSalaryMin !== undefined)
@@ -105,18 +172,38 @@ export async function updatePreferences(
     updateData.preferredIndustries = input.preferredIndustries;
   if (input.excludedCompanies !== undefined)
     updateData.excludedCompanies = input.excludedCompanies;
+  if (input.desiredRoles !== undefined)
+    updateData.desiredRoles = input.desiredRoles;
+  if (input.adjacentRoles !== undefined)
+    updateData.adjacentRoles = input.adjacentRoles;
+  if (input.excludedRoles !== undefined)
+    updateData.excludedRoles = input.excludedRoles;
   if (input.notificationPreferences !== undefined)
     updateData.notificationPreferences = input.notificationPreferences;
+
+  if (input.dismissSuggestedRole) {
+    const [existing] = await db
+      .select({ intelligenceMetadata: profiles.intelligenceMetadata })
+      .from(profiles)
+      .where(eq(profiles.id, userId))
+      .limit(1);
+    const meta = parseIntelligenceMetadata(existing?.intelligenceMetadata);
+    const currentDismissed = new Set(meta.dismissedRoleSuggestions ?? []);
+    currentDismissed.add(input.dismissSuggestedRole);
+    meta.dismissedRoleSuggestions = Array.from(currentDismissed);
+    updateData.intelligenceMetadata = meta;
+  }
 
   await db.update(profiles).set(updateData).where(eq(profiles.id, userId));
   await recordAudit(userId, 'profile_updated', { section: 'preferences' });
 
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function replaceExperience(
   userId: string,
-  input: ReplaceWorkExperienceInput
+  input: ReplaceWorkExperienceInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.transaction(async (tx) => {
     await tx
@@ -125,28 +212,45 @@ export async function replaceExperience(
 
     if (input.items.length > 0) {
       await tx.insert(workExperiences).values(
-        input.items.map((item) => ({
-          userId,
-          company: item.company,
-          title: item.title,
-          location: item.location ?? null,
-          startDate: parseLooseDate(item.startDate),
-          endDate: parseLooseDate(item.endDate),
-          isCurrent: item.isCurrent ?? false,
-          description: item.description ?? null,
-          source: 'user' as const,
-        }))
+        input.items.map((item) => {
+          const responsibilities = cleanList(item.responsibilities);
+          const achievements = cleanList(item.achievements);
+          const technologies = cleanList(item.technologies);
+          const fallbackDesc = [...responsibilities, ...achievements].join('\n');
+          const description =
+            item.description?.trim() || (fallbackDesc ? fallbackDesc : null);
+
+          return {
+            userId,
+            company: item.company,
+            title: item.title,
+            location: item.location || null,
+            startDate: parseLooseDate(item.startDate),
+            endDate: item.isCurrent ? null : parseLooseDate(item.endDate),
+            isCurrent: item.isCurrent ?? false,
+            description,
+            responsibilities,
+            achievements,
+            technologies,
+            source: item.source === 'ai' ? ('ai' as const) : ('user' as const),
+            confidence:
+              item.confidence !== undefined && item.confidence !== null
+                ? String(item.confidence)
+                : null,
+          };
+        })
       );
     }
   });
 
   await recordAudit(userId, 'profile_updated', { section: 'experience' });
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function replaceEducation(
   userId: string,
-  input: ReplaceEducationInput
+  input: ReplaceEducationInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.transaction(async (tx) => {
     await tx
@@ -155,29 +259,45 @@ export async function replaceEducation(
 
     if (input.items.length > 0) {
       await tx.insert(educationEntries).values(
-        input.items.map((item) => ({
-          userId,
-          institution: item.institution,
-          degree: item.degree ?? null,
-          fieldOfStudy: item.fieldOfStudy ?? null,
-          startDate: parseLooseDate(item.startDate),
-          endDate: parseLooseDate(item.endDate),
-          description: item.description ?? null,
-          source: 'user' as const,
-        }))
+        input.items.map((item) => {
+          const endDate = parseLooseDate(item.endDate);
+          const graduationYear =
+            item.graduationYear !== undefined
+              ? item.graduationYear
+              : endDate
+                ? endDate.getUTCFullYear()
+                : null;
+          return {
+            userId,
+            institution: item.institution,
+            degree: item.degree || null,
+            fieldOfStudy: item.fieldOfStudy || null,
+            startDate: parseLooseDate(item.startDate),
+            endDate,
+            graduationYear,
+            grade: item.grade || null,
+            description: item.description || null,
+            source: item.source === 'ai' ? ('ai' as const) : ('user' as const),
+            confidence:
+              item.confidence !== undefined && item.confidence !== null
+                ? String(item.confidence)
+                : null,
+          };
+        })
       );
     }
   });
 
   await recordAudit(userId, 'profile_updated', { section: 'education' });
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function replaceSkills(
   userId: string,
-  input: ReplaceSkillsInput
+  input: ReplaceSkillsInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
-  const seen = new Map<string, { name: string; category?: string }>();
+  const seen = new Map<string, ReplaceSkillsInput['items'][number]>();
   for (const item of input.items) {
     seen.set(item.name.toLowerCase(), item);
   }
@@ -191,46 +311,73 @@ export async function replaceSkills(
         deduplicated.map((item) => ({
           userId,
           name: item.name,
-          category: item.category ?? null,
-          source: 'user' as const,
+          category: item.category || null,
+          proficiency: item.proficiency || null,
+          yearsOfExperience:
+            item.yearsOfExperience !== undefined &&
+            item.yearsOfExperience !== null
+              ? String(item.yearsOfExperience)
+              : null,
+          evidence: item.evidence || null,
+          source: item.source === 'ai' ? ('ai' as const) : ('user' as const),
+          confidence:
+            item.confidence !== undefined && item.confidence !== null
+              ? String(item.confidence)
+              : null,
         }))
       );
     }
   });
 
   await recordAudit(userId, 'profile_updated', { section: 'skills' });
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function replaceProjects(
   userId: string,
-  input: ReplaceProjectsInput
+  input: ReplaceProjectsInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.transaction(async (tx) => {
     await tx.delete(projects).where(eq(projects.userId, userId));
 
     if (input.items.length > 0) {
       await tx.insert(projects).values(
-        input.items.map((item) => ({
-          userId,
-          name: item.name,
-          description: item.description ?? null,
-          url: item.url || null,
-          startDate: parseLooseDate(item.startDate),
-          endDate: parseLooseDate(item.endDate),
-          source: 'user' as const,
-        }))
+        input.items.map((item) => {
+          const liveUrl = item.liveUrl || null;
+          const githubUrl = item.githubUrl || null;
+          const primaryUrl = liveUrl || githubUrl || item.url || null;
+          return {
+            userId,
+            name: item.name,
+            description: item.description || null,
+            role: item.role || null,
+            technologies: cleanList(item.technologies),
+            contributions: cleanList(item.contributions),
+            url: primaryUrl,
+            githubUrl,
+            liveUrl,
+            startDate: parseLooseDate(item.startDate),
+            endDate: parseLooseDate(item.endDate),
+            source: item.source === 'ai' ? ('ai' as const) : ('user' as const),
+            confidence:
+              item.confidence !== undefined && item.confidence !== null
+                ? String(item.confidence)
+                : null,
+          };
+        })
       );
     }
   });
 
   await recordAudit(userId, 'profile_updated', { section: 'projects' });
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function replaceCertifications(
   userId: string,
-  input: ReplaceCertificationsInput
+  input: ReplaceCertificationsInput,
+  authEmail?: string | null
 ): Promise<ProfileDto> {
   await db.transaction(async (tx) => {
     await tx.delete(certifications).where(eq(certifications.userId, userId));
@@ -240,11 +387,15 @@ export async function replaceCertifications(
         input.items.map((item) => ({
           userId,
           name: item.name,
-          issuer: item.issuer ?? null,
+          issuer: item.issuer || null,
           issueDate: parseLooseDate(item.issueDate),
           expiryDate: parseLooseDate(item.expiryDate),
           credentialUrl: item.credentialUrl || null,
-          source: 'user' as const,
+          source: item.source === 'ai' ? ('ai' as const) : ('user' as const),
+          confidence:
+            item.confidence !== undefined && item.confidence !== null
+              ? String(item.confidence)
+              : null,
         }))
       );
     }
@@ -253,7 +404,7 @@ export async function replaceCertifications(
   await recordAudit(userId, 'profile_updated', {
     section: 'certifications',
   });
-  return getProfile(userId);
+  return getProfile(userId, authEmail);
 }
 
 export async function applyParsedResumeData(
@@ -261,17 +412,62 @@ export async function applyParsedResumeData(
   parsed: ResumeParsedData
 ): Promise<void> {
   await db.insert(profiles).values({ id: userId }).onConflictDoNothing();
+  const [existing] = await db
+    .select({ intelligenceMetadata: profiles.intelligenceMetadata })
+    .from(profiles)
+    .where(eq(profiles.id, userId))
+    .limit(1);
+  const meta = parseIntelligenceMetadata(existing?.intelligenceMetadata);
 
   const personalUpdates: Partial<typeof profiles.$inferInsert> = {};
   const p = parsed.personal;
-  if (p.fullName) personalUpdates.fullName = p.fullName;
-  if (p.phone) personalUpdates.phone = p.phone;
-  if (p.location) personalUpdates.location = p.location;
-  if (p.linkedinUrl) personalUpdates.linkedinUrl = p.linkedinUrl;
-  if (p.githubUrl) personalUpdates.githubUrl = p.githubUrl;
-  if (p.portfolioUrl) personalUpdates.portfolioUrl = p.portfolioUrl;
-  if (p.headline) personalUpdates.headline = p.headline;
-  if (p.summary) personalUpdates.summary = p.summary;
+  let updatedPersonalFromAi = false;
+  let updatedSummaryFromAi = false;
+
+  if (p.fullName) {
+    personalUpdates.fullName = p.fullName;
+    updatedPersonalFromAi = true;
+  }
+  if (p.email) {
+    personalUpdates.contactEmail = p.email;
+    updatedPersonalFromAi = true;
+  }
+  if (p.phone) {
+    personalUpdates.phone = p.phone;
+    updatedPersonalFromAi = true;
+  }
+  if (p.location) {
+    personalUpdates.location = p.location;
+    updatedPersonalFromAi = true;
+  }
+  if (p.linkedinUrl) {
+    personalUpdates.linkedinUrl = p.linkedinUrl;
+    updatedPersonalFromAi = true;
+  }
+  if (p.githubUrl) {
+    personalUpdates.githubUrl = p.githubUrl;
+    updatedPersonalFromAi = true;
+  }
+  if (p.portfolioUrl) {
+    personalUpdates.portfolioUrl = p.portfolioUrl;
+    updatedPersonalFromAi = true;
+  }
+  if (p.headline) {
+    personalUpdates.headline = p.headline;
+    updatedSummaryFromAi = true;
+  }
+  if (p.summary) {
+    personalUpdates.summary = p.summary;
+    updatedSummaryFromAi = true;
+  }
+
+  if (updatedPersonalFromAi && meta.personalInfoSource !== 'user') {
+    meta.personalInfoSource = 'ai';
+  }
+  if (updatedSummaryFromAi && meta.summarySource !== 'user') {
+    meta.summarySource = 'ai';
+  }
+  personalUpdates.intelligenceMetadata = meta;
 
   const seenSkills = new Map<
     string,
@@ -444,6 +640,21 @@ async function loadProfile(userId: string): Promise<ProfileWithRelations> {
   };
 }
 
+function cleanList(items: string[] | undefined): string[] {
+  if (!items) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const item of items) {
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(trimmed);
+  }
+  return out;
+}
+
 function parseLooseDate(value: string | undefined | null): Date | null {
   if (!value) return null;
   const padded = value.length === 4 ? `${value}-01` : value;
@@ -460,21 +671,18 @@ function toConfidence(value: unknown): number | null {
   return Number(value);
 }
 
-function computeCompletionPercent(profile: ProfileWithRelations): number {
-  let score = 0;
-  if (profile.fullName && profile.headline && profile.summary) score += 20;
-  if (profile.linkedinUrl || profile.githubUrl || profile.portfolioUrl) score += 10;
-  if (profile.experience.length > 0) score += 20;
-  if (profile.education.length > 0) score += 15;
-  if (profile.skills.length >= 3) score += 15;
-  if (profile.projects.length > 0) score += 10;
-  if (profile.preferredTitles.length > 0 || profile.workMode) score += 10;
-  return Math.min(score, 100);
-}
+function toProfileDto(
+  profile: ProfileWithRelations,
+  authEmail?: string | null
+): ProfileDto {
+  const intelligenceMetadata = parseIntelligenceMetadata(
+    profile.intelligenceMetadata
+  );
 
-function toProfileDto(profile: ProfileWithRelations): ProfileDto {
-  return {
+  const baseProfile: Omit<ProfileDto, 'intelligence' | 'completionPercent'> = {
     fullName: profile.fullName,
+    email: profile.contactEmail || authEmail || null,
+    authEmail: authEmail ?? null,
     phone: profile.phone,
     location: profile.location,
     linkedinUrl: profile.linkedinUrl,
@@ -482,9 +690,11 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
     portfolioUrl: profile.portfolioUrl,
     headline: profile.headline,
     summary: profile.summary,
+    careerStage: profile.careerStage,
     yearsOfExperience: profile.yearsOfExperience,
     employmentStatus: profile.employmentStatus,
     preferredTitles: profile.preferredTitles,
+    preferredExperienceLevel: profile.preferredExperienceLevel,
     preferredLocations: profile.preferredLocations,
     workMode: profile.workMode,
     employmentTypes: profile.employmentTypes,
@@ -492,6 +702,10 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
     expectedSalaryMax: profile.expectedSalaryMax,
     preferredIndustries: profile.preferredIndustries,
     excludedCompanies: profile.excludedCompanies,
+    desiredRoles: profile.desiredRoles,
+    adjacentRoles: profile.adjacentRoles,
+    excludedRoles: profile.excludedRoles,
+    intelligenceMetadata,
     notificationPreferences: {
       followUpReminders: true,
       jobMatchAlerts: true,
@@ -502,7 +716,6 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
         ? (profile.notificationPreferences as Record<string, boolean>)
         : {}),
     },
-    completionPercent: computeCompletionPercent(profile),
     experience: profile.experience.map(
       (item): WorkExperienceDto => ({
         id: item.id,
@@ -513,6 +726,9 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
         endDate: toIsoOrNull(item.endDate),
         isCurrent: item.isCurrent,
         description: item.description,
+        responsibilities: item.responsibilities ?? [],
+        achievements: item.achievements ?? [],
+        technologies: item.technologies ?? [],
         source: item.source as 'user' | 'ai',
         confidence: toConfidence(item.confidence),
       })
@@ -525,6 +741,10 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
         fieldOfStudy: item.fieldOfStudy,
         startDate: toIsoOrNull(item.startDate),
         endDate: toIsoOrNull(item.endDate),
+        graduationYear:
+          item.graduationYear ??
+          (item.endDate ? item.endDate.getUTCFullYear() : null),
+        grade: item.grade,
         description: item.description,
         source: item.source as 'user' | 'ai',
         confidence: toConfidence(item.confidence),
@@ -535,6 +755,9 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
         id: item.id,
         name: item.name,
         category: item.category,
+        proficiency: item.proficiency,
+        yearsOfExperience: toConfidence(item.yearsOfExperience),
+        evidence: item.evidence,
         source: item.source as 'user' | 'ai',
         confidence: toConfidence(item.confidence),
       })
@@ -544,7 +767,12 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
         id: item.id,
         name: item.name,
         description: item.description,
+        role: item.role,
+        technologies: item.technologies ?? [],
+        contributions: item.contributions ?? [],
         url: item.url,
+        githubUrl: item.githubUrl,
+        liveUrl: item.liveUrl,
         startDate: toIsoOrNull(item.startDate),
         endDate: toIsoOrNull(item.endDate),
         source: item.source as 'user' | 'ai',
@@ -564,6 +792,14 @@ function toProfileDto(profile: ProfileWithRelations): ProfileDto {
       })
     ),
     updatedAt: profile.updatedAt.toISOString(),
+  };
+
+  const intelligence = computeProfileIntelligence(baseProfile);
+
+  return {
+    ...baseProfile,
+    completionPercent: intelligence.confirmedPercent,
+    intelligence,
   };
 }
 

@@ -150,28 +150,41 @@ export function cleanJsonFence(raw: string): string {
 }
 
 export function buildCandidateContext(profile: ProfileDto) {
+  const summaryConfirmed = profile.intelligenceMetadata?.summarySource !== 'ai';
+  const confirmedSkills = profile.skills.filter((s) => s.source !== 'ai');
+  const confirmedExperience = profile.experience.filter((e) => e.source !== 'ai');
+  const confirmedEducation = profile.education.filter((ed) => ed.source !== 'ai');
+  const confirmedProjects = profile.projects.filter((p) => p.source !== 'ai');
+
   return {
     fullName: profile.fullName,
     location: profile.location,
-    headline: profile.headline,
-    summary: profile.summary,
+    headline: summaryConfirmed ? profile.headline : null,
+    summary: summaryConfirmed ? profile.summary : null,
     yearsOfExperience: profile.yearsOfExperience,
-    skills: profile.skills.map((s) => s.name),
-    experience: profile.experience.map((e) => ({
+    skills: confirmedSkills.map((s) => s.name),
+    experience: confirmedExperience.map((e) => ({
       company: e.company,
       title: e.title,
       startDate: e.startDate,
       endDate: e.isCurrent ? 'Present' : e.endDate,
       description: e.description,
+      responsibilities: e.responsibilities ?? [],
+      achievements: e.achievements ?? [],
+      technologies: e.technologies ?? [],
     })),
-    education: profile.education.map((ed) => ({
+    education: confirmedEducation.map((ed) => ({
       institution: ed.institution,
       degree: ed.degree,
       fieldOfStudy: ed.fieldOfStudy,
+      graduationYear: ed.graduationYear ?? null,
     })),
-    projects: profile.projects.map((p) => ({
+    projects: confirmedProjects.map((p) => ({
       name: p.name,
+      role: p.role ?? null,
       description: p.description,
+      technologies: p.technologies ?? [],
+      contributions: p.contributions ?? [],
     })),
   };
 }
@@ -274,9 +287,15 @@ export function buildGroundedScreeningAnswer(
   job: { company: string; title: string; description: string },
   question: string
 ): ScreeningAnswerResult {
-  const skills = profile.skills.map((s) => s.name).slice(0, 5);
-  const topExp = profile.experience[0];
-  const topProject = profile.projects[0];
+  const skills = profile.skills
+    .filter((s) => s.source !== 'ai')
+    .map((s) => s.name)
+    .slice(0, 5);
+  const topExp = profile.experience.find((e) => e.source !== 'ai');
+  const topProject = profile.projects.find((p) => p.source !== 'ai');
+  const summaryConfirmed = profile.intelligenceMetadata?.summarySource !== 'ai';
+  const confirmedHeadline = summaryConfirmed ? profile.headline : null;
+  const confirmedSummary = summaryConfirmed ? profile.summary : null;
   const qLower = question.toLowerCase();
   const facts: string[] = [];
   const parts: string[] = [];
@@ -295,7 +314,7 @@ export function buildGroundedScreeningAnswer(
     const companyText = job.company ? ` at ${job.company}` : '';
     const roleText = job.title ? ` the ${job.title} role` : ' this role';
     parts.push(
-      `I am excited about${roleText}${companyText} because it aligns closely with my background${profile.headline ? ` as a ${profile.headline}` : ''}.`
+      `I am excited about${roleText}${companyText} because it aligns closely with my background${confirmedHeadline ? ` as a ${confirmedHeadline}` : ''}.`
     );
     if (topExp) {
       parts.push(
@@ -330,7 +349,7 @@ export function buildGroundedScreeningAnswer(
 
   if (parts.length === 0) {
     parts.push(
-      profile.summary?.trim() ||
+      confirmedSummary?.trim() ||
         `Based on my verified profile${skills.length > 0 ? ` (${skills.join(', ')})` : ''}, I am well positioned to contribute to ${job.title || 'this team'}${job.company ? ` at ${job.company}` : ''}.`
     );
   }
@@ -520,12 +539,13 @@ export async function createTailoredDocument(
   }
 
   const profile = await getProfile(userId);
+  const summaryConfirmed = profile.intelligenceMetadata?.summarySource !== 'ai';
   const hasCandidateSignal =
-    Boolean(profile.summary?.trim()) ||
-    Boolean(profile.headline?.trim()) ||
-    profile.experience.length > 0 ||
-    profile.skills.length > 0 ||
-    profile.projects.length > 0;
+    (summaryConfirmed && Boolean(profile.summary?.trim())) ||
+    (summaryConfirmed && Boolean(profile.headline?.trim())) ||
+    profile.experience.some((e) => e.source !== 'ai') ||
+    profile.skills.some((s) => s.source !== 'ai') ||
+    profile.projects.some((p) => p.source !== 'ai');
 
   if (!hasCandidateSignal) {
     throw new Error(

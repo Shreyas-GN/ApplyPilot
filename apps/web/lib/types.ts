@@ -14,6 +14,9 @@ export interface WorkExperienceDto {
   endDate: string | null;
   isCurrent: boolean;
   description: string | null;
+  responsibilities?: string[];
+  achievements?: string[];
+  technologies?: string[];
   source: "user" | "ai";
   confidence: number | null;
 }
@@ -25,6 +28,8 @@ export interface EducationDto {
   fieldOfStudy: string | null;
   startDate: string | null;
   endDate: string | null;
+  graduationYear?: number | null;
+  grade?: string | null;
   description: string | null;
   source: "user" | "ai";
   confidence: number | null;
@@ -34,6 +39,9 @@ export interface SkillDto {
   id: string;
   name: string;
   category: string | null;
+  proficiency?: string | null;
+  yearsOfExperience?: number | null;
+  evidence?: string | null;
   source: "user" | "ai";
   confidence: number | null;
 }
@@ -42,7 +50,12 @@ export interface ProjectDto {
   id: string;
   name: string;
   description: string | null;
+  role?: string | null;
+  technologies?: string[];
+  contributions?: string[];
   url: string | null;
+  githubUrl?: string | null;
+  liveUrl?: string | null;
   startDate: string | null;
   endDate: string | null;
   source: "user" | "ai";
@@ -60,8 +73,67 @@ export interface CertificationDto {
   confidence: number | null;
 }
 
+export type ProfileSectionId =
+  | "personal_info"
+  | "professional_summary"
+  | "skills"
+  | "experience"
+  | "education"
+  | "projects"
+  | "certifications"
+  | "career_preferences"
+  | "career_interests";
+
+export type SectionProvenanceSource = "user" | "ai" | "empty";
+
+export interface SectionCompletenessDto {
+  id: ProfileSectionId;
+  label: string;
+  complete: boolean;
+  confirmedCount: number;
+  aiUnverifiedCount: number;
+  provenance: SectionProvenanceSource;
+  weight: number;
+  earnedWeight: number;
+}
+
+export interface ProfileSuggestionDto {
+  id: string;
+  sectionId: ProfileSectionId;
+  title: string;
+  description: string;
+  actionLabel: string;
+  priority: "high" | "medium" | "low";
+  kind: "verify_ai" | "complete_missing" | "enrich";
+}
+
+export interface AiRoleSuggestionDto {
+  role: string;
+  kind: "desired" | "adjacent";
+  reason: string;
+  source: "ai_suggested";
+}
+
+export interface ProfileIntelligenceMetadataDto {
+  personalInfoSource?: "user" | "ai";
+  summarySource?: "user" | "ai";
+  dismissedRoleSuggestions?: string[];
+}
+
+export interface ProfileIntelligenceDto {
+  confirmedPercent: number;
+  totalWithAiPercent: number;
+  unverifiedAiCount: number;
+  confirmedItemCount: number;
+  sections: SectionCompletenessDto[];
+  suggestions: ProfileSuggestionDto[];
+  aiSuggestedRoles: AiRoleSuggestionDto[];
+}
+
 export interface ProfileDto {
   fullName: string | null;
+  email?: string | null;
+  authEmail?: string | null;
   phone: string | null;
   location: string | null;
   linkedinUrl: string | null;
@@ -69,9 +141,11 @@ export interface ProfileDto {
   portfolioUrl: string | null;
   headline: string | null;
   summary: string | null;
+  careerStage?: string | null;
   yearsOfExperience: number | null;
   employmentStatus: string | null;
   preferredTitles: string[];
+  preferredExperienceLevel?: string | null;
   preferredLocations: string[];
   workMode: string | null;
   employmentTypes: string[];
@@ -79,6 +153,11 @@ export interface ProfileDto {
   expectedSalaryMax: number | null;
   preferredIndustries: string[];
   excludedCompanies: string[];
+  desiredRoles?: string[];
+  adjacentRoles?: string[];
+  excludedRoles?: string[];
+  intelligenceMetadata?: ProfileIntelligenceMetadataDto | null;
+  intelligence?: ProfileIntelligenceDto;
   notificationPreferences?: NotificationPreferences;
   completionPercent: number;
   experience: WorkExperienceDto[];

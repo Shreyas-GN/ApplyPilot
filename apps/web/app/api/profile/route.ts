@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   try {
-    const profile = await getProfile(user.id);
+    const profile = await getProfile(user.id, user.email ?? null);
     return NextResponse.json(profile);
   } catch (error) {
     console.error('Failed to get profile:', error);
@@ -37,7 +37,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const updated = await updateBasicInfo(user.id, result.data);
+    const updated = await updateBasicInfo(user.id, result.data, user.email ?? null);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to update basic info:', error);

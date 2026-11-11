@@ -244,12 +244,18 @@ export function computeJobMatch(
     };
   }
 
-  const userSkills = profile.skills.map((s) => s.name.trim()).filter(Boolean);
+  const userSkills = profile.skills
+    .filter((s) => s.source !== 'ai')
+    .map((s) => s.name.trim())
+    .filter(Boolean);
+  const summaryConfirmed = profile.intelligenceMetadata?.summarySource !== 'ai';
+  const confirmedHeadline = summaryConfirmed ? profile.headline : null;
   const hasPreferences =
     profile.preferredTitles.length > 0 ||
+    (profile.desiredRoles?.length ?? 0) > 0 ||
     profile.preferredLocations.length > 0 ||
     Boolean(profile.workMode) ||
-    Boolean(profile.headline);
+    Boolean(confirmedHeadline);
 
   if (userSkills.length === 0 && !hasPreferences) {
     return {
@@ -325,14 +331,25 @@ export function computeJobMatch(
 
   // 2. Title & Headline match (25 points)
   const jobTitleLower = job.title.toLowerCase();
-  const experienceTitles = profile.experience.map((e) => e.title);
+  const experienceTitles = profile.experience
+    .filter((e) => e.source !== 'ai')
+    .map((e) => e.title);
   const titleTargets = [
     ...profile.preferredTitles,
-    ...(profile.headline ? [profile.headline] : []),
+    ...(profile.desiredRoles ?? []),
+    ...(confirmedHeadline ? [confirmedHeadline] : []),
     ...experienceTitles,
   ]
     .map((t) => t.trim().toLowerCase())
     .filter(Boolean);
+
+  const isExcludedRole = (profile.excludedRoles ?? []).some((excluded) => {
+    const token = excluded.trim().toLowerCase();
+    return token.length > 0 && jobTitleLower.includes(token);
+  });
+  if (isExcludedRole) {
+    gaps.push('Matches an excluded role in your Career Interests');
+  }
 
   let bestTitleRatio = 0;
   if (titleTargets.length > 0) {
@@ -407,11 +424,19 @@ export function computeJobMatch(
 
   // 5. Adjacent-role detection (roles outside exact preferred titles with strong skill/transferable fit)
   const hasExplicitTitles =
-    profile.preferredTitles.length > 0 || Boolean(profile.headline) || experienceTitles.length > 0;
+    profile.preferredTitles.length > 0 ||
+    (profile.desiredRoles?.length ?? 0) > 0 ||
+    Boolean(confirmedHeadline) ||
+    experienceTitles.length > 0;
+  const matchesAdjacentInterest = (profile.adjacentRoles ?? []).some((adj) => {
+    const words = adj.trim().toLowerCase().split(/\s+/).filter((w) => w.length > 2);
+    return words.length > 0 && words.every((w) => jobTitleLower.includes(w));
+  });
   const isAdjacentRole =
-    hasExplicitTitles &&
-    bestTitleRatio < 0.5 &&
-    (matchedSkills.length >= 2 || transferableSkills.length >= 1 || skillsScore >= 50);
+    matchesAdjacentInterest ||
+    (hasExplicitTitles &&
+      bestTitleRatio < 0.5 &&
+      (matchedSkills.length >= 2 || transferableSkills.length >= 1 || skillsScore >= 50));
 
   let adjacencyReason: string | null = null;
   if (isAdjacentRole) {

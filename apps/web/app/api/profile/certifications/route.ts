@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const updated = await replaceCertifications(user.id, result.data);
+    const updated = await replaceCertifications(user.id, result.data, user.email ?? null);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to replace certifications:', error);

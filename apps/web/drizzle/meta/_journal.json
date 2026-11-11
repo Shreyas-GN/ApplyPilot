@@ -43,6 +43,13 @@
       "when": 1794396871366,
       "tag": "0005_unknown_typhoid_mary",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794415648495,
+      "tag": "0006_cold_expediter",
+      "breakpoints": true
     }
   ]
 }

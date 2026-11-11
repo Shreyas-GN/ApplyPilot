@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const updated = await updatePreferences(user.id, result.data);
+    const updated = await updatePreferences(user.id, result.data, user.email ?? null);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to update preferences:', error);
@@ -29,4 +29,6 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+
+export const PATCH = PUT;
 

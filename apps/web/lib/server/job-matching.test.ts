@@ -148,4 +148,23 @@ describe('job-matching utilities', () => {
     expect(intelligence.preferredSkills).toContain('Kubernetes');
     expect(intelligence.responsibilities.length).toBeGreaterThan(0);
   });
+
+  it('never treats unverified AI-extracted skills as confirmed qualifications in scoring', () => {
+    const profile = makeProfile({
+      skills: [
+        { id: '1', name: 'TypeScript', category: null, source: 'ai', confidence: 0.7 },
+        { id: '2', name: 'React', category: null, source: 'ai', confidence: 0.6 },
+      ],
+    });
+    const match = computeJobMatch(profile, {
+      title: 'Senior Frontend Engineer',
+      location: 'Remote',
+      workMode: 'remote',
+      description: 'TypeScript and React role.',
+      skills: ['TypeScript', 'React'],
+    });
+
+    expect(match.matchedSkills).toEqual([]);
+    expect(match.missingSkills).toEqual(['TypeScript', 'React']);
+  });
 });

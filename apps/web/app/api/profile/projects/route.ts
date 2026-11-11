@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const updated = await replaceProjects(user.id, result.data);
+    const updated = await replaceProjects(user.id, result.data, user.email ?? null);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to replace projects:', error);
