@@ -491,3 +491,31 @@ export const tailoredDocuments = pgTable(
     }),
   ]
 );
+
+// 14. Extension Sessions (Paired browser extension tokens)
+export const extensionSessions = pgTable(
+  'extension_sessions',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    label: text('label').default('Chrome Extension').notNull(),
+    tokenHash: text('token_hash').notNull(),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('extension_sessions_user_id_idx').on(table.userId),
+    uniqueIndex('extension_sessions_token_hash_idx').on(table.tokenHash),
+    pgPolicy('extension_sessions_owner_policy', {
+      for: 'all',
+      to: authenticatedRole,
+      using: sql`user_id = ${authUid}`,
+      withCheck: sql`user_id = ${authUid}`,
+    }),
+  ]
+);

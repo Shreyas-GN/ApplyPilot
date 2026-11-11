@@ -269,3 +269,18 @@ export interface TailoredDocumentDto {
   updatedAt: string;
 }
 
+export interface ExtensionSessionDto {
+  id: string;
+  label: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+}
+
+export interface AuditLogDto {
+  id: string;
+  action: string;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+}
+

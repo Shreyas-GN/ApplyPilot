@@ -2,16 +2,113 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>ApplyPilot</title>
+    <title>ApplyPilot Co-Pilot</title>
     <style>
-      body { font-family: system-ui, sans-serif; width: 260px; padding: 12px; }
-      h1 { font-size: 14px; margin: 0 0 8px; }
-      p { font-size: 12px; color: #666; margin: 0; }
+      * { box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        width: 340px;
+        margin: 0;
+        padding: 14px;
+        background: #f8fafc;
+        color: #0f172a;
+      }
+      h1 { font-size: 15px; margin: 0 0 4px; color: #1e293b; }
+      p { font-size: 12px; color: #475569; margin: 0 0 10px; line-height: 1.4; }
+      .card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+      label { display: block; font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+      input {
+        width: 100%;
+        padding: 7px 9px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      button {
+        width: 100%;
+        padding: 8px 10px;
+        border: none;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 6px;
+      }
+      button.primary { background: #2c47d6; color: #fff; }
+      button.secondary { background: #fff; color: #334155; border: 1px solid #cbd5e1; }
+      button.danger { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      .badge {
+        display: inline-block;
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: #eef4ff;
+        color: #2c47d6;
+      }
+      .field-list {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0;
+        max-height: 140px;
+        overflow-y: auto;
+      }
+      .field-list li {
+        font-size: 11px;
+        padding: 4px 0;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .status { font-size: 12px; margin-top: 8px; }
+      .status.error { color: #b91c1c; }
+      .status.ok { color: #15803d; }
+      .hidden { display: none; }
     </style>
   </head>
   <body>
-    <h1>ApplyPilot</h1>
-    <p id="status">Not paired yet.</p>
+    <h1>ApplyPilot Co-Pilot</h1>
+    <p id="subtitle">Pair with your ApplyPilot account in Settings.</p>
+
+    <div id="pair-view" class="card hidden">
+      <label for="api-url">ApplyPilot App URL</label>
+      <input id="api-url" type="url" value="http://localhost:3000" />
+      <label for="token-input">Pairing token</label>
+      <input id="token-input" type="password" placeholder="ap_ext_..." />
+      <button id="connect-btn" class="primary">Connect extension</button>
+    </div>
+
+    <div id="copilot-view" class="hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <strong id="candidate-name" style="font-size:13px;">Paired</strong>
+          <span id="ats-badge" class="badge">Checking tab…</span>
+        </div>
+        <p id="job-summary" style="margin:0;">Open a Greenhouse or Lever job page to capture or autofill.</p>
+      </div>
+
+      <div id="actions-card" class="card hidden">
+        <button id="save-job-btn" class="secondary">Save job to ApplyPilot</button>
+        <button id="mark-applied-btn" class="secondary">Mark as applied</button>
+        <button id="preview-fill-btn" class="primary">Preview autofill fields</button>
+      </div>
+
+      <div id="preview-card" class="card hidden">
+        <strong style="font-size:12px;">Review fields before filling</strong>
+        <ul id="field-list" class="field-list"></ul>
+        <button id="confirm-fill-btn" class="primary">Fill reviewed fields</button>
+      </div>
+
+      <button id="disconnect-btn" class="danger">Disconnect</button>
+    </div>
+
+    <p id="status" class="status"></p>
     <script type="module" src="./popup.js"></script>
   </body>
 </html>
