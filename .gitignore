@@ -21,6 +21,7 @@ next-env.d.ts
 
 # local object storage (STORAGE_PROVIDER=local dev default)
 .local-storage/
+.vercel
 
 # logs
 *.log
@@ -41,3 +42,4 @@ infrastructure/terraform/.terraform/
 infrastructure/terraform/*.tfstate
 infrastructure/terraform/*.tfstate.backup
 infrastructure/terraform/.terraform.lock.hcl
+.env*
