@@ -40,6 +40,8 @@ export const applicationStatusEnum = pgEnum('application_status', [
   'rejected',
 ]);
 
+export const jobStateEnum = pgEnum('job_state', ['saved', 'dismissed']);
+
 // 1. Profiles
 export const profiles = pgTable(
   'profiles',
@@ -512,6 +514,37 @@ export const extensionSessions = pgTable(
     index('extension_sessions_user_id_idx').on(table.userId),
     uniqueIndex('extension_sessions_token_hash_idx').on(table.tokenHash),
     pgPolicy('extension_sessions_owner_policy', {
+      for: 'all',
+      to: authenticatedRole,
+      using: sql`user_id = ${authUid}`,
+      withCheck: sql`user_id = ${authUid}`,
+    }),
+  ]
+);
+
+// 15. Job States (Saved bookmarks & dismissed jobs per user)
+export const jobStates = pgTable(
+  'job_states',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    jobId: uuid('job_id')
+      .notNull()
+      .references(() => jobs.id, { onDelete: 'cascade' }),
+    state: jobStateEnum('state').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('job_states_user_job_idx').on(table.userId, table.jobId),
+    index('job_states_user_state_idx').on(table.userId, table.state),
+    pgPolicy('job_states_owner_policy', {
       for: 'all',
       to: authenticatedRole,
       using: sql`user_id = ${authUid}`,

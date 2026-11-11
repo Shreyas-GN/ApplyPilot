@@ -132,7 +132,12 @@ function DashboardContent() {
               {jobs.slice(0, 3).map((job) => (
                 <li key={job.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
                   <div className="min-w-0">
-                    <p className="truncate font-medium text-slate-900">{job.title}</p>
+                    <Link
+                      href={`/jobs/${job.id}`}
+                      className="block truncate font-medium text-slate-900 hover:text-brand-700 hover:underline"
+                    >
+                      {job.title}
+                    </Link>
                     <p className="truncate text-xs text-slate-500">
                       {job.company}
                       {job.location ? ` · ${job.location}` : ""}
@@ -143,7 +148,7 @@ function DashboardContent() {
                       {job.match.score}%
                     </span>
                     <Link
-                      href={`/tailor?jobId=${job.id}`}
+                      href={`/studio?tab=tailored&jobId=${job.id}`}
                       className="text-xs font-medium text-brand-600 hover:underline"
                     >
                       Tailor

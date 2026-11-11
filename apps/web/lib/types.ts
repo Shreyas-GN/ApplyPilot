@@ -176,11 +176,37 @@ export type ApplicationStatus =
   | "offer"
   | "rejected";
 
+export type JobUserState = "saved" | "dismissed" | null;
+
+export interface TransferableSkillMatch {
+  candidateSkill: string;
+  targetSkill: string;
+  reason: string;
+}
+
 export interface JobMatchBreakdown {
   score: number;
+  skillsScore: number;
+  experienceScore: number;
   matchedSkills: string[];
   missingSkills: string[];
+  transferableSkills: TransferableSkillMatch[];
+  strengths: string[];
+  gaps: string[];
   reasons: string[];
+  isAdjacentRole: boolean;
+  adjacencyReason: string | null;
+}
+
+export interface JobIntelligenceBreakdown {
+  summary: string;
+  responsibilities: string[];
+  requiredSkills: string[];
+  preferredSkills: string[];
+  technicalRequirements: string[];
+  seniorityLevel: string;
+  expectedExperienceYears: string | null;
+  companyAndRoleHighlights: string[];
 }
 
 export interface JobDto {
@@ -198,8 +224,14 @@ export interface JobDto {
   postedAt: string | null;
   createdAt: string;
   match: JobMatchBreakdown;
+  userState: JobUserState;
   applicationId: string | null;
   applicationStatus: ApplicationStatus | null;
+}
+
+export interface JobDetailDto extends JobDto {
+  intelligence: JobIntelligenceBreakdown;
+  tailoredDocumentsCount: number;
 }
 
 export interface ApplicationEventDto {

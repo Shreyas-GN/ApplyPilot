@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  analyzeJobIntelligence,
   computeJobMatch,
   extractJobSkills,
   inferWorkMode,
@@ -80,9 +81,12 @@ describe('job-matching utilities', () => {
     });
 
     expect(match.score).toBeGreaterThanOrEqual(85);
+    expect(match.skillsScore).toBeGreaterThanOrEqual(70);
+    expect(match.experienceScore).toBeGreaterThanOrEqual(80);
     expect(match.matchedSkills).toEqual(['TypeScript', 'React', 'Next.js']);
     expect(match.missingSkills).toEqual(['Supabase']);
     expect(match.reasons.length).toBeGreaterThan(0);
+    expect(match.isAdjacentRole).toBe(false);
   });
 
   it('returns lower score and explains mismatch when skills & mode do not align', () => {
@@ -98,6 +102,50 @@ describe('job-matching utilities', () => {
     expect(match.score).toBeLessThan(30);
     expect(match.matchedSkills).toEqual([]);
     expect(match.missingSkills).toEqual(['C++', 'Linux']);
+    expect(match.gaps.length).toBeGreaterThan(0);
+  });
+
+  it('identifies transferable skills and flags adjacent roles outside conventional target titles', () => {
+    const profile = makeProfile({
+      skills: [
+        { id: '1', name: 'TypeScript', category: null, source: 'user', confidence: null },
+        { id: '2', name: 'React', category: null, source: 'user', confidence: null },
+        { id: '3', name: 'Vitest', category: null, source: 'user', confidence: null },
+      ],
+    });
+    const match = computeJobMatch(profile, {
+      title: 'Developer Advocate',
+      location: 'Remote',
+      workMode: 'remote',
+      description:
+        'Build sample apps with TypeScript, React, Playwright, and JavaScript tutorials for developers.',
+      skills: ['TypeScript', 'React', 'Playwright', 'JavaScript'],
+    });
+
+    expect(match.isAdjacentRole).toBe(true);
+    expect(match.adjacencyReason).toContain('TypeScript');
+    expect(match.transferableSkills.some((t) => t.targetSkill === 'Playwright')).toBe(true);
+  });
+
+  it('analyzes job intelligence into responsibilities, required vs preferred skills, and seniority', () => {
+    const intelligence = analyzeJobIntelligence({
+      title: 'Senior Full Stack Engineer',
+      company: 'Acme Corp',
+      location: 'Remote',
+      workMode: 'remote',
+      employmentType: 'full_time',
+      source: 'greenhouse',
+      skills: ['TypeScript', 'React', 'PostgreSQL', 'Kubernetes'],
+      description:
+        'We are looking for a Senior Full Stack Engineer with 5+ years of experience. You will design resilient web applications and lead end-to-end feature delivery with TypeScript, React, and PostgreSQL. Nice to have: Kubernetes and cloud deployment experience.',
+    });
+
+    expect(intelligence.seniorityLevel).toBe('Senior');
+    expect(intelligence.expectedExperienceYears).toBe('5+ years');
+    expect(intelligence.requiredSkills).toEqual(
+      expect.arrayContaining(['TypeScript', 'React', 'PostgreSQL'])
+    );
+    expect(intelligence.preferredSkills).toContain('Kubernetes');
+    expect(intelligence.responsibilities.length).toBeGreaterThan(0);
   });
 });
-

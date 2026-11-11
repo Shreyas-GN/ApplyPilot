@@ -1,11 +1,24 @@
-import { desc, eq, ilike, or, and } from 'drizzle-orm';
+import { desc, eq, ilike, or, and, gte, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { applications, jobs } from '@/lib/db/schema';
-import type { ApplicationStatus, JobDto } from '@/lib/types';
+import {
+  applicationEvents,
+  applications,
+  jobs,
+  jobStates,
+  tailoredDocuments,
+} from '@/lib/db/schema';
+import type {
+  ApplicationStatus,
+  JobDetailDto,
+  JobDto,
+  JobUserState,
+} from '@/lib/types';
 import { getProfile } from './profile';
 import {
+  analyzeJobIntelligence,
   computeJobMatch,
   extractJobSkills,
+  inferSeniorityLevel,
   inferWorkMode,
   stripHtml,
 } from './job-matching';
@@ -179,11 +192,43 @@ async function ingestLeverBoard(
   return count;
 }
 
+export type DiscoverJobsTab = 'for_you' | 'search' | 'adjacent' | 'saved';
+
+export interface ListJobsOptions {
+  tab?: DiscoverJobsTab;
+  q?: string;
+  workMode?: string;
+  minScore?: number;
+  freshness?: 'all' | '24h' | '7d' | '30d';
+  seniority?: string;
+  includeDismissed?: boolean;
+  limit?: number;
+}
+
+function matchesSeniorityFilter(jobTitle: string, description: string, filter: string): boolean {
+  if (!filter || filter === 'all') return true;
+  const level = inferSeniorityLevel(jobTitle, description).toLowerCase();
+  if (filter === 'junior') return level.includes('junior') || level.includes('entry');
+  if (filter === 'mid') return level.includes('mid');
+  if (filter === 'senior') return level.includes('senior');
+  if (filter === 'staff') return level.includes('staff') || level.includes('lead');
+  return true;
+}
+
 export async function listMatchedJobs(
   userId: string,
-  options: { q?: string; workMode?: string; limit?: number } = {}
+  options: ListJobsOptions = {}
 ): Promise<JobDto[]> {
-  const { q, workMode, limit = 60 } = options;
+  const {
+    tab,
+    q,
+    workMode,
+    minScore = 0,
+    freshness = 'all',
+    seniority = 'all',
+    includeDismissed = false,
+    limit = 100,
+  } = options;
 
   const conditions = [];
   if (q && q.trim()) {
@@ -200,8 +245,14 @@ export async function listMatchedJobs(
   if (workMode && workMode !== 'all') {
     conditions.push(eq(jobs.workMode, workMode));
   }
+  if (freshness && freshness !== 'all') {
+    const now = Date.now();
+    const hours = freshness === '24h' ? 24 : freshness === '7d' ? 24 * 7 : 24 * 30;
+    const cutoff = new Date(now - hours * 60 * 60 * 1000);
+    conditions.push(or(gte(jobs.postedAt, cutoff), gte(jobs.createdAt, cutoff)));
+  }
 
-  const [jobRows, userProfile, userApps] = await Promise.all([
+  const [jobRows, userProfile, userApps, userStates] = await Promise.all([
     db
       .select()
       .from(jobs)
@@ -217,21 +268,35 @@ export async function listMatchedJobs(
       })
       .from(applications)
       .where(eq(applications.userId, userId)),
+    db
+      .select({
+        jobId: jobStates.jobId,
+        state: jobStates.state,
+      })
+      .from(jobStates)
+      .where(eq(jobStates.userId, userId)),
   ]);
 
-  const appByJobId = new Map<
-    string,
-    { id: string; status: ApplicationStatus }
-  >();
+  const appByJobId = new Map<string, { id: string; status: ApplicationStatus }>();
   for (const app of userApps) {
     if (app.jobId) {
       appByJobId.set(app.jobId, { id: app.id, status: app.status });
     }
   }
 
-  const mapped: JobDto[] = jobRows.map((job) => {
+  const stateByJobId = new Map<string, 'saved' | 'dismissed'>();
+  for (const row of userStates) {
+    stateByJobId.set(row.jobId, row.state);
+  }
+
+  const excludedCompanies = new Set(
+    (userProfile?.excludedCompanies ?? []).map((c) => c.trim().toLowerCase()).filter(Boolean)
+  );
+
+  let mapped: JobDto[] = jobRows.map((job) => {
     const match = computeJobMatch(userProfile, job);
     const existingApp = appByJobId.get(job.id);
+    const userState: JobUserState = stateByJobId.get(job.id) ?? null;
     return {
       id: job.id,
       source: job.source,
@@ -247,13 +312,171 @@ export async function listMatchedJobs(
       postedAt: job.postedAt ? job.postedAt.toISOString() : null,
       createdAt: job.createdAt.toISOString(),
       match,
+      userState,
       applicationId: existingApp?.id ?? null,
       applicationStatus: existingApp?.status ?? null,
     };
   });
 
-  // Sort highest match first
+  if (!includeDismissed) {
+    mapped = mapped.filter((j) => j.userState !== 'dismissed');
+  }
+
+  if (tab === 'for_you' || tab === 'adjacent') {
+    mapped = mapped.filter((j) => !excludedCompanies.has(j.company.toLowerCase()));
+  }
+
+  if (tab === 'adjacent') {
+    mapped = mapped.filter((j) => j.match.isAdjacentRole);
+  } else if (tab === 'saved') {
+    mapped = mapped.filter(
+      (j) => j.userState === 'saved' || j.applicationStatus === 'saved'
+    );
+  }
+
+  if (minScore > 0) {
+    mapped = mapped.filter((j) => j.match.score >= minScore);
+  }
+
+  if (seniority && seniority !== 'all') {
+    mapped = mapped.filter((j) => matchesSeniorityFilter(j.title, j.description, seniority));
+  }
+
+  // Sort highest match first (tie-breaking by recency)
   mapped.sort((a, b) => b.match.score - a.match.score);
   return mapped;
+}
+
+export async function getJobDetail(
+  userId: string,
+  jobId: string
+): Promise<JobDetailDto | null> {
+  const [jobRow] = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
+  if (!jobRow) return null;
+
+  const [userProfile, appRows, stateRows, tailoredCountRows] = await Promise.all([
+    getProfile(userId),
+    db
+      .select({ id: applications.id, status: applications.status })
+      .from(applications)
+      .where(and(eq(applications.userId, userId), eq(applications.jobId, jobId)))
+      .limit(1),
+    db
+      .select({ state: jobStates.state })
+      .from(jobStates)
+      .where(and(eq(jobStates.userId, userId), eq(jobStates.jobId, jobId)))
+      .limit(1),
+    db
+      .select({ value: count() })
+      .from(tailoredDocuments)
+      .where(and(eq(tailoredDocuments.userId, userId), eq(tailoredDocuments.jobId, jobId))),
+  ]);
+
+  const match = computeJobMatch(userProfile, jobRow);
+  const intelligence = analyzeJobIntelligence(jobRow);
+  const existingApp = appRows[0];
+
+  return {
+    id: jobRow.id,
+    source: jobRow.source,
+    externalId: jobRow.externalId,
+    company: jobRow.company,
+    title: jobRow.title,
+    location: jobRow.location,
+    workMode: jobRow.workMode,
+    employmentType: jobRow.employmentType,
+    url: jobRow.url,
+    description: jobRow.description,
+    skills: jobRow.skills,
+    postedAt: jobRow.postedAt ? jobRow.postedAt.toISOString() : null,
+    createdAt: jobRow.createdAt.toISOString(),
+    match,
+    userState: stateRows[0]?.state ?? null,
+    applicationId: existingApp?.id ?? null,
+    applicationStatus: existingApp?.status ?? null,
+    intelligence,
+    tailoredDocumentsCount: Number(tailoredCountRows[0]?.value ?? 0),
+  };
+}
+
+export async function setJobState(
+  userId: string,
+  jobId: string,
+  state: 'saved' | 'dismissed'
+): Promise<{
+  userState: 'saved' | 'dismissed';
+  applicationId: string | null;
+  applicationStatus: ApplicationStatus | null;
+} | null> {
+  const [jobRow] = await db.select().from(jobs).where(eq(jobs.id, jobId)).limit(1);
+  if (!jobRow) return null;
+
+  await db
+    .insert(jobStates)
+    .values({
+      userId,
+      jobId,
+      state,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [jobStates.userId, jobStates.jobId],
+      set: { state, updatedAt: new Date() },
+    });
+
+  const [existingApp] = await db
+    .select({ id: applications.id, status: applications.status })
+    .from(applications)
+    .where(and(eq(applications.userId, userId), eq(applications.jobId, jobId)))
+    .limit(1);
+
+  if (state === 'saved' && !existingApp) {
+    const profile = await getProfile(userId);
+    const match = computeJobMatch(profile, jobRow);
+    const [createdApp] = await db
+      .insert(applications)
+      .values({
+        userId,
+        jobId: jobRow.id,
+        company: jobRow.company,
+        title: jobRow.title,
+        location: jobRow.location,
+        url: jobRow.url,
+        status: 'saved',
+        matchScore: match.score,
+      })
+      .returning({ id: applications.id, status: applications.status });
+
+    if (createdApp) {
+      await db.insert(applicationEvents).values({
+        applicationId: createdApp.id,
+        userId,
+        type: 'created',
+        description: 'Saved from Discover Jobs',
+      });
+      return {
+        userState: state,
+        applicationId: createdApp.id,
+        applicationStatus: createdApp.status,
+      };
+    }
+  }
+
+  return {
+    userState: state,
+    applicationId: existingApp?.id ?? null,
+    applicationStatus: existingApp?.status ?? null,
+  };
+}
+
+export async function clearJobState(
+  userId: string,
+  jobId: string
+): Promise<boolean> {
+  const deleted = await db
+    .delete(jobStates)
+    .where(and(eq(jobStates.userId, userId), eq(jobStates.jobId, jobId)))
+    .returning({ id: jobStates.id });
+  return deleted.length > 0;
 }
 

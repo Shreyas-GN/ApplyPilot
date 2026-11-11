@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/supabase/auth';
-import { listMatchedJobs } from '@/lib/server/jobs';
+import { listMatchedJobs, type DiscoverJobsTab } from '@/lib/server/jobs';
+
+const VALID_TABS = new Set<DiscoverJobsTab>(['for_you', 'search', 'adjacent', 'saved']);
+const VALID_FRESHNESS = new Set(['all', '24h', '7d', '30d']);
 
 export async function GET(request: NextRequest) {
   const user = await getUser();
@@ -10,10 +13,32 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
+    const rawTab = searchParams.get('tab');
+    const tab =
+      rawTab && VALID_TABS.has(rawTab as DiscoverJobsTab)
+        ? (rawTab as DiscoverJobsTab)
+        : undefined;
     const q = searchParams.get('q') ?? undefined;
     const workMode = searchParams.get('workMode') ?? undefined;
+    const seniority = searchParams.get('seniority') ?? undefined;
+    const rawMinScore = searchParams.get('minScore');
+    const minScore = rawMinScore ? Number.parseInt(rawMinScore, 10) || 0 : 0;
+    const rawFreshness = searchParams.get('freshness');
+    const freshness =
+      rawFreshness && VALID_FRESHNESS.has(rawFreshness)
+        ? (rawFreshness as 'all' | '24h' | '7d' | '30d')
+        : 'all';
+    const includeDismissed = searchParams.get('includeDismissed') === 'true';
 
-    const results = await listMatchedJobs(user.id, { q, workMode });
+    const results = await listMatchedJobs(user.id, {
+      tab,
+      q,
+      workMode,
+      minScore,
+      freshness,
+      seniority,
+      includeDismissed,
+    });
     return NextResponse.json(results);
   } catch (error) {
     console.error('Failed to list matched jobs:', error);
@@ -23,4 +48,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
