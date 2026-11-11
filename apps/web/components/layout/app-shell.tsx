@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/jobs", label: "Jobs" },
+  { href: "/tailor", label: "Tailor" },
   { href: "/applications", label: "Applications" },
   { href: "/profile", label: "Profile" },
   { href: "/resumes", label: "Resumes" },

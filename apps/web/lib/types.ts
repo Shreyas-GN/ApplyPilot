@@ -225,3 +225,47 @@ export interface ApplicationDto {
   events?: ApplicationEventDto[];
 }
 
+export type TailoredDocumentType = "resume" | "cover_letter";
+export type CoverLetterTone = "formal" | "conversational" | "concise";
+
+export interface TailoredResumeExperienceItem {
+  company: string;
+  title: string;
+  startDate: string | null;
+  endDate: string | null;
+  originalDescription: string | null;
+  tailoredDescription: string;
+}
+
+export interface TailoredResumeContent {
+  headline: string;
+  summary: string;
+  highlightedSkills: string[];
+  experience: TailoredResumeExperienceItem[];
+  keywordsUsed: string[];
+  missingKeywords: string[];
+  rationale: string;
+}
+
+export interface CoverLetterContent {
+  subjectLine: string;
+  greeting: string;
+  bodyParagraphs: string[];
+  closing: string;
+  signature: string;
+  keyPointsHighlighted: string[];
+}
+
+export interface TailoredDocumentDto {
+  id: string;
+  jobId: string | null;
+  applicationId: string | null;
+  company: string;
+  jobTitle: string;
+  type: TailoredDocumentType;
+  tone: CoverLetterTone | null;
+  content: TailoredResumeContent | CoverLetterContent;
+  createdAt: string;
+  updatedAt: string;
+}
+

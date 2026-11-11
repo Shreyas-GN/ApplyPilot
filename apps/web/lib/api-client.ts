@@ -1,19 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
-// Kept in module state, never in localStorage/sessionStorage — the access
-// token only ever lives in memory for this tab. A hard reload loses it on
-// purpose; AuthProvider re-establishes it via the httpOnly refresh cookie
-// on mount. See docs/SYSTEM_ARCHITECTURE.md §6.
-let accessToken: string | null = null;
-
-export function setAccessToken(token: string | null): void {
-  accessToken = token;
-}
-
-export function getAccessToken(): string | null {
-  return accessToken;
-}
-
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -36,33 +22,8 @@ async function parseErrorDetail(response: Response): Promise<string> {
   return `Request failed with status ${response.status}`;
 }
 
-let refreshInFlight: Promise<boolean> | null = null;
-
-async function tryRefresh(): Promise<boolean> {
-  if (!refreshInFlight) {
-    refreshInFlight = (async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
-          method: "POST",
-          credentials: "include",
-        });
-        if (!res.ok) return false;
-        const data = (await res.json()) as { tokens: { accessToken: string } };
-        setAccessToken(data.tokens.accessToken);
-        return true;
-      } catch {
-        return false;
-      } finally {
-        refreshInFlight = null;
-      }
-    })();
-  }
-  return refreshInFlight;
-}
-
-async function request<T>(path: string, options: RequestInit = {}, allowRetry = true): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
-  if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
   if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
@@ -72,13 +33,6 @@ async function request<T>(path: string, options: RequestInit = {}, allowRetry = 
     headers,
     credentials: "include",
   });
-
-  if (response.status === 401 && allowRetry && path !== "/auth/refresh" && path !== "/auth/login") {
-    const refreshed = await tryRefresh();
-    if (refreshed) {
-      return request<T>(path, options, false);
-    }
-  }
 
   if (!response.ok) {
     throw new ApiError(response.status, await parseErrorDetail(response));

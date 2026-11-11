@@ -7,7 +7,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useAuth } from "@/lib/auth-context";
-import { api } from "@/lib/api-client";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SettingsPage() {
   return (
@@ -28,7 +28,15 @@ function SettingsContent() {
     if (!user) return;
     setResendState("sending");
     try {
-      await api.post("/auth/resend-verification");
+      const supabase = createClient();
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: user.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+        },
+      });
+      if (error) throw error;
       setResendState("sent");
     } catch {
       setResendState("error");
@@ -39,7 +47,11 @@ function SettingsContent() {
     if (!user) return;
     setResetState("sending");
     try {
-      await api.post("/auth/forgot-password", { email: user.email });
+      const supabase = createClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
       setResetState("sent");
     } catch {
       setResetState("error");

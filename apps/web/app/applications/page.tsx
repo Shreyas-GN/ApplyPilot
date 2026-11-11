@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import type { ApplicationDto, ApplicationStatus } from "@/lib/types";
 import { ProtectedRoute } from "@/components/layout/protected-route";
@@ -322,6 +323,11 @@ function ApplicationsContent() {
                         Posting ↗
                       </a>
                     )}
+                    <Link href={`/tailor?applicationId=${app.id}`}>
+                      <Button variant="secondary" className="px-3 py-1.5 text-xs">
+                        Tailor
+                      </Button>
+                    </Link>
                     <Button
                       variant="secondary"
                       className="px-3 py-1.5 text-xs"

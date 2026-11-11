@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { ProfileDto, ResumeDto } from "@/lib/types";
+import type { ApplicationDto, JobDto, ProfileDto, ResumeDto } from "@/lib/types";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardHeader } from "@/components/ui/card";
@@ -24,6 +24,8 @@ function DashboardContent() {
   const { user } = useAuth();
   const { data: profile, loading: profileLoading } = useApi<ProfileDto>("/profile");
   const { data: resumes, loading: resumesLoading } = useApi<ResumeDto[]>("/resumes");
+  const { data: applications, loading: appsLoading } = useApi<ApplicationDto[]>("/applications");
+  const { data: jobs, loading: jobsLoading } = useApi<JobDto[]>("/jobs");
 
   const primaryResume = resumes?.find((r) => r.isPrimary) ?? resumes?.[0] ?? null;
   const needsReview = resumes?.find(
@@ -112,6 +114,85 @@ function DashboardContent() {
           </ul>
         )}
       </Card>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader
+            title="Top job matches"
+            action={
+              <Link href="/jobs" className="text-xs font-medium text-brand-600 hover:underline">
+                View all →
+              </Link>
+            }
+          />
+          {jobsLoading ? (
+            <div className="h-24 animate-pulse rounded bg-slate-100" />
+          ) : jobs && jobs.length > 0 ? (
+            <ul className="flex flex-col divide-y divide-slate-100">
+              {jobs.slice(0, 3).map((job) => (
+                <li key={job.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-slate-900">{job.title}</p>
+                    <p className="truncate text-xs text-slate-500">
+                      {job.company}
+                      {job.location ? ` · ${job.location}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
+                      {job.match.score}%
+                    </span>
+                    <Link
+                      href={`/tailor?jobId=${job.id}`}
+                      className="text-xs font-medium text-brand-600 hover:underline"
+                    >
+                      Tailor
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-slate-400">
+              No synced roles yet — visit{" "}
+              <Link href="/jobs" className="text-brand-600 hover:underline">
+                Jobs
+              </Link>{" "}
+              to sync live postings.
+            </p>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Application pipeline"
+            action={
+              <Link href="/applications" className="text-xs font-medium text-brand-600 hover:underline">
+                Open tracker →
+              </Link>
+            }
+          />
+          {appsLoading ? (
+            <div className="h-24 animate-pulse rounded bg-slate-100" />
+          ) : applications && applications.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {(["saved", "applied", "interviewing", "offer"] as const).map((st) => {
+                const count = applications.filter((a) => a.status === st).length;
+                return (
+                  <div key={st} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                    <p className="text-xs capitalize text-slate-500">{st}</p>
+                    <p className="mt-1 text-xl font-semibold text-slate-900">{count}</p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400">
+              No tracked applications yet — save roles from Jobs or add one in Applications.
+            </p>
+          )}
+        </Card>
+      </div>
 
       <Card>
         <CardHeader title="Recent activity" />

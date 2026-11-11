@@ -455,3 +455,39 @@ export const applicationEvents = pgTable(
     }),
   ]
 );
+
+// 13. Tailored Documents (AI tailored resumes & cover letters)
+export const tailoredDocuments = pgTable(
+  'tailored_documents',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    jobId: uuid('job_id').references(() => jobs.id, { onDelete: 'set null' }),
+    applicationId: uuid('application_id').references(() => applications.id, {
+      onDelete: 'set null',
+    }),
+    company: text('company').notNull(),
+    jobTitle: text('job_title').notNull(),
+    type: text('type').notNull(), // 'resume' | 'cover_letter'
+    tone: text('tone'), // 'formal' | 'conversational' | 'concise'
+    content: jsonb('content').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('tailored_documents_user_id_idx').on(table.userId),
+    index('tailored_documents_user_job_idx').on(table.userId, table.jobId),
+    pgPolicy('tailored_documents_owner_policy', {
+      for: 'all',
+      to: authenticatedRole,
+      using: sql`user_id = ${authUid}`,
+      withCheck: sql`user_id = ${authUid}`,
+    }),
+  ]
+);

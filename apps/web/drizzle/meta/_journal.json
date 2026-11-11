@@ -15,6 +15,13 @@
       "when": 1794377353597,
       "tag": "0001_tough_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794379905879,
+      "tag": "0002_daily_marrow",
+      "breakpoints": true
     }
   ]
 }

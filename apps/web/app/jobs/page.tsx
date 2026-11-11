@@ -251,6 +251,11 @@ function JobsContent() {
                     >
                       View posting ↗
                     </a>
+                    <Link href={`/tailor?jobId=${job.id}`}>
+                      <Button variant="secondary" className="px-3 py-1.5 text-xs">
+                        Tailor
+                      </Button>
+                    </Link>
                     {job.applicationId ? (
                       <Link href="/applications">
                         <Button variant="secondary" className="px-3 py-1.5 text-xs">
