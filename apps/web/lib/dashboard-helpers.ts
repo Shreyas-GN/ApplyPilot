@@ -302,13 +302,21 @@ export function buildRecentActivity(params: {
         timestamp: log.createdAt,
       });
     } else if (log.action === "application_created") {
-      const label =
+      const matchedApp =
+        typeof meta.applicationId === "string"
+          ? applications?.find((a) => a.id === meta.applicationId)
+          : undefined;
+      const titleText =
         typeof meta.company === "string" && typeof meta.title === "string"
-          ? `${meta.title} at ${meta.company}`
-          : "New tracked application";
+          ? `Tracked ${meta.title} at ${meta.company}`
+          : matchedApp
+            ? `Tracked ${matchedApp.title} at ${matchedApp.company}`
+            : typeof meta.company === "string" && meta.company
+              ? `Tracked application at ${meta.company}`
+              : "Tracked new application";
       items.push({
         id: `audit-${log.id}`,
-        title: `Tracked ${label}`,
+        title: titleText,
         category: "Application",
         href: "/applications",
         timestamp: log.createdAt,
