@@ -1,21 +1,40 @@
 import { type EmailOtpType } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { profiles } from '@/lib/db/schema';
 import { createClient } from '../../../lib/supabase/server';
+
+function sanitizeNextPath(raw: string | null): string {
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) {
+    return '/dashboard';
+  }
+  return raw;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const token_hash = searchParams.get('token_hash');
+  const code = searchParams.get('code');
+  const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
-  const next = searchParams.get('next') ?? '/dashboard';
+  const next = sanitizeNextPath(searchParams.get('next'));
 
-  if (token_hash && type) {
-    const supabase = await createClient();
+  const supabase = await createClient();
 
-    const { error } = await supabase.auth.verifyOtp({
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && data.user) {
+      await db.insert(profiles).values({ id: data.user.id }).onConflictDoNothing();
+      return NextResponse.redirect(new URL(next, request.url));
+    }
+  }
+
+  if (tokenHash && type) {
+    const { data, error } = await supabase.auth.verifyOtp({
       type,
-      token_hash,
+      token_hash: tokenHash,
     });
-    if (!error) {
+    if (!error && data.user) {
+      await db.insert(profiles).values({ id: data.user.id }).onConflictDoNothing();
       return NextResponse.redirect(new URL(next, request.url));
     }
   }
@@ -24,4 +43,3 @@ export async function GET(request: NextRequest) {
     new URL('/login?error=invalid_or_expired_token', request.url)
   );
 }
-

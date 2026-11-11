@@ -39,11 +39,22 @@ export default function LoginPage() {
       await login(result.data.email, result.data.password);
       router.push("/dashboard");
     } catch (error) {
-      setFormError(
-        error instanceof ApiError && error.status === 401
-          ? "Incorrect email or password."
-          : "Something went wrong. Please try again.",
-      );
+      if (error instanceof ApiError) {
+        if (
+          error.status === 401 ||
+          /invalid login credentials/i.test(error.detail)
+        ) {
+          setFormError("Incorrect email or password.");
+        } else if (/email not confirmed/i.test(error.detail)) {
+          setFormError(
+            "Please confirm your email address before logging in. Check your inbox for the verification link."
+          );
+        } else {
+          setFormError(error.detail);
+        }
+      } else {
+        setFormError("Something went wrong. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }

@@ -7,17 +7,22 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
 import { ApiError } from "./api-client";
 import { createClient } from "./supabase/client";
 
+export interface RegisterResult {
+  requiresEmailConfirmation: boolean;
+}
+
 interface AuthContextValue {
   user: AuthUserDto | null;
   loading: boolean;
   login(email: string, password: string): Promise<void>;
-  register(email: string, password: string): Promise<void>;
+  register(email: string, password: string): Promise<RegisterResult | void>;
   logout(): Promise<void>;
   refreshUser(): Promise<void>;
 }
@@ -36,7 +41,7 @@ function toAuthUserDto(user: User): AuthUserDto {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUserDto | null>(null);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -92,20 +97,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const register = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string): Promise<RegisterResult> => {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/onboarding`,
         },
       });
       if (error) {
         throw new ApiError(error.status ?? 400, error.message);
       }
-      if (data.user) {
-        setUser(toAuthUserDto(data.user));
+
+      // Supabase returns an empty identities array when email confirmation is on
+      // and an account already exists for the given email.
+      if (
+        data.user &&
+        Array.isArray(data.user.identities) &&
+        data.user.identities.length === 0
+      ) {
+        throw new ApiError(
+          409,
+          "An account with this email already exists. Try logging in."
+        );
       }
+
+      if (data.session && data.user) {
+        setUser(toAuthUserDto(data.user));
+        return { requiresEmailConfirmation: false };
+      }
+
+      return { requiresEmailConfirmation: true };
     },
     [supabase]
   );

@@ -58,4 +58,17 @@ describe("SignupPage", () => {
     expect(await screen.findByText(/already exists/i)).toBeInTheDocument();
     expect(pushMock).not.toHaveBeenCalled();
   });
+
+  it("shows check-your-email state without navigating when email confirmation is required", async () => {
+    registerMock.mockResolvedValueOnce({ requiresEmailConfirmation: true });
+    const user = userEvent.setup();
+    render(<SignupPage />);
+
+    await user.type(screen.getByLabelText(/email/i), "alice@example.com");
+    await user.type(screen.getByLabelText(/password/i), "correct-horse-battery");
+    await user.click(screen.getByRole("button", { name: /create account/i }));
+
+    expect(await screen.findByText(/check your email/i)).toBeInTheDocument();
+    expect(pushMock).not.toHaveBeenCalled();
+  });
 });
