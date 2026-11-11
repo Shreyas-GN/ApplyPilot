@@ -10,6 +10,11 @@ const STATUS_TONE: Record<string, string> = {
   completed: "bg-emerald-100 text-emerald-700",
   queued: "bg-slate-100 text-slate-700",
   processing: "bg-blue-100 text-blue-700",
+  saved: "bg-slate-100 text-slate-700",
+  applied: "bg-blue-100 text-blue-700",
+  interviewing: "bg-amber-100 text-amber-800",
+  offer: "bg-emerald-100 text-emerald-700",
+  rejected: "bg-red-100 text-red-700",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -24,6 +29,11 @@ const STATUS_LABEL: Record<string, string> = {
   completed: "Completed",
   queued: "Queued",
   processing: "Processing",
+  saved: "Saved",
+  applied: "Applied",
+  interviewing: "Interviewing",
+  offer: "Offer",
+  rejected: "Rejected",
 };
 
 export function StatusBadge({ status }: { status: string }) {

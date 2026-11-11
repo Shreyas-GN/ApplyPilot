@@ -168,3 +168,60 @@ export interface ResumeParsedDataDto {
   certifications: ResumeParsedCertificationDto[];
   overallConfidence?: number;
 }
+
+export type ApplicationStatus =
+  | "saved"
+  | "applied"
+  | "interviewing"
+  | "offer"
+  | "rejected";
+
+export interface JobMatchBreakdown {
+  score: number;
+  matchedSkills: string[];
+  missingSkills: string[];
+  reasons: string[];
+}
+
+export interface JobDto {
+  id: string;
+  source: string;
+  externalId: string;
+  company: string;
+  title: string;
+  location: string | null;
+  workMode: string | null;
+  employmentType: string | null;
+  url: string;
+  description: string;
+  skills: string[];
+  postedAt: string | null;
+  createdAt: string;
+  match: JobMatchBreakdown;
+  applicationId: string | null;
+  applicationStatus: ApplicationStatus | null;
+}
+
+export interface ApplicationEventDto {
+  id: string;
+  type: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface ApplicationDto {
+  id: string;
+  jobId: string | null;
+  company: string;
+  title: string;
+  location: string | null;
+  url: string | null;
+  status: ApplicationStatus;
+  matchScore: number | null;
+  notes: string | null;
+  appliedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  events?: ApplicationEventDto[];
+}
+

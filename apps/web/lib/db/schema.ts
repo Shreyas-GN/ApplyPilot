@@ -32,6 +32,14 @@ export const reviewStatusEnum = pgEnum('review_status', [
 
 export const itemSourceEnum = pgEnum('item_source', ['user', 'ai']);
 
+export const applicationStatusEnum = pgEnum('application_status', [
+  'saved',
+  'applied',
+  'interviewing',
+  'offer',
+  'rejected',
+]);
+
 // 1. Profiles
 export const profiles = pgTable(
   'profiles',
@@ -340,6 +348,106 @@ export const auditLogs = pgTable(
   (table) => [
     index('audit_logs_user_id_created_at_idx').on(table.userId, table.createdAt),
     pgPolicy('audit_logs_owner_policy', {
+      for: 'all',
+      to: authenticatedRole,
+      using: sql`user_id = ${authUid}`,
+      withCheck: sql`user_id = ${authUid}`,
+    }),
+  ]
+);
+
+// 10. Jobs (Public ATS & ingested listings)
+export const jobs = pgTable(
+  'jobs',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    source: text('source').notNull(), // 'greenhouse' | 'lever' | 'manual'
+    externalId: text('external_id').notNull(),
+    company: text('company').notNull(),
+    title: text('title').notNull(),
+    location: text('location'),
+    workMode: text('work_mode'), // 'remote' | 'hybrid' | 'onsite'
+    employmentType: text('employment_type'),
+    url: text('url').notNull(),
+    description: text('description').notNull(),
+    skills: text('skills')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    postedAt: timestamp('posted_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('jobs_source_external_id_idx').on(
+      table.source,
+      table.externalId
+    ),
+    index('jobs_company_idx').on(table.company),
+    pgPolicy('jobs_authenticated_read_policy', {
+      for: 'select',
+      to: authenticatedRole,
+      using: sql`true`,
+    }),
+  ]
+);
+
+// 11. Applications (User's tracked jobs)
+export const applications = pgTable(
+  'applications',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    jobId: uuid('job_id').references(() => jobs.id, { onDelete: 'set null' }),
+    company: text('company').notNull(),
+    title: text('title').notNull(),
+    location: text('location'),
+    url: text('url'),
+    status: applicationStatusEnum('status').default('saved').notNull(),
+    matchScore: integer('match_score'),
+    notes: text('notes'),
+    appliedAt: timestamp('applied_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('applications_user_id_idx').on(table.userId),
+    pgPolicy('applications_owner_policy', {
+      for: 'all',
+      to: authenticatedRole,
+      using: sql`user_id = ${authUid}`,
+      withCheck: sql`user_id = ${authUid}`,
+    }),
+  ]
+);
+
+// 12. Application Events (Timeline log)
+export const applicationEvents = pgTable(
+  'application_events',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    applicationId: uuid('application_id')
+      .notNull()
+      .references(() => applications.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => authUsers.id, { onDelete: 'cascade' }),
+    type: text('type').notNull(), // 'created' | 'status_change' | 'note'
+    description: text('description').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index('application_events_app_id_idx').on(table.applicationId),
+    pgPolicy('application_events_owner_policy', {
       for: 'all',
       to: authenticatedRole,
       using: sql`user_id = ${authUid}`,

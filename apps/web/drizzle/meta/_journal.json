@@ -8,6 +8,13 @@
       "when": 1794329749366,
       "tag": "0000_flimsy_butterfly",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794377353597,
+      "tag": "0001_tough_venom",
+      "breakpoints": true
     }
   ]
 }
