@@ -103,7 +103,7 @@ export function WorkspaceIntro() {
                     {pillar.number}.
                   </span>
                   <pillar.icon
-                    className={`h-4 w-4 ${isActive ? "text-[#ffe3d8]" : "text-lp-muted group-hover:text-lp-ink"}`}
+                    className={`h-4 w-4 ${isActive ? "text-[#d8cefe]" : "text-lp-muted group-hover:text-lp-ink"}`}
                     aria-hidden="true"
                   />
                 </div>

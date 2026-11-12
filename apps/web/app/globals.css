@@ -34,22 +34,22 @@
   --font-ui: var(--font-inter), "DM Sans", system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 
-  /* Landing page design system tokens (HeyRetro-inspired Warm Tactile Workspace) */
-  --color-lp-ink: #2b2320;
-  --color-lp-body: #52433d;
-  --color-lp-muted: #84756d;
-  --color-lp-bg: #faf7f4;
-  --color-lp-surface: #f7ece4;
+  /* Landing page design system tokens — ApplyPilot Executive Modernist */
+  --color-lp-ink: #181716;
+  --color-lp-body: #4a4744;
+  --color-lp-muted: #827e78;
+  --color-lp-bg: #f8f7f4;
+  --color-lp-surface: #efece6;
   --color-lp-surface-subtle: #ffffff;
-  --color-lp-border: #e6dad0;
-  --color-lp-accent: #1f7a6c;
-  --color-lp-accent-hover: #176156;
-  --color-lp-accent-soft: #e6f4f1;
-  --color-lp-wine: #ec5a38;
-  --color-lp-wine-hover: #d64827;
-  --color-lp-lagoon: #2b2320;
-  --color-lp-peach: #fae6d9;
-  --color-lp-sage: #eef0e5;
+  --color-lp-border: #e2dfd7;
+  --color-lp-accent: #5e48b8;
+  --color-lp-accent-hover: #4c399b;
+  --color-lp-accent-soft: #f0ecfc;
+  --color-lp-wine: #3d1a24;
+  --color-lp-wine-hover: #2d1219;
+  --color-lp-lagoon: #162a2b;
+  --color-lp-sand: #f3f1ec;
+  --color-lp-emerald: #0d825c;
 
   /* Authenticated App Design System — "Warm Editorial Workspace"
      Synthesizing Superhuman + Intercom + Bevel + ClickUp + Handshake */

@@ -64,12 +64,12 @@ export function Faq() {
     <section id="faq" className="border-b border-lp-border bg-lp-bg py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-16">
-          {/* Left Column: Heading & Support Link (HeyRetro-style) */}
+          {/* Left Column: Heading & Support Link */}
           <div>
-            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-wine">
-              Got questions?
+            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-lp-accent">
+              GOT QUESTIONS?
             </p>
-            <h2 className="mt-2 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[42px]">
+            <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[42px]">
               Questions, answered plainly.
             </h2>
             <p className="mt-4 font-ui text-[15px] leading-relaxed text-lp-body">
@@ -79,7 +79,7 @@ export function Faq() {
             <div className="mt-6">
               <a
                 href="mailto:support@applypilot.com"
-                className="inline-flex items-center gap-1.5 font-ui text-sm font-semibold text-lp-wine hover:underline"
+                className="inline-flex items-center gap-1.5 font-ui text-sm font-semibold text-lp-accent hover:underline"
               >
                 Still have questions? Reach out to support →
               </a>

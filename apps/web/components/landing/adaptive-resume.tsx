@@ -36,15 +36,15 @@ export function AdaptiveResume() {
   }
 
   return (
-    <section id="adaptive-resume" className="border-b border-lp-border bg-lp-surface py-20 sm:py-28">
+    <section id="adaptive-resume" className="border-b border-lp-border bg-lp-bg py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
         {/* Section Header */}
         <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
           <div>
-            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-              Every role is different
+            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-lp-accent">
+              PRECISION TAILORING ENGINE
             </p>
-            <h2 className="mt-3 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[42px]">
+            <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[42px]">
               One professional profile. A resume tailored to every opportunity.
             </h2>
             <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
@@ -67,31 +67,31 @@ export function AdaptiveResume() {
         </div>
 
         {/* Large Split-Screen Interactive Demonstration */}
-        <div className="mt-12 overflow-hidden rounded-[28px] border border-lp-border bg-white shadow-[0_12px_44px_rgba(43,35,32,0.06)]">
+        <div className="mt-12 overflow-hidden rounded-2xl border border-lp-border bg-white shadow-[0_4px_24px_rgba(24,23,22,0.04)]">
           {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-lp-border bg-lp-bg/60 px-5 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-lp-border bg-lp-surface/50 px-5 py-4 sm:px-6">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <FileEdit className="h-4 w-4 text-lp-wine" aria-hidden="true" />
+                <FileEdit className="h-4 w-4 text-lp-accent" aria-hidden="true" />
                 <span className="font-ui text-sm font-semibold text-lp-ink">
                   Resume comparison
                 </span>
               </div>
-              <span className="rounded-full border border-lp-border bg-white px-2.5 py-0.5 font-mono text-[11px] text-lp-muted">
-                Illustrative preview
+              <span className="rounded-md border border-lp-border bg-white px-2 py-0.5 font-mono text-[10px] text-lp-muted">
+                Side-by-side diff
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-ui text-xs text-lp-muted">Target job description:</span>
-              <div className="inline-flex rounded-full border border-lp-border bg-white p-0.5">
+              <div className="inline-flex rounded-lg border border-lp-border bg-white p-0.5">
                 {sampleOpportunities.map((opp, idx) => (
                   <button
                     key={opp.id}
                     type="button"
                     onClick={() => setSelectedIdx(idx)}
-                    className={`rounded-full px-3 py-1 font-ui text-xs font-semibold transition-colors ${selectedIdx === idx
-                        ? "bg-[#141413] text-white"
+                    className={`rounded-md px-3 py-1 font-ui text-xs font-medium transition-colors ${selectedIdx === idx
+                        ? "bg-lp-wine text-white shadow-2xs"
                         : "text-lp-body hover:text-lp-ink"
                       }`}
                   >

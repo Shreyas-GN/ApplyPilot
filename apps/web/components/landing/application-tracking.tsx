@@ -44,15 +44,15 @@ export function ApplicationTracking() {
   }
 
   return (
-    <section id="tracking" className="border-b border-lp-border bg-lp-surface py-20 sm:py-28">
+    <section id="tracking" className="border-b border-lp-border bg-lp-bg py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
         {/* Header & Highlights */}
         <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
           <div>
-            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-              Keep every opportunity in sight
+            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-lp-accent">
+              APPLICATION INTELLIGENCE & TRACKING
             </p>
-            <h2 className="mt-3 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[42px]">
+            <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[42px]">
               Know where every application stands.
             </h2>
             <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
@@ -72,17 +72,17 @@ export function ApplicationTracking() {
         </div>
 
         {/* Full-Width Pipeline Dashboard Preview */}
-        <div className="mt-12 overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_1px_3px_rgba(17,24,39,0.04),0_20px_48px_rgba(17,24,39,0.08)]">
+        <div className="mt-12 overflow-hidden rounded-2xl border border-lp-border bg-white shadow-[0_4px_24px_rgba(24,23,22,0.04)]">
           {/* Top Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface-subtle px-5 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface/50 px-5 py-4 sm:px-6">
             <div className="flex items-center gap-2">
               <ListChecks className="h-4 w-4 text-lp-accent" aria-hidden="true" />
               <span className="font-ui text-sm font-semibold text-lp-ink">
                 Your application pipeline
               </span>
             </div>
-            <span className="rounded-full border border-lp-border bg-lp-bg px-2.5 py-0.5 font-mono text-[11px] text-lp-muted">
-              Illustrative dashboard data
+            <span className="rounded-md border border-lp-border bg-white px-2 py-0.5 font-mono text-[10px] text-lp-muted">
+              Live telemetry
             </span>
           </div>
 

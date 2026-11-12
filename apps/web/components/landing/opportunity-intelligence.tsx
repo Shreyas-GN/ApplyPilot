@@ -18,28 +18,28 @@ export function OpportunityIntelligence() {
   const current = sampleOpportunities[selectedIdx] ?? sampleOpportunities[0]!;
 
   return (
-    <section id="opportunities" className="border-b border-lp-border bg-lp-bg py-16 sm:py-20">
+    <section id="opportunities" className="border-b border-lp-border bg-lp-bg py-16 sm:py-24">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-        <div className="grid items-center gap-10 rounded-[32px] border border-lp-border bg-white p-7 shadow-[0_8px_32px_rgba(43,35,32,0.05)] sm:p-10 lg:grid-cols-[1fr_minmax(0,440px)] lg:gap-14 lg:p-12">
+        <div className="grid items-center gap-10 rounded-2xl border border-lp-border bg-white p-6 shadow-[0_4px_24px_rgba(24,23,22,0.04)] sm:p-10 lg:grid-cols-[1fr_minmax(0,440px)] lg:gap-14 lg:p-12">
           {/* Left: Opportunity Assessment Demonstration */}
-          <div className="order-2 overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_8px_30px_rgba(43,35,32,0.07)] lg:order-1">
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-[#141413] px-5 py-3.5 text-white">
+          <div className="order-2 overflow-hidden rounded-xl border border-lp-border bg-lp-bg shadow-sm lg:order-1">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface/50 px-5 py-3.5">
               <div className="flex items-center gap-2">
-                <Scale className="h-4 w-4 text-[#f9a68f]" aria-hidden="true" />
-                <span className="font-ui text-sm font-semibold">
+                <Scale className="h-4 w-4 text-lp-accent" aria-hidden="true" />
+                <span className="font-ui text-sm font-semibold text-lp-ink">
                   Opportunity Assessment
                 </span>
               </div>
-              <div className="inline-flex rounded-full bg-white/10 p-0.5">
+              <div className="inline-flex rounded-lg border border-lp-border bg-white p-0.5">
                 {sampleOpportunities.map((opp, idx) => (
                   <button
                     key={opp.id}
                     type="button"
                     onClick={() => setSelectedIdx(idx)}
-                    className={`rounded-full px-2.5 py-1 font-ui text-xs font-medium transition-colors ${
+                    className={`rounded-md px-2.5 py-1 font-ui text-xs font-medium transition-colors ${
                       selectedIdx === idx
-                        ? "bg-lp-wine text-white"
-                        : "text-white/70 hover:text-white"
+                        ? "bg-lp-wine text-white shadow-2xs"
+                        : "text-lp-body hover:text-lp-ink"
                     }`}
                   >
                     {opp.role}

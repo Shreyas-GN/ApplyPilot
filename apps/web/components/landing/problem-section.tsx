@@ -1,90 +1,90 @@
+import { AlertCircle, FileSearch, Layers } from "lucide-react";
+
 export function ProblemSection() {
-  const pillars = [
+  const problems = [
     {
-      title: "Master Profile",
-      description: "One structured source of truth for skills & impact.",
-      bg: "bg-lp-peach",
-      dot: "bg-lp-wine",
-      previewTitle: "Verified Experience",
-      previewMeta: "12 skills · 4 roles",
+      number: "01",
+      icon: FileSearch,
+      title: "Too many opportunities, too little clarity",
+      description:
+        "Finding a job vacancy doesn't tell you whether it's actually right for your experience, compensation goals, and engineering philosophy.",
+      badge: "High noise · Low signal",
+      detail: "Evaluating 40+ job descriptions manually leads to cognitive overload and blind submissions.",
     },
     {
-      title: "Fit Scoring",
-      description: "See honest alignment & gaps before you apply.",
-      bg: "bg-lp-accent-soft",
-      dot: "bg-lp-accent",
-      previewTitle: "92% Role Fit",
-      previewMeta: "2 strong signals",
+      number: "02",
+      icon: Layers,
+      title: "One static resume doesn't fit every opportunity",
+      description:
+        "Different jobs demand distinct emphasis on your technical stack and leadership scope. Generic AI resume tools invent claims that fail in technical interviews.",
+      badge: "The credibility trap",
+      detail: "Recruiters detect hallucinated buzzwords in seconds. True confidence requires verified evidence.",
     },
     {
-      title: "Adaptive Resume",
-      description: "Tailored bullets grounded in real evidence.",
-      bg: "bg-lp-sage",
-      dot: "bg-emerald-600",
-      previewTitle: "Resume v3 · Tailored",
-      previewMeta: "Approved by you",
-    },
-    {
-      title: "Companion",
-      description: "Prepare screening answers on employer sites.",
-      bg: "bg-amber-50",
-      dot: "bg-amber-600",
-      previewTitle: "Drafted Response",
-      previewMeta: "Ready to review",
-    },
-    {
-      title: "Pipeline Tracker",
-      description: "Follow every stage, version & next step.",
-      bg: "bg-stone-100",
-      dot: "bg-[#141413]",
-      previewTitle: "Interview Stage",
-      previewMeta: "3 active roles",
+      number: "03",
+      icon: AlertCircle,
+      title: "Applications become chaotic to track and manage",
+      description:
+        "External employer ATS portals, distinct resume versions, scheduled follow-ups, and recruiter screening calls quickly scatter across browser tabs.",
+      badge: "Fragmented pipeline",
+      detail: "Without a central career cockpit, candidates lose leverage, context, and follow-through timing.",
     },
   ];
 
   return (
-    <section className="border-b border-lp-border bg-lp-bg py-20 sm:py-24">
+    <section className="border-b border-lp-border bg-lp-bg py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-        <div className="max-w-[680px]">
-          <h2 className="font-ui text-[32px] font-bold leading-[1.1] tracking-[-0.03em] text-lp-ink sm:text-[42px]">
-            Everything your search needs.
-            <span className="block text-lp-muted">Nothing it doesn&apos;t.</span>
+        <div className="mx-auto max-w-[740px] text-center">
+          <p className="inline-flex rounded-full border border-lp-border bg-white px-3.5 py-1 font-mono text-[11px] font-medium tracking-wider text-lp-accent shadow-2xs">
+            THE JOB-SEARCH PARADOX
+          </p>
+          <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.03em] text-lp-ink sm:text-[44px]">
+            Finding a job is one thing. Getting your application right is another.
           </h2>
-          <p className="mt-4 font-ui text-[16px] leading-[1.6] text-lp-body">
-            The job search shouldn&apos;t live across scattered job boards, disconnected resume
-            files, and messy spreadsheets.
+          <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
+            The modern job search is scattered across job boards, company career portals, resume
+            drafts, spreadsheets, and endless application forms. More volume doesn&apos;t solve it.
+            Better career decisions do.
           </p>
         </div>
 
-        {/* HeyRetro-style 5-card horizontal illustrated strip */}
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {pillars.map((item) => (
+        {/* ApplyPilot Unique 3-Column Architecture */}
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {problems.map((item) => (
             <div
-              key={item.title}
-              className="group rounded-2xl border border-lp-border bg-white p-3 shadow-[0_2px_10px_rgba(43,35,32,0.03)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(43,35,32,0.07)]"
+              key={item.number}
+              className="flex flex-col justify-between rounded-2xl border border-lp-border bg-white p-6 shadow-[0_4px_20px_rgba(24,23,22,0.03)] transition-all duration-150 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(24,23,22,0.06)] sm:p-8"
             >
-              <div className={`flex h-28 flex-col justify-between rounded-xl p-3.5 ${item.bg}`}>
-                <div className="flex items-center justify-between">
-                  <span className={`h-2.5 w-2.5 rounded-full ${item.dot}`} />
-                  <span className="rounded bg-white/80 px-1.5 py-0.5 font-mono text-[10px] font-medium text-lp-ink">
-                    Live
+              <div>
+                <div className="flex items-center justify-between border-b border-lp-border/80 pb-4">
+                  <span className="font-mono text-xs font-semibold tracking-wider text-lp-muted">
+                    {item.number}
+                  </span>
+                  <span className="rounded-md bg-lp-surface px-2.5 py-0.5 font-mono text-[10px] font-medium text-lp-body">
+                    {item.badge}
                   </span>
                 </div>
-                <div className="rounded-lg bg-white/95 p-2 shadow-2xs">
-                  <p className="font-ui text-[11px] font-semibold text-lp-ink">
-                    {item.previewTitle}
-                  </p>
-                  <p className="font-mono text-[10px] text-lp-muted">{item.previewMeta}</p>
-                </div>
-              </div>
-              <div className="px-1 pt-3 pb-1">
-                <h3 className="font-ui text-sm font-semibold text-lp-ink">{item.title}</h3>
-                <p className="mt-1 font-ui text-xs leading-relaxed text-lp-body">
+                <h3 className="mt-5 font-ui text-lg font-bold leading-snug text-lp-ink">
+                  {item.title}
+                </h3>
+                <p className="mt-3 font-ui text-sm leading-relaxed text-lp-body">
                   {item.description}
                 </p>
               </div>
+
+              <div className="mt-6 rounded-xl border border-lp-border/60 bg-lp-surface/40 p-3.5 font-ui text-xs leading-relaxed text-lp-muted">
+                {item.detail}
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Takeaway Manifesto Banner */}
+        <div className="mt-12 rounded-2xl border border-lp-border bg-white p-6 text-center sm:p-8">
+          <p className="font-ui text-[16px] font-semibold text-lp-ink sm:text-[17px]">
+            You don&apos;t need another place to send applications. You need a better way to manage
+            the decisions behind them.
+          </p>
         </div>
       </div>
     </section>

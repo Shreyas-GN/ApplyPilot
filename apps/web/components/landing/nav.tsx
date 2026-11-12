@@ -49,7 +49,7 @@ export function Nav() {
           </Link>
           <Link
             href="/signup"
-            className="group inline-flex items-center justify-center gap-1.5 rounded-full bg-lp-wine px-4 py-2 font-ui text-sm font-semibold text-white shadow-xs transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-wine"
+            className="group inline-flex items-center justify-center gap-1.5 rounded-xl bg-lp-wine px-4 py-2 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-wine"
           >
             Get started — it&apos;s free
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -103,7 +103,7 @@ export function Nav() {
               <Link
                 href="/signup"
                 onClick={() => setOpen(false)}
-                className="rounded-full bg-lp-wine px-4 py-2.5 text-center font-ui text-sm font-semibold text-white transition-colors hover:bg-lp-wine-hover"
+                className="rounded-xl bg-lp-wine px-4 py-2.5 text-center font-ui text-sm font-medium text-white transition-colors hover:bg-lp-wine-hover"
               >
                 Get started — it&apos;s free
               </Link>

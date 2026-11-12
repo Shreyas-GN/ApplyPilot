@@ -25,13 +25,13 @@ export function CandidateIntelligence() {
   const [confirmed, setConfirmed] = useState(true);
 
   return (
-    <section id="candidate-intelligence" className="border-b border-lp-border bg-lp-bg py-16 sm:py-20">
+    <section id="candidate-intelligence" className="border-b border-lp-border bg-lp-bg py-16 sm:py-24">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-        <div className="grid items-center gap-10 rounded-[32px] border border-lp-border bg-white p-7 shadow-[0_8px_32px_rgba(43,35,32,0.05)] sm:p-10 lg:grid-cols-[minmax(0,440px)_1fr] lg:gap-14 lg:p-12">
+        <div className="grid items-center gap-10 rounded-2xl border border-lp-border bg-white p-6 shadow-[0_4px_24px_rgba(24,23,22,0.04)] sm:p-10 lg:grid-cols-[minmax(0,440px)_1fr] lg:gap-14 lg:p-12">
           {/* Left: Copy */}
           <div>
-            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-lp-accent">
-              Your professional foundation
+            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-lp-accent">
+              YOUR PROFESSIONAL FOUNDATION
             </p>
             <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[40px]">
               Your experience, understood.
@@ -56,15 +56,15 @@ export function CandidateIntelligence() {
           </div>
 
           {/* Right: Structured Candidate Profile Demonstration */}
-          <div className="overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_8px_30px_rgba(43,35,32,0.07)]">
-            {/* Dark Obsidian Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-[#141413] px-5 py-3.5 text-white">
+          <div className="overflow-hidden rounded-xl border border-lp-border bg-lp-bg shadow-sm">
+            {/* Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface/50 px-5 py-3.5">
               <div className="flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-[#f9a68f]" aria-hidden="true" />
-                <span className="font-ui text-sm font-semibold">Candidate Profile</span>
+                <UserRound className="h-4 w-4 text-lp-accent" aria-hidden="true" />
+                <span className="font-ui text-sm font-semibold text-lp-ink">Candidate Profile</span>
               </div>
-              <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[11px] text-white/80">
-                Illustrative sample
+              <span className="rounded-md border border-lp-border bg-white px-2 py-0.5 font-mono text-[10px] text-lp-muted">
+                Structured master record
               </span>
             </div>
 
