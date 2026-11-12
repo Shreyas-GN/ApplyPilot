@@ -80,7 +80,7 @@ function ProfileContent() {
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="h-44 animate-pulse rounded-[14px] border border-ap-line bg-ap-surface-muted"
+            className="h-44 animate-pulse rounded-[14px] border border-ui-border bg-ui-linen"
           />
         ))}
       </div>
@@ -236,10 +236,10 @@ function ProfileContent() {
               onClick={() => scrollToSection(section.id)}
               className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                 section.complete
-                  ? "border-ap-sage/30 bg-ap-sage-soft text-ap-sage"
+                  ? "border-ap-sage/30 bg-emerald-50 text-emerald-700"
                   : section.aiUnverifiedCount > 0
-                    ? "border-amber-300 bg-ap-butter text-ap-ink"
-                    : "border-ap-line bg-ap-surface text-ap-body"
+                    ? "border-amber-300 bg-ap-butter text-ui-ink"
+                    : "border-ui-border bg-ui-surface text-ui-body"
               }`}
             >
               0{idx + 1} · {section.label}
@@ -251,8 +251,8 @@ function ProfileContent() {
       <div className="grid gap-6 lg:grid-cols-[230px_minmax(0,1fr)] lg:items-start">
         {/* Desktop Field Guide index */}
         <aside className="hidden lg:sticky lg:top-6 lg:block">
-          <div className="rounded-[14px] border border-ap-line bg-ap-surface p-4 shadow-[0_1px_2px_rgba(30,25,21,0.04)]">
-            <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+          <div className="rounded-[14px] border border-ui-border bg-ui-surface p-4 shadow-[0_1px_2px_rgba(30,25,21,0.04)]">
+            <p className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
               Dossier Index
             </p>
             <nav aria-label="Dossier sections" className="space-y-1">
@@ -261,24 +261,24 @@ function ProfileContent() {
                   key={section.id}
                   type="button"
                   onClick={() => scrollToSection(section.id)}
-                  className="flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-ap-body transition hover:bg-ap-paper-deep hover:text-ap-ink"
+                  className="flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-ui-body transition hover:bg-ui-linen hover:text-ui-ink"
                 >
                   <span className="truncate">
-                    <span className="mr-1.5 font-mono text-[11px] text-ap-muted">
+                    <span className="mr-1.5 font-mono text-[11px] text-ui-muted">
                       0{idx + 1}
                     </span>
                     {section.label}
                   </span>
                   {section.complete ? (
-                    <span className="shrink-0 font-mono text-[11px] text-ap-sage">
+                    <span className="shrink-0 font-mono text-[11px] text-emerald-700">
                       ✓
                     </span>
                   ) : section.aiUnverifiedCount > 0 ? (
-                    <span className="shrink-0 rounded-full bg-ap-butter px-1.5 py-0.5 font-mono text-[10px] text-ap-ink">
+                    <span className="shrink-0 rounded-full bg-ap-butter px-1.5 py-0.5 font-mono text-[10px] text-ui-ink">
                       AI
                     </span>
                   ) : (
-                    <span className="shrink-0 font-mono text-[10px] text-ap-muted">
+                    <span className="shrink-0 font-mono text-[10px] text-ui-muted">
                       —
                     </span>
                   )}

@@ -46,6 +46,22 @@
   --color-lp-accent-hover: #1d4ed8;
   --color-lp-accent-soft: #eff6ff;
 
+  /* Authenticated App Design System — "Warm Editorial Workspace"
+     Synthesizing Superhuman + Intercom + Bevel + ClickUp + Handshake */
+  --color-ui-canvas: #f6f5f1;
+  --color-ui-surface: #ffffff;
+  --color-ui-linen: #efede7;
+  --color-ui-border: #e3e3e2;
+  --color-ui-ink: #292827;
+  --color-ui-body: #666666;
+  --color-ui-muted: #8c8b88;
+  --color-ui-wine: #421d24;
+  --color-ui-wine-hover: #32141a;
+  --color-ui-violet: #714cb6;
+  --color-ui-lilac: #d4c7ff;
+  --color-ui-lilac-soft: #ede8ff;
+  --color-ui-lagoon: #0c4243;
+
   --radius-button: 999px;
   --radius-panel: 20px;
   --radius-window: 14px;
@@ -58,8 +74,13 @@ html {
 }
 
 body {
-  color: #0f172a;
-  background: #f8fafc;
+  color: #292827;
+  background: #f6f5f1;
+  font-family: var(--font-ui);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 .bg-dot-pattern {

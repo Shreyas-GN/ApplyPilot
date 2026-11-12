@@ -87,21 +87,21 @@ const WORKSPACE_SECTIONS: Array<{
 
 export default function SitemapPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-5 py-12 sm:px-8">
+    <main className="min-h-screen bg-ui-canvas px-5 py-12 sm:px-8">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <Link href="/" className="text-sm font-semibold text-brand-700 hover:underline">
+            <Link href="/" className="text-sm font-semibold text-ui-violet hover:underline">
               ← Back to ApplyPilot
             </Link>
-            <h1 className="mt-2 text-3xl font-semibold text-slate-900">ApplyPilot Sitemap</h1>
-            <p className="mt-1 text-sm text-slate-600">
+            <h1 className="mt-2 text-3xl font-semibold text-ui-ink">ApplyPilot Sitemap</h1>
+            <p className="mt-1 text-sm text-ui-body">
               All workspace destinations, discovery tabs, and account pages.
             </p>
           </div>
           <Link
             href="/dashboard"
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+            className="rounded-lg bg-ui-wine px-4 py-2 text-sm font-medium text-white hover:bg-ui-wine-hover"
           >
             Open workspace
           </Link>
@@ -110,12 +110,12 @@ export default function SitemapPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {WORKSPACE_SECTIONS.map((section) => (
             <Card key={section.title}>
-              <h2 className="text-base font-semibold text-slate-900">{section.title}</h2>
-              <p className="mt-1 text-xs text-slate-500">{section.description}</p>
+              <h2 className="text-base font-semibold text-ui-ink">{section.title}</h2>
+              <p className="mt-1 text-xs text-ui-muted">{section.description}</p>
               <ul className="mt-4 flex flex-col gap-2 text-sm">
                 {section.links.map((item) => (
                   <li key={item.href}>
-                    <Link href={item.href} className="text-brand-700 hover:underline">
+                    <Link href={item.href} className="text-ui-violet hover:underline">
                       {item.label}
                     </Link>
                   </li>

@@ -39,14 +39,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
+        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-ui-violet">
           ApplyPilot
         </Link>
         <Card>
-          <h1 className="mb-1 text-xl font-semibold text-slate-900">Reset your password</h1>
-          <p className="mb-6 text-sm text-slate-500">
+          <h1 className="mb-1 text-xl font-semibold text-ui-ink">Reset your password</h1>
+          <p className="mb-6 text-sm text-ui-muted">
             Enter your email and we&apos;ll send you a reset link.
           </p>
           {sent ? (
@@ -70,8 +70,8 @@ export default function ForgotPasswordPage() {
               </Button>
             </form>
           )}
-          <p className="mt-6 text-center text-sm text-slate-500">
-            <Link href="/login" className="font-medium text-brand-600 hover:underline">
+          <p className="mt-6 text-center text-sm text-ui-muted">
+            <Link href="/login" className="font-medium text-ui-violet hover:underline">
               Back to log in
             </Link>
           </p>

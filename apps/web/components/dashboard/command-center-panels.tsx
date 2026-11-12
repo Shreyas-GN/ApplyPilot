@@ -34,26 +34,26 @@ export function NextActionsPanel({
   return (
     <section
       aria-labelledby="next-actions-heading"
-      className="rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
+      className="rounded-2xl border border-ui-border bg-ui-surface p-6"
     >
-      <div className="mb-4 border-b border-ap-line pb-3.5">
-        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+      <div className="mb-4 border-b border-ui-border pb-3.5">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
           Recommended Workflow
         </span>
         <h2
           id="next-actions-heading"
-          className="mt-1 font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ap-ink"
+          className="mt-1 text-[22px] leading-[1.2] tracking-[-0.015em] text-ui-ink"
         >
           Next Actions
         </h2>
       </div>
 
       {loading ? (
-        <div className="h-28 animate-pulse rounded-xl bg-ap-surface-muted" />
+        <div className="h-28 animate-pulse rounded-xl bg-ui-linen" />
       ) : actions.length === 0 ? (
-        <div className="rounded-xl border border-ap-sage/30 bg-ap-sage-soft/50 p-4 text-sm text-ap-body">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-sm text-ui-body">
           All readiness milestones are complete. Keep reviewing new{" "}
-          <Link href="/jobs?tab=for-you" className="font-medium text-ap-ink underline">
+          <Link href="/jobs?tab=for-you" className="font-medium text-ui-ink underline">
             matched roles
           </Link>{" "}
           and tailoring applications.
@@ -65,28 +65,28 @@ export function NextActionsPanel({
               key={item.id}
               className={`flex flex-col justify-between gap-2.5 rounded-xl border p-3.5 sm:flex-row sm:items-center ${
                 item.priority === "high"
-                  ? "border-ap-vermilion/30 bg-ap-vermilion-soft/30"
-                  : "border-ap-line bg-ap-paper-deep/35"
+                  ? "border-ap-vermilion/30 bg-ui-lilac-soft/30"
+                  : "border-ui-border bg-ui-linen/35"
               }`}
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-semibold text-ap-ink">
+                  <p className="text-sm font-semibold text-ui-ink">
                     {item.title}
                   </p>
                   {item.priority === "high" && (
-                    <span className="rounded-full bg-ap-vermilion-soft px-2 py-0.5 font-mono text-[10px] font-medium uppercase text-ap-vermilion">
+                    <span className="rounded-full bg-ui-lilac-soft px-2 py-0.5 font-mono text-[10px] font-medium uppercase text-ui-violet">
                       Priority
                     </span>
                   )}
                 </div>
-                <p className="mt-0.5 text-xs text-ap-muted">
+                <p className="mt-0.5 text-xs text-ui-muted">
                   {item.description}
                 </p>
               </div>
               <Link
                 href={item.href}
-                className="inline-flex h-8 shrink-0 items-center justify-center rounded-full border border-ap-line bg-ap-surface px-3.5 text-xs font-medium text-ap-ink transition hover:bg-ap-paper-deep"
+                className="inline-flex h-8 shrink-0 items-center justify-center rounded-full border border-ui-border bg-ui-surface px-3.5 text-xs font-medium text-ui-ink transition hover:bg-ui-linen"
               >
                 {item.cta} →
               </Link>
@@ -99,11 +99,11 @@ export function NextActionsPanel({
 }
 
 const PROGRESS_STAGES = [
-  { key: "saved", label: "Saved", tone: "border-ap-line bg-ap-paper-deep/45 text-ap-ink" },
-  { key: "applied", label: "Applied", tone: "border-ap-line bg-ap-paper-deep/45 text-ap-ink" },
-  { key: "interviewing", label: "Interviewing", tone: "border-amber-300 bg-ap-butter/35 text-ap-ink" },
-  { key: "offer", label: "Offered", tone: "border-ap-sage/35 bg-ap-sage-soft/70 text-ap-sage" },
-  { key: "rejected", label: "Rejected", tone: "border-ap-line bg-ap-surface-muted text-ap-muted" },
+  { key: "saved", label: "Saved", tone: "border-ui-border bg-ui-linen/45 text-ui-ink" },
+  { key: "applied", label: "Applied", tone: "border-ui-border bg-ui-linen/45 text-ui-ink" },
+  { key: "interviewing", label: "Interviewing", tone: "border-amber-300 bg-ap-butter/35 text-ui-ink" },
+  { key: "offer", label: "Offered", tone: "border-ap-sage/35 bg-emerald-50/70 text-emerald-700" },
+  { key: "rejected", label: "Rejected", tone: "border-ui-border bg-ui-linen text-ui-muted" },
 ] as const;
 
 export function ApplicationProgressPanel({
@@ -122,16 +122,16 @@ export function ApplicationProgressPanel({
   return (
     <section
       aria-labelledby="application-progress-heading"
-      className="rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
+      className="rounded-2xl border border-ui-border bg-ui-surface p-6"
     >
-      <div className="mb-4 flex items-start justify-between gap-3 border-b border-ap-line pb-3.5">
+      <div className="mb-4 flex items-start justify-between gap-3 border-b border-ui-border pb-3.5">
         <div>
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
             Pipeline Summary
           </span>
           <h2
             id="application-progress-heading"
-            className="mt-1 font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ap-ink"
+            className="mt-1 text-[22px] leading-[1.2] tracking-[-0.015em] text-ui-ink"
           >
             Application Progress
           </h2>
@@ -139,14 +139,14 @@ export function ApplicationProgressPanel({
 
         <Link
           href="/applications"
-          className="text-xs font-medium text-ap-vermilion hover:underline"
+          className="text-xs font-medium text-ui-violet hover:underline"
         >
           Open tracker →
         </Link>
       </div>
 
       {loading ? (
-        <div className="h-24 animate-pulse rounded-xl bg-ap-surface-muted" />
+        <div className="h-24 animate-pulse rounded-xl bg-ui-linen" />
       ) : error ? (
         <div className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs text-red-900">
           <p>{error}</p>
@@ -159,13 +159,13 @@ export function ApplicationProgressPanel({
           </button>
         </div>
       ) : summary.total === 0 ? (
-        <div className="rounded-xl border border-dashed border-ap-line bg-ap-paper-deep/40 p-4 text-sm text-ap-muted">
+        <div className="rounded-xl border border-dashed border-ui-border bg-ui-linen/40 p-4 text-sm text-ui-muted">
           No applications tracked yet. Save promising roles from{" "}
-          <Link href="/jobs" className="font-medium text-ap-vermilion hover:underline">
+          <Link href="/jobs" className="font-medium text-ui-violet hover:underline">
             Discover Jobs
           </Link>{" "}
           or add one in{" "}
-          <Link href="/applications" className="font-medium text-ap-vermilion hover:underline">
+          <Link href="/applications" className="font-medium text-ui-violet hover:underline">
             Applications
           </Link>
           .
@@ -190,14 +190,14 @@ export function ApplicationProgressPanel({
           </div>
 
           {summary.followUpsCount > 0 && (
-            <div className="flex items-center justify-between gap-2 rounded-xl border border-amber-300 bg-ap-butter/40 px-3 py-2 text-xs text-ap-ink">
+            <div className="flex items-center justify-between gap-2 rounded-xl border border-amber-300 bg-ap-butter/40 px-3 py-2 text-xs text-ui-ink">
               <span>
                 {summary.followUpsCount} scheduled follow-up reminder
                 {summary.followUpsCount === 1 ? "" : "s"}
               </span>
               <Link
                 href="/applications?view=list"
-                className="font-semibold text-ap-vermilion hover:underline"
+                className="font-semibold text-ui-violet hover:underline"
               >
                 Review →
               </Link>
@@ -223,16 +223,16 @@ export function ProfileReadinessPanel({
   return (
     <section
       aria-labelledby="profile-readiness-heading"
-      className="rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
+      className="rounded-2xl border border-ui-border bg-ui-surface p-6"
     >
-      <div className="mb-4 flex items-start justify-between gap-3 border-b border-ap-line pb-3.5">
+      <div className="mb-4 flex items-start justify-between gap-3 border-b border-ui-border pb-3.5">
         <div>
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
             Candidate Readiness
           </span>
           <h2
             id="profile-readiness-heading"
-            className="mt-1 font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ap-ink"
+            className="mt-1 text-[22px] leading-[1.2] tracking-[-0.015em] text-ui-ink"
           >
             Profile Readiness
           </h2>
@@ -240,37 +240,37 @@ export function ProfileReadinessPanel({
 
         <Link
           href="/profile"
-          className="text-xs font-medium text-ap-vermilion hover:underline"
+          className="text-xs font-medium text-ui-violet hover:underline"
         >
           Edit dossier →
         </Link>
       </div>
 
       {loading ? (
-        <div className="h-28 animate-pulse rounded-xl bg-ap-surface-muted" />
+        <div className="h-28 animate-pulse rounded-xl bg-ui-linen" />
       ) : (
         <div className="space-y-4">
           {/* Completeness */}
           <div>
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-xs font-medium text-ap-body">
+              <span className="text-xs font-medium text-ui-body">
                 Confirmed profile completeness
               </span>
-              <span className="font-mono text-lg font-semibold text-ap-ink">
+              <span className="font-mono text-lg font-semibold text-ui-ink">
                 {readiness.confirmedPercent}%
               </span>
             </div>
-            <div className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-ap-surface-muted">
+            <div className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-ui-linen">
               <div
-                className="h-full bg-ap-sage transition-all"
+                className="h-full bg-emerald-600 transition-all"
                 style={{ width: `${readiness.confirmedPercent}%` }}
               />
             </div>
             {readiness.unverifiedAiCount > 0 && (
-              <p className="mt-1.5 text-xs text-ap-ink">
+              <p className="mt-1.5 text-xs text-ui-ink">
                 {readiness.unverifiedAiCount} AI-extracted item
                 {readiness.unverifiedAiCount === 1 ? "" : "s"} awaiting your confirmation (
-                <Link href="/profile" className="font-medium text-ap-vermilion hover:underline">
+                <Link href="/profile" className="font-medium text-ui-violet hover:underline">
                   review in Profile
                 </Link>
                 ).
@@ -279,21 +279,21 @@ export function ProfileReadinessPanel({
           </div>
 
           {/* Primary Resume Status */}
-          <div className="rounded-xl border border-ap-line bg-ap-paper-deep/40 p-3">
+          <div className="rounded-xl border border-ui-border bg-ui-linen/40 p-3">
             <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.06em] text-ap-muted">
+              <span className="font-mono text-[10px] uppercase tracking-[0.06em] text-ui-muted">
                 Primary Resume
               </span>
               <Link
                 href="/resumes"
-                className="text-xs font-medium text-ap-vermilion hover:underline"
+                className="text-xs font-medium text-ui-violet hover:underline"
               >
                 Manage →
               </Link>
             </div>
             {readiness.primaryResume ? (
               <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
-                <p className="truncate text-sm font-medium text-ap-ink">
+                <p className="truncate text-sm font-medium text-ui-ink">
                   {readiness.primaryResume.versionLabel}
                 </p>
                 <StatusBadge
@@ -305,9 +305,9 @@ export function ProfileReadinessPanel({
                 />
               </div>
             ) : (
-              <p className="mt-1 text-xs text-ap-muted">
+              <p className="mt-1 text-xs text-ui-muted">
                 No resume uploaded yet.{" "}
-                <Link href="/resumes" className="font-medium text-ap-vermilion hover:underline">
+                <Link href="/resumes" className="font-medium text-ui-violet hover:underline">
                   Upload PDF or DOCX
                 </Link>
               </p>
@@ -316,13 +316,13 @@ export function ProfileReadinessPanel({
 
           {/* Missing Information */}
           <div>
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.06em] text-ap-muted">
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.06em] text-ui-muted">
               {readiness.missingSections.length > 0
                 ? "Missing or Unverified Information"
                 : "Section Coverage"}
             </p>
             {readiness.missingSections.length === 0 ? (
-              <p className="text-xs text-ap-sage">
+              <p className="text-xs text-emerald-700">
                 All 9 Candidate Intelligence sections have verified entries.
               </p>
             ) : (
@@ -333,8 +333,8 @@ export function ProfileReadinessPanel({
                     href={`/profile#section-${sec.id}`}
                     className={`rounded-full border px-2.5 py-0.5 text-xs font-medium transition ${
                       sec.aiUnverifiedCount > 0
-                        ? "border-amber-300 bg-ap-butter/60 text-ap-ink"
-                        : "border-ap-line bg-ap-paper-deep text-ap-body hover:text-ap-ink"
+                        ? "border-amber-300 bg-amber-50 text-ui-ink"
+                        : "border-ui-border bg-ui-linen text-ui-body hover:text-ui-ink"
                     }`}
                   >
                     {sec.label}
@@ -366,24 +366,24 @@ export function RecentActivityPanel({
   return (
     <section
       aria-labelledby="recent-activity-heading"
-      className="rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
+      className="rounded-2xl border border-ui-border bg-ui-surface p-6"
     >
-      <div className="mb-4 border-b border-ap-line pb-3.5">
-        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+      <div className="mb-4 border-b border-ui-border pb-3.5">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
           Chronological Log
         </span>
         <h2
           id="recent-activity-heading"
-          className="mt-1 font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ap-ink"
+          className="mt-1 text-[22px] leading-[1.2] tracking-[-0.015em] text-ui-ink"
         >
           Recent Activity
         </h2>
       </div>
 
       {loading ? (
-        <div className="h-24 animate-pulse rounded-xl bg-ap-surface-muted" />
+        <div className="h-24 animate-pulse rounded-xl bg-ui-linen" />
       ) : activity.length === 0 ? (
-        <p className="text-sm text-ap-muted">
+        <p className="text-sm text-ui-muted">
           No recent activity yet. Updates to your profile, saved jobs, resumes, and application statuses will appear here.
         </p>
       ) : (
@@ -396,16 +396,16 @@ export function RecentActivityPanel({
               <div className="min-w-0">
                 <Link
                   href={item.href}
-                  className="block truncate text-xs font-medium text-ap-ink hover:text-ap-vermilion hover:underline"
+                  className="block truncate text-xs font-medium text-ui-ink hover:text-ui-violet hover:underline"
                 >
                   {item.title}
                 </Link>
                 <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                  <span className="font-mono text-[10px] uppercase text-ap-muted">
+                  <span className="font-mono text-[10px] uppercase text-ui-muted">
                     {item.category}
                   </span>
                   {item.statusLabel && (
-                    <span className="rounded-full bg-ap-paper-deep px-2 py-0.5 text-[10px] font-medium text-ap-body">
+                    <span className="rounded-full bg-ui-linen px-2 py-0.5 text-[10px] font-medium text-ui-body">
                       {item.statusLabel}
                     </span>
                   )}
@@ -413,7 +413,7 @@ export function RecentActivityPanel({
               </div>
               <time
                 dateTime={item.timestamp}
-                className="shrink-0 font-mono text-[11px] text-ap-muted"
+                className="shrink-0 font-mono text-[11px] text-ui-muted"
               >
                 {new Date(item.timestamp).toLocaleDateString()}
               </time>

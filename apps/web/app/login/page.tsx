@@ -78,14 +78,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
-          ApplyPilot
+        <Link href="/" className="mb-6 flex items-center justify-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
+            AP
+          </span>
+          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
         </Link>
         <Card>
-          <h1 className="mb-1 text-xl font-semibold text-slate-900">Welcome back</h1>
-          <p className="mb-6 text-sm text-slate-500">Log in to continue your job search.</p>
+          <h1 className="mb-1 text-xl font-semibold text-ui-ink">Welcome back</h1>
+          <p className="mb-6 text-sm text-ui-muted">Log in to continue your job search.</p>
           {formError && (
             <div className="mb-4">
               <Alert tone="error">{formError}</Alert>
@@ -113,7 +116,7 @@ export default function LoginPage() {
               required
             />
             <div className="text-right text-sm">
-              <Link href="/forgot-password" className="text-brand-600 hover:underline">
+              <Link href="/forgot-password" className="text-ui-violet hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -121,9 +124,9 @@ export default function LoginPage() {
               Log in
             </Button>
           </form>
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-ui-muted">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-medium text-brand-600 hover:underline">
+            <Link href="/signup" className="font-medium text-ui-violet hover:underline">
               Sign up
             </Link>
           </p>

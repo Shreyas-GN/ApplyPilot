@@ -205,7 +205,7 @@ export function RepeatableSection({
       }
     >
       {items.length === 0 && (
-        <p className="mb-4 text-sm text-ap-muted">{emptyLabel}</p>
+        <p className="mb-4 text-sm text-ui-muted">{emptyLabel}</p>
       )}
 
       <div className="flex flex-col gap-4">
@@ -224,16 +224,16 @@ export function RepeatableSection({
               className={`rounded-xl border p-4 ${
                 isAi
                   ? "border-amber-300 bg-ap-butter/20"
-                  : "border-ap-line bg-ap-paper-deep/35"
+                  : "border-ui-border bg-ui-linen/35"
               }`}
             >
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-ap-line/70 pb-2.5">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-ui-border/70 pb-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[11px] font-medium uppercase text-ap-muted">
+                  <span className="font-mono text-[11px] font-medium uppercase text-ui-muted">
                     #{index + 1}
                   </span>
                   {headerTitle && (
-                    <span className="text-sm font-semibold text-ap-ink">
+                    <span className="text-sm font-semibold text-ui-ink">
                       {headerTitle}
                       {headerSub ? ` · ${headerSub}` : ""}
                     </span>
@@ -249,7 +249,7 @@ export function RepeatableSection({
                     <button
                       type="button"
                       onClick={() => confirmItem(index)}
-                      className="rounded-full bg-ap-sage-soft px-2.5 py-0.5 text-xs font-medium text-ap-sage hover:opacity-90"
+                      className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 hover:opacity-90"
                     >
                       Confirm entry
                     </button>
@@ -270,7 +270,7 @@ export function RepeatableSection({
                     return (
                       <label
                         key={field.name}
-                        className="flex items-center gap-2 pt-1 text-sm font-medium text-ap-body sm:col-span-2"
+                        className="flex items-center gap-2 pt-1 text-sm font-medium text-ui-body sm:col-span-2"
                       >
                         <input
                           type="checkbox"
@@ -278,7 +278,7 @@ export function RepeatableSection({
                           onChange={(e) =>
                             updateField(index, field.name, e.target.checked)
                           }
-                          className="h-4 w-4 rounded border-ap-line accent-ap-ink"
+                          className="h-4 w-4 rounded border-ui-border accent-ap-ink"
                         />
                         {field.label}
                       </label>
@@ -369,7 +369,7 @@ export function RepeatableSection({
                           href={rawValue.trim()}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-1 inline-block text-xs font-medium text-ap-vermilion hover:underline"
+                          className="mt-1 inline-block text-xs font-medium text-ui-violet hover:underline"
                         >
                           Open link ↗
                         </a>
@@ -386,7 +386,7 @@ export function RepeatableSection({
       <button
         type="button"
         onClick={addItem}
-        className="mt-4 inline-flex h-9 items-center justify-center rounded-full border border-ap-line bg-ap-paper-deep px-4 text-xs font-medium text-ap-ink transition hover:bg-ap-surface-muted"
+        className="mt-4 inline-flex h-9 items-center justify-center rounded-full border border-ui-border bg-ui-linen px-4 text-xs font-medium text-ui-ink transition hover:bg-ui-linen"
       >
         {addLabel}
       </button>

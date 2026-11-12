@@ -229,7 +229,7 @@ function ReviewContent() {
   }
 
   if (loading) {
-    return <div className="h-64 animate-pulse rounded-xl bg-slate-100" />;
+    return <div className="h-64 animate-pulse rounded-xl bg-ui-linen" />;
   }
 
   if (loadError) {
@@ -241,8 +241,8 @@ function ReviewContent() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Review parsed resume</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-semibold text-ui-ink">Review parsed resume</h1>
+        <p className="mt-1 text-sm text-ui-muted">
           {resume?.versionLabel} — check what we extracted, correct anything that&apos;s wrong, then
           confirm to update your profile.
         </p>
@@ -368,7 +368,7 @@ function ReviewContent() {
         />
       </Card>
 
-      <div className="flex justify-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
+      <div className="flex justify-end gap-3 rounded-xl border border-ui-border bg-white p-4 shadow-lg">
         <Button variant="secondary" onClick={handleSaveCorrections} loading={saving}>
           Save corrections
         </Button>

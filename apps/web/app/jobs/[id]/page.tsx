@@ -149,10 +149,10 @@ function JobDetailContent() {
     return (
       <div className="flex flex-col gap-6">
         <div className="h-6 w-40 animate-pulse rounded bg-slate-200" />
-        <div className="h-44 animate-pulse rounded-xl bg-slate-100" />
+        <div className="h-44 animate-pulse rounded-xl bg-ui-linen" />
         <div className="grid gap-6 lg:grid-cols-12">
-          <div className="h-72 animate-pulse rounded-xl bg-slate-100 lg:col-span-5" />
-          <div className="h-72 animate-pulse rounded-xl bg-slate-100 lg:col-span-7" />
+          <div className="h-72 animate-pulse rounded-xl bg-ui-linen lg:col-span-5" />
+          <div className="h-72 animate-pulse rounded-xl bg-ui-linen lg:col-span-7" />
         </div>
       </div>
     );
@@ -163,7 +163,7 @@ function JobDetailContent() {
       <div className="flex flex-col gap-4">
         <Link
           href="/jobs"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ui-violet hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Discover Jobs</span>
@@ -182,7 +182,7 @@ function JobDetailContent() {
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/jobs"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-ui-body hover:text-ui-ink"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Discover Jobs</span>
@@ -190,7 +190,7 @@ function JobDetailContent() {
         {job.tailoredDocumentsCount > 0 && (
           <Link
             href={`/studio?tab=tailored&jobId=${job.id}`}
-            className="text-xs font-medium text-brand-700 hover:underline"
+            className="text-xs font-medium text-ui-violet hover:underline"
           >
             {job.tailoredDocumentsCount} tailored draft
             {job.tailoredDocumentsCount === 1 ? "" : "s"} created →
@@ -205,7 +205,7 @@ function JobDetailContent() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-2xl font-semibold text-slate-900">{job.title}</h1>
+              <h1 className="text-2xl font-semibold text-ui-ink">{job.title}</h1>
               <span
                 className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold ${scoreTone(
                   job.match.score
@@ -214,13 +214,13 @@ function JobDetailContent() {
                 {job.match.score}% Overall Match
               </span>
               {job.match.isAdjacentRole && (
-                <Badge className="bg-brand-50 text-brand-700">Adjacent Role</Badge>
+                <Badge className="bg-ui-lilac-soft text-ui-violet">Adjacent Role</Badge>
               )}
               {job.applicationStatus && <StatusBadge status={job.applicationStatus} />}
             </div>
 
-            <p className="mt-2 text-sm text-slate-600">
-              <span className="font-semibold text-slate-900">{job.company}</span>
+            <p className="mt-2 text-sm text-ui-body">
+              <span className="font-semibold text-ui-ink">{job.company}</span>
               {job.location ? ` · ${job.location}` : ""}
               {job.workMode ? ` · ${job.workMode}` : ""}
               {" · "}
@@ -228,15 +228,15 @@ function JobDetailContent() {
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">
-              <Badge className="bg-slate-100 text-slate-700">
+              <Badge className="bg-ui-linen text-ui-ink">
                 {`Level: ${job.intelligence.seniorityLevel}`}
               </Badge>
               {job.intelligence.expectedExperienceYears && (
-                <Badge className="bg-slate-100 text-slate-700">
+                <Badge className="bg-ui-linen text-ui-ink">
                   {`Experience: ${job.intelligence.expectedExperienceYears}`}
                 </Badge>
               )}
-              <Badge className="bg-slate-100 text-slate-700">{`Source: ${job.source}`}</Badge>
+              <Badge className="bg-ui-linen text-ui-ink">{`Source: ${job.source}`}</Badge>
             </div>
           </div>
 
@@ -245,7 +245,7 @@ function JobDetailContent() {
               href={job.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-ui-border bg-white px-3 py-2 text-xs font-medium text-ui-ink hover:bg-ui-canvas"
             >
               <span>Original posting</span>
               <ExternalLink className="h-3.5 w-3.5" />
@@ -308,11 +308,11 @@ function JobDetailContent() {
 
             <div className="flex flex-col gap-4">
               <div>
-                <div className="mb-1 flex justify-between text-xs font-medium text-slate-700">
+                <div className="mb-1 flex justify-between text-xs font-medium text-ui-ink">
                   <span>Overall Personalized Fit</span>
                   <span>{job.match.score}%</span>
                 </div>
-                <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="h-2.5 w-full overflow-hidden rounded-full bg-ui-linen">
                   <div
                     className={`h-full rounded-full ${barTone(job.match.score)}`}
                     style={{ width: `${job.match.score}%` }}
@@ -321,10 +321,10 @@ function JobDetailContent() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                <div className="rounded-lg border border-slate-100 bg-ui-canvas p-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xs text-slate-500">Skills compatibility</span>
-                    <span className="text-sm font-semibold text-slate-900">
+                    <span className="text-xs text-ui-muted">Skills compatibility</span>
+                    <span className="text-sm font-semibold text-ui-ink">
                       {job.match.skillsScore}%
                     </span>
                   </div>
@@ -336,10 +336,10 @@ function JobDetailContent() {
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                <div className="rounded-lg border border-slate-100 bg-ui-canvas p-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-xs text-slate-500">Experience fit</span>
-                    <span className="text-sm font-semibold text-slate-900">
+                    <span className="text-xs text-ui-muted">Experience fit</span>
+                    <span className="text-sm font-semibold text-ui-ink">
                       {job.match.experienceScore}%
                     </span>
                   </div>
@@ -353,10 +353,10 @@ function JobDetailContent() {
               </div>
 
               {job.match.adjacencyReason && (
-                <div className="flex items-start gap-2.5 rounded-lg border border-brand-200 bg-brand-50/70 p-3 text-xs text-slate-700">
-                  <Compass className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                <div className="flex items-start gap-2.5 rounded-lg border border-ui-lilac bg-ui-lilac-soft/70 p-3 text-xs text-ui-ink">
+                  <Compass className="mt-0.5 h-4 w-4 shrink-0 text-ui-violet" />
                   <div>
-                    <p className="font-semibold text-slate-900">Adjacent role insight</p>
+                    <p className="font-semibold text-ui-ink">Adjacent role insight</p>
                     <p className="mt-0.5 leading-relaxed">{job.match.adjacencyReason}</p>
                   </div>
                 </div>
@@ -364,11 +364,11 @@ function JobDetailContent() {
 
               {job.match.reasons.length > 0 && (
                 <div>
-                  <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <Sparkles className="h-3.5 w-3.5 text-brand-600" />
+                  <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ui-muted">
+                    <Sparkles className="h-3.5 w-3.5 text-ui-violet" />
                     <span>Why recommended</span>
                   </p>
-                  <ul className="flex flex-col gap-1.5 text-xs text-slate-700">
+                  <ul className="flex flex-col gap-1.5 text-xs text-ui-ink">
                     {job.match.reasons.map((r) => (
                       <li key={r} className="flex items-start gap-2">
                         <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
@@ -384,7 +384,7 @@ function JobDetailContent() {
                   <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-emerald-700">
                     Strengths
                   </p>
-                  <ul className="flex flex-col gap-1 text-xs text-slate-700">
+                  <ul className="flex flex-col gap-1 text-xs text-ui-ink">
                     {job.match.strengths.map((s) => (
                       <li key={s}>• {s}</li>
                     ))}
@@ -397,7 +397,7 @@ function JobDetailContent() {
                   <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
                     Missing Requirements & Gaps
                   </p>
-                  <ul className="flex flex-col gap-1 text-xs text-slate-700">
+                  <ul className="flex flex-col gap-1 text-xs text-ui-ink">
                     {job.match.gaps.map((g) => (
                       <li key={g}>• {g}</li>
                     ))}
@@ -419,17 +419,17 @@ function JobDetailContent() {
                     key={`${item.candidateSkill}-${item.targetSkill}`}
                     className="rounded-lg border border-sky-100 bg-sky-50/50 p-3 text-xs"
                   >
-                    <p className="flex items-center gap-1.5 font-semibold text-slate-900">
+                    <p className="flex items-center gap-1.5 font-semibold text-ui-ink">
                       <span>{item.candidateSkill}</span>
                       <ArrowRight className="h-3.5 w-3.5 text-sky-600" />
                       <span>{item.targetSkill}</span>
                     </p>
-                    <p className="mt-1 leading-relaxed text-slate-600">{item.reason}</p>
+                    <p className="mt-1 leading-relaxed text-ui-body">{item.reason}</p>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-ui-muted">
                 No transferable skill gaps needed — your direct skills already cover the core stack or none were mapped for missing tags.
               </p>
             )}
@@ -443,14 +443,14 @@ function JobDetailContent() {
               title="Job Details"
               description="Company context, seniority expectations, and role overview."
             />
-            <p className="text-sm leading-relaxed text-slate-700">{job.intelligence.summary}</p>
+            <p className="text-sm leading-relaxed text-ui-ink">{job.intelligence.summary}</p>
             <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
               {job.intelligence.companyAndRoleHighlights.map((hl) => (
                 <div
                   key={hl}
-                  className="flex items-center gap-2 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-700"
+                  className="flex items-center gap-2 rounded-lg border border-slate-100 bg-ui-canvas px-3 py-2 text-xs font-medium text-ui-ink"
                 >
-                  <Briefcase className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                  <Briefcase className="h-3.5 w-3.5 shrink-0 text-ui-muted" />
                   <span>{hl}</span>
                 </div>
               ))}
@@ -462,10 +462,10 @@ function JobDetailContent() {
               title="Responsibilities"
               description="What this role focuses on day-to-day."
             />
-            <ul className="flex flex-col gap-2.5 text-sm leading-relaxed text-slate-700">
+            <ul className="flex flex-col gap-2.5 text-sm leading-relaxed text-ui-ink">
               {job.intelligence.responsibilities.map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-600" />
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ui-wine" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -479,7 +479,7 @@ function JobDetailContent() {
             />
             <div className="flex flex-col gap-5">
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ui-muted">
                   Required Skills
                 </p>
                 {job.intelligence.requiredSkills.length > 0 ? (
@@ -494,7 +494,7 @@ function JobDetailContent() {
                           className={
                             matched
                               ? "bg-emerald-50 text-emerald-700"
-                              : "bg-slate-100 text-slate-700"
+                              : "bg-ui-linen text-ui-ink"
                           }
                         >
                           {matched ? `✓ ${skill}` : skill}
@@ -503,13 +503,13 @@ function JobDetailContent() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500">No specific keyword tags detected.</p>
+                  <p className="text-xs text-ui-muted">No specific keyword tags detected.</p>
                 )}
               </div>
 
               {job.intelligence.preferredSkills.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ui-muted">
                     Preferred / Bonus Skills
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -524,10 +524,10 @@ function JobDetailContent() {
 
               {job.intelligence.technicalRequirements.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ui-muted">
                     Technical Requirements & Engineering Scope
                   </p>
-                  <ul className="flex flex-col gap-2 text-sm leading-relaxed text-slate-700">
+                  <ul className="flex flex-col gap-2 text-sm leading-relaxed text-ui-ink">
                     {job.intelligence.technicalRequirements.map((req) => (
                       <li key={req} className="flex items-start gap-2.5">
                         <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
@@ -542,14 +542,14 @@ function JobDetailContent() {
                 <button
                   type="button"
                   onClick={() => setShowRawDescription((prev) => !prev)}
-                  className="text-xs font-medium text-brand-700 hover:underline"
+                  className="text-xs font-medium text-ui-violet hover:underline"
                 >
                   {showRawDescription
                     ? "Hide full job posting description"
                     : "Show full job posting description"}
                 </button>
                 {showRawDescription && (
-                  <p className="mt-3 whitespace-pre-line rounded-lg bg-slate-50 p-4 text-xs leading-relaxed text-slate-700">
+                  <p className="mt-3 whitespace-pre-line rounded-lg bg-ui-canvas p-4 text-xs leading-relaxed text-ui-ink">
                     {job.description}
                   </p>
                 )}

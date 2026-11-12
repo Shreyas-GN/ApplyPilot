@@ -223,12 +223,12 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
           : undefined
       }
     >
-      <div className="mb-5 rounded-xl border border-ap-line bg-ap-paper-deep/50 p-3.5">
+      <div className="mb-5 rounded-xl border border-ui-border bg-ui-linen/50 p-3.5">
         <div className="mb-2 flex items-center justify-between">
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
             Add Skill Entry
           </span>
-          <span className="text-xs text-ap-muted">
+          <span className="text-xs text-ui-muted">
             Comma-separated names allowed for batch entry
           </span>
         </div>
@@ -245,13 +245,13 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
               }
             }}
             placeholder="e.g. TypeScript, PostgreSQL"
-            className="h-9 rounded-lg border border-ap-line bg-ap-surface px-3 text-sm text-ap-ink placeholder:text-ap-muted outline-none focus:border-ap-vermilion sm:col-span-4"
+            className="h-9 rounded-lg border border-ui-border bg-ui-surface px-3 text-sm text-ui-ink placeholder:text-ui-muted outline-none focus:border-ap-vermilion sm:col-span-4"
           />
           <select
             aria-label="Skill category"
             value={categoryDraft}
             onChange={(e) => setCategoryDraft(e.target.value)}
-            className="h-9 rounded-lg border border-ap-line bg-ap-surface px-2.5 text-sm text-ap-ink outline-none focus:border-ap-vermilion sm:col-span-3"
+            className="h-9 rounded-lg border border-ui-border bg-ui-surface px-2.5 text-sm text-ui-ink outline-none focus:border-ap-vermilion sm:col-span-3"
           >
             {SKILL_CATEGORIES.map((cat) => (
               <option key={cat} value={cat}>
@@ -263,7 +263,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
             aria-label="Skill proficiency"
             value={proficiencyDraft}
             onChange={(e) => setProficiencyDraft(e.target.value)}
-            className="h-9 rounded-lg border border-ap-line bg-ap-surface px-2.5 text-sm text-ap-ink outline-none focus:border-ap-vermilion sm:col-span-3"
+            className="h-9 rounded-lg border border-ui-border bg-ui-surface px-2.5 text-sm text-ui-ink outline-none focus:border-ap-vermilion sm:col-span-3"
           >
             {PROFICIENCY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -280,7 +280,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
             value={yearsDraft}
             onChange={(e) => setYearsDraft(e.target.value)}
             placeholder="Yrs"
-            className="h-9 rounded-lg border border-ap-line bg-ap-surface px-2.5 text-sm text-ap-ink placeholder:text-ap-muted outline-none focus:border-ap-vermilion sm:col-span-2"
+            className="h-9 rounded-lg border border-ui-border bg-ui-surface px-2.5 text-sm text-ui-ink placeholder:text-ui-muted outline-none focus:border-ap-vermilion sm:col-span-2"
           />
         </div>
         <div className="mt-2.5 flex flex-col gap-2 sm:flex-row">
@@ -296,12 +296,12 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
               }
             }}
             placeholder="Evidence (optional): e.g. Shipped 4 production microservices & OSS CLI"
-            className="h-9 min-w-0 flex-1 rounded-lg border border-ap-line bg-ap-surface px-3 text-sm text-ap-ink placeholder:text-ap-muted outline-none focus:border-ap-vermilion"
+            className="h-9 min-w-0 flex-1 rounded-lg border border-ui-border bg-ui-surface px-3 text-sm text-ui-ink placeholder:text-ui-muted outline-none focus:border-ap-vermilion"
           />
           <button
             type="button"
             onClick={addSkill}
-            className="h-9 shrink-0 rounded-lg border border-ap-line bg-ap-surface px-4 text-xs font-medium text-ap-ink hover:bg-ap-surface-muted"
+            className="h-9 shrink-0 rounded-lg border border-ui-border bg-ui-surface px-4 text-xs font-medium text-ui-ink hover:bg-ui-linen"
           >
             + Add skill
           </button>
@@ -309,7 +309,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-ap-muted">
+        <p className="text-sm text-ui-muted">
           No skills recorded yet. Add your core languages, frameworks, infrastructure, or domain capabilities above.
         </p>
       ) : (
@@ -317,7 +317,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
           {grouped.map(([category, groupItems]) => (
             <div key={category} className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+                <h3 className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
                   {category} ({groupItems.length})
                 </h3>
               </div>
@@ -332,28 +332,28 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                       className={`rounded-xl border p-3 ${
                         isAi
                           ? "border-amber-300 bg-ap-butter/20"
-                          : "border-ap-line bg-ap-surface"
+                          : "border-ui-border bg-ui-surface"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-sm font-semibold text-ap-ink">
+                            <span className="text-sm font-semibold text-ui-ink">
                               {skill.name}
                             </span>
                             {skill.proficiency && (
-                              <span className="rounded-full bg-ap-paper-deep px-2 py-0.5 text-[11px] font-medium capitalize text-ap-body">
+                              <span className="rounded-full bg-ui-linen px-2 py-0.5 text-[11px] font-medium capitalize text-ui-body">
                                 {skill.proficiency}
                               </span>
                             )}
                             {skill.yearsOfExperience && (
-                              <span className="font-mono text-[11px] text-ap-muted">
+                              <span className="font-mono text-[11px] text-ui-muted">
                                 {skill.yearsOfExperience}y
                               </span>
                             )}
                           </div>
                           {skill.evidence && (
-                            <p className="mt-1 text-xs text-ap-muted">
+                            <p className="mt-1 text-xs text-ui-muted">
                               {skill.evidence}
                             </p>
                           )}
@@ -370,7 +370,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                             <button
                               type="button"
                               onClick={() => confirmItem(index)}
-                              className="rounded-full bg-ap-sage-soft px-2 py-0.5 text-[11px] font-medium text-ap-sage hover:opacity-90"
+                              className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 hover:opacity-90"
                             >
                               Confirm
                             </button>
@@ -380,7 +380,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                             onClick={() =>
                               setEditingIndex(isEditing ? null : index)
                             }
-                            className="text-xs font-medium text-ap-body hover:text-ap-ink hover:underline"
+                            className="text-xs font-medium text-ui-body hover:text-ui-ink hover:underline"
                           >
                             {isEditing ? "Done" : "Edit"}
                           </button>
@@ -396,14 +396,14 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                       </div>
 
                       {isEditing && (
-                        <div className="mt-3 grid gap-2 border-t border-ap-line pt-3 sm:grid-cols-2">
+                        <div className="mt-3 grid gap-2 border-t border-ui-border pt-3 sm:grid-cols-2">
                           <select
                             aria-label={`Edit category for ${skill.name}`}
                             value={skill.category}
                             onChange={(e) =>
                               updateItem(index, { category: e.target.value })
                             }
-                            className="h-8 rounded-md border border-ap-line bg-ap-surface px-2 text-xs text-ap-ink"
+                            className="h-8 rounded-md border border-ui-border bg-ui-surface px-2 text-xs text-ui-ink"
                           >
                             <option value="">Uncategorized</option>
                             {SKILL_CATEGORIES.map((cat) => (
@@ -418,7 +418,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                             onChange={(e) =>
                               updateItem(index, { proficiency: e.target.value })
                             }
-                            className="h-8 rounded-md border border-ap-line bg-ap-surface px-2 text-xs text-ap-ink"
+                            className="h-8 rounded-md border border-ui-border bg-ui-surface px-2 text-xs text-ui-ink"
                           >
                             {PROFICIENCY_OPTIONS.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -439,7 +439,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                               })
                             }
                             placeholder="Years"
-                            className="h-8 rounded-md border border-ap-line bg-ap-surface px-2 text-xs text-ap-ink"
+                            className="h-8 rounded-md border border-ui-border bg-ui-surface px-2 text-xs text-ui-ink"
                           />
                           <input
                             type="text"
@@ -449,7 +449,7 @@ export function SkillsEditor({ skills, onUpdated }: SkillsEditorProps) {
                               updateItem(index, { evidence: e.target.value })
                             }
                             placeholder="Evidence / project reference"
-                            className="h-8 rounded-md border border-ap-line bg-ap-surface px-2 text-xs text-ap-ink"
+                            className="h-8 rounded-md border border-ui-border bg-ui-surface px-2 text-xs text-ui-ink"
                           />
                         </div>
                       )}

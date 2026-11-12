@@ -77,15 +77,18 @@ export default function SignupPage() {
 
   if (pendingConfirmation) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
         <div className="w-full max-w-md">
-          <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
-            ApplyPilot
+          <Link href="/" className="mb-6 flex items-center justify-center gap-2.5">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
+              AP
+            </span>
+            <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
           </Link>
           <Card>
-            <h1 className="mb-1 text-xl font-semibold text-slate-900">Check your email</h1>
-            <p className="mb-4 text-sm text-slate-600">
-              We sent a confirmation link to <strong className="text-slate-900">{email}</strong>.
+            <h1 className="mb-1 text-xl font-semibold text-ui-ink">Check your email</h1>
+            <p className="mb-4 text-sm text-ui-body">
+              We sent a confirmation link to <strong className="text-ui-ink">{email}</strong>.
               Open the link to activate your account and continue onboarding.
             </p>
             {formError && (
@@ -109,7 +112,7 @@ export default function SignupPage() {
               </Button>
               <Link
                 href="/login"
-                className="text-center text-sm font-medium text-brand-600 hover:underline"
+                className="text-center text-sm font-medium text-ui-violet hover:underline"
               >
                 Already confirmed? Log in →
               </Link>
@@ -121,14 +124,17 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
-          ApplyPilot
+        <Link href="/" className="mb-6 flex items-center justify-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
+            AP
+          </span>
+          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
         </Link>
         <Card>
-          <h1 className="mb-1 text-xl font-semibold text-slate-900">Create your account</h1>
-          <p className="mb-6 text-sm text-slate-500">Find better jobs. Apply smarter.</p>
+          <h1 className="mb-1 text-xl font-semibold text-ui-ink">Create your account</h1>
+          <p className="mb-6 text-sm text-ui-muted">Find better jobs. Apply smarter.</p>
           {formError && (
             <div className="mb-4">
               <Alert tone="error">{formError}</Alert>
@@ -160,9 +166,9 @@ export default function SignupPage() {
               Create account
             </Button>
           </form>
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-sm text-ui-muted">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-brand-600 hover:underline">
+            <Link href="/login" className="font-medium text-ui-violet hover:underline">
               Log in
             </Link>
           </p>

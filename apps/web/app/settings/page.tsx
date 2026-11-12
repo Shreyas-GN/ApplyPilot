@@ -14,6 +14,8 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { Alert } from "@/components/ui/alert";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { ExtensionPairingCard } from "@/components/copilot/extension-pairing-card";
 import { useAuth } from "@/lib/auth-context";
 import { createClient } from "@/lib/supabase/client";
@@ -236,38 +238,18 @@ function SettingsContent() {
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Settings</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Manage your account, notification preferences, privacy controls, and browser extension pairing.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Account & Controls"
+        title="Settings"
+        description="Manage your account, notification preferences, privacy controls, and browser extension pairing."
+      />
 
-      <div
-        role="tablist"
-        aria-label="Settings sections"
-        className="flex flex-wrap gap-1 border-b border-slate-200"
-      >
-        {SETTINGS_TABS.map((tab) => {
-          const selected = tab.id === activeTab;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => handleTabChange(tab.id)}
-              className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-                selected
-                  ? "border-brand-600 text-brand-700"
-                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <Tabs
+        ariaLabel="Settings sections"
+        value={activeTab}
+        onChange={handleTabChange}
+        items={SETTINGS_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+      />
 
       {activeTab === "account" && (
         <div className="flex flex-col gap-6">
@@ -275,12 +257,12 @@ function SettingsContent() {
             <CardHeader title="Account" />
             <dl className="flex flex-col gap-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-500">Email</dt>
-                <dd className="font-medium text-slate-900">{user?.email}</dd>
+                <dt className="text-ui-muted">Email</dt>
+                <dd className="font-medium text-ui-ink">{user?.email}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Email verified</dt>
-                <dd className="font-medium text-slate-900">
+                <dt className="text-ui-muted">Email verified</dt>
+                <dd className="font-medium text-ui-ink">
                   {user?.emailVerified ? "Yes" : "No"}
                 </dd>
               </div>
@@ -364,11 +346,11 @@ function SettingsContent() {
             {NOTIFICATION_ITEMS.map((item) => (
               <label
                 key={item.key}
-                className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-slate-200 p-4 hover:bg-slate-50/70"
+                className="flex cursor-pointer items-start justify-between gap-4 rounded-lg border border-ui-border p-4 hover:bg-ui-canvas/70"
               >
                 <div>
-                  <p className="text-sm font-medium text-slate-900">{item.label}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">{item.description}</p>
+                  <p className="text-sm font-medium text-ui-ink">{item.label}</p>
+                  <p className="mt-0.5 text-xs text-ui-muted">{item.description}</p>
                 </div>
                 <input
                   type="checkbox"
@@ -379,7 +361,7 @@ function SettingsContent() {
                       [item.key]: e.target.checked,
                     })
                   }
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="mt-1 h-4 w-4 rounded border-ui-border text-ui-violet focus:ring-brand-500"
                 />
               </label>
             ))}
@@ -400,22 +382,22 @@ function SettingsContent() {
               description="Recent security, tailoring, and Co-pilot actions on your account."
             />
             {activityLoading ? (
-              <div className="h-20 animate-pulse rounded bg-slate-100" />
+              <div className="h-20 animate-pulse rounded bg-ui-linen" />
             ) : activity && activity.length > 0 ? (
               <ul className="flex max-h-64 flex-col divide-y divide-slate-100 overflow-y-auto text-xs">
                 {activity.slice(0, 20).map((entry) => (
                   <li key={entry.id} className="flex items-center justify-between gap-4 py-2">
-                    <span className="text-slate-700">
+                    <span className="text-ui-ink">
                       {ACTION_LABELS[entry.action] ?? entry.action}
                     </span>
-                    <span className="shrink-0 text-slate-400">
+                    <span className="shrink-0 text-ui-muted">
                       {new Date(entry.createdAt).toLocaleString()}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-slate-400">No recorded activity yet.</p>
+              <p className="text-sm text-ui-muted">No recorded activity yet.</p>
             )}
           </Card>
 
@@ -428,7 +410,7 @@ function SettingsContent() {
               <div>
                 <a
                   href="/api/account/export"
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-lg border border-ui-border bg-white px-4 py-2 text-sm font-medium text-ui-ink hover:bg-ui-canvas"
                 >
                   Export all my data (JSON)
                 </a>
@@ -436,7 +418,7 @@ function SettingsContent() {
 
               <form onSubmit={handleDeleteAccount} className="border-t border-slate-100 pt-4">
                 <p className="mb-2 text-sm font-semibold text-red-700">Danger zone</p>
-                <p className="mb-3 text-xs text-slate-500">
+                <p className="mb-3 text-xs text-ui-muted">
                   Permanently deletes your profile, stored resume files, tailored documents, tracked applications, and login account.
                 </p>
                 {deleteError && (
@@ -474,7 +456,7 @@ function SettingsContent() {
           <div className="flex justify-end">
             <Link
               href="/copilot"
-              className="text-xs font-medium text-brand-700 hover:underline"
+              className="text-xs font-medium text-ui-violet hover:underline"
             >
               Open full Browser Copilot hub →
             </Link>

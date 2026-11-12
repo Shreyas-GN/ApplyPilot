@@ -201,7 +201,7 @@ export function PreferencesForm({ profile, onUpdated }: PreferencesFormProps) {
         </SelectField>
 
         <div className="sm:col-span-2">
-          <span className="mb-1.5 block text-sm font-medium text-ap-body">
+          <span className="mb-1.5 block text-sm font-medium text-ui-body">
             Employment type
           </span>
           <div className="flex flex-wrap gap-2">
@@ -214,8 +214,8 @@ export function PreferencesForm({ profile, onUpdated }: PreferencesFormProps) {
                   onClick={() => toggleEmploymentType(opt.value)}
                   className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
                     active
-                      ? "border-ap-ink bg-ap-ink text-ap-surface"
-                      : "border-ap-line bg-ap-paper-deep text-ap-body hover:text-ap-ink"
+                      ? "border-ap-ink bg-ui-wine text-ap-surface"
+                      : "border-ui-border bg-ui-linen text-ui-body hover:text-ui-ink"
                   }`}
                 >
                   {opt.label}

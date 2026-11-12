@@ -39,12 +39,12 @@ function VerifyEmailStatus() {
     };
   }, [tokenHash, type]);
 
-  if (state === "verifying") return <p className="text-sm text-slate-500">Verifying your email…</p>;
+  if (state === "verifying") return <p className="text-sm text-ui-muted">Verifying your email…</p>;
   if (state === "success") {
     return (
       <div className="flex flex-col gap-3">
         <Alert tone="success">Your email has been verified. Thanks!</Alert>
-        <Link href="/dashboard" className="text-sm font-medium text-brand-600 hover:underline">
+        <Link href="/dashboard" className="text-sm font-medium text-ui-violet hover:underline">
           Continue to dashboard →
         </Link>
       </div>
@@ -55,13 +55,13 @@ function VerifyEmailStatus() {
 
 export default function VerifyEmailPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-brand-700">
+        <Link href="/" className="mb-6 block text-center text-lg font-semibold text-ui-violet">
           ApplyPilot
         </Link>
         <Card>
-          <h1 className="mb-6 text-xl font-semibold text-slate-900">Email verification</h1>
+          <h1 className="mb-6 text-xl font-semibold text-ui-ink">Email verification</h1>
           <Suspense fallback={null}>
             <VerifyEmailStatus />
           </Suspense>

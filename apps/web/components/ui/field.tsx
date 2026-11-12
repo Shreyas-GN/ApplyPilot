@@ -15,20 +15,23 @@ interface FieldWrapperProps {
 
 function FieldWrapper({ label, htmlFor, error, hint, children }: FieldWrapperProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="text-sm font-medium text-slate-700">
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={htmlFor} className="text-[13px] font-medium text-ui-ink">
         {label}
       </label>
       {children}
-      {hint && !error && <p className="text-xs text-slate-500">{hint}</p>}
+      {hint && !error && <p className="text-xs text-ui-muted">{hint}</p>}
       {error && (
-        <p className="text-xs text-red-600" role="alert">
+        <p className="text-xs text-red-700" role="alert">
           {error}
         </p>
       )}
     </div>
   );
 }
+
+const BASE_INPUT_CLASSES =
+  "rounded-[10px] border bg-ui-surface px-3 py-2 text-sm text-ui-ink placeholder:text-ui-muted outline-none transition-colors focus:border-ui-violet focus:ring-2 focus:ring-ui-lilac/60";
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -37,9 +40,6 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function TextField({ label, error, hint, id, name, className = "", ...props }: TextFieldProps) {
-  // `name` defaults from the label the same way `id` does — every call
-  // site gets a real HTML name attribute (autofill, accessibility tooling,
-  // querying) without having to pass one explicitly every time.
   const fieldName = name ?? label;
   const fieldId = id ?? fieldName;
   return (
@@ -48,8 +48,8 @@ export function TextField({ label, error, hint, id, name, className = "", ...pro
         id={fieldId}
         name={fieldName}
         aria-invalid={Boolean(error)}
-        className={`rounded-lg border px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-brand-400 ${
-          error ? "border-red-400" : "border-slate-300"
+        className={`${BASE_INPUT_CLASSES} ${
+          error ? "border-red-400" : "border-ui-border"
         } ${className}`}
         {...props}
       />
@@ -80,8 +80,8 @@ export function TextAreaField({
         id={fieldId}
         name={fieldName}
         aria-invalid={Boolean(error)}
-        className={`rounded-lg border px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-brand-400 ${
-          error ? "border-red-400" : "border-slate-300"
+        className={`${BASE_INPUT_CLASSES} ${
+          error ? "border-red-400" : "border-ui-border"
         } ${className}`}
         {...props}
       />
@@ -103,8 +103,8 @@ export function SelectField({ label, error, id, name, className = "", children, 
       <select
         id={fieldId}
         name={fieldName}
-        className={`rounded-lg border px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:ring-2 focus:ring-brand-400 ${
-          error ? "border-red-400" : "border-slate-300"
+        className={`${BASE_INPUT_CLASSES} ${
+          error ? "border-red-400" : "border-ui-border"
         } ${className}`}
         {...props}
       >

@@ -20,6 +20,7 @@ import {
   ProfileReadinessPanel,
   RecentActivityPanel,
 } from "@/components/dashboard/command-center-panels";
+import { StatCard } from "@/components/ui/card";
 import { summarizeApplicationProgress } from "@/lib/dashboard-helpers";
 import { useAuth } from "@/lib/auth-context";
 import { useApi } from "@/lib/use-api";
@@ -102,36 +103,36 @@ function DashboardContent() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-10">
+    <div className="space-y-6 pb-10">
       {/* 1. Welcome & Overview */}
-      <header className="rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6">
+      <header className="rounded-2xl border border-ui-border bg-ui-surface p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
-            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-ui-violet">
               Job Search Command Center
             </span>
-            <h1 className="mt-1 font-display text-[28px] leading-[1.15] tracking-[-0.02em] text-ap-ink sm:text-[34px]">
+            <h1 className="mt-1.5 text-[28px] font-semibold leading-[1.15] tracking-[-0.022em] text-ui-ink sm:text-[32px]">
               Welcome back{firstName ? `, ${firstName}` : ""}
             </h1>
-            <p className="mt-1.5 text-sm text-ap-body">{buildOverviewSummary()}</p>
+            <p className="mt-1.5 text-sm text-ui-body">{buildOverviewSummary()}</p>
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Link
               href="/jobs"
-              className="inline-flex h-9 items-center justify-center rounded-full bg-ap-ink px-4 text-xs font-medium text-ap-surface transition hover:bg-ap-body"
+              className="inline-flex h-9 items-center justify-center rounded-[10px] bg-ui-wine px-4 text-xs font-medium text-white transition-colors hover:bg-ui-wine-hover"
             >
               Discover Jobs
             </Link>
             <Link
               href="/profile"
-              className="inline-flex h-9 items-center justify-center rounded-full border border-ap-line bg-ap-paper-deep px-4 text-xs font-medium text-ap-ink transition hover:bg-ap-surface-muted"
+              className="inline-flex h-9 items-center justify-center rounded-[10px] border border-ui-border bg-ui-surface px-4 text-xs font-medium text-ui-ink transition-colors hover:bg-ui-linen/70"
             >
               Candidate Profile
             </Link>
             <Link
               href="/studio"
-              className="inline-flex h-9 items-center justify-center rounded-full border border-ap-line bg-ap-surface px-4 text-xs font-medium text-ap-ink transition hover:bg-ap-paper-deep"
+              className="inline-flex h-9 items-center justify-center rounded-[10px] bg-ui-lilac-soft px-4 text-xs font-medium text-ui-ink transition-colors hover:bg-ui-lilac/70"
             >
               Resume Studio
             </Link>
@@ -151,6 +152,34 @@ function DashboardContent() {
           </div>
         )}
       </header>
+
+      {/* Bevel-inspired Tabular Metric Strip */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          label="Matched Roles"
+          value={jobsLoading ? "—" : (jobs?.length ?? 0)}
+          hint={adjacentCount > 0 ? `${adjacentCount} adjacent roles` : "Ranked for your profile"}
+          tone="accent"
+        />
+        <StatCard
+          label="Active Pipeline"
+          value={appsLoading ? "—" : appSummary.activeCount}
+          hint={`${appSummary.total} total tracked`}
+          tone="neutral"
+        />
+        <StatCard
+          label="Profile Readiness"
+          value={profileLoading ? "—" : `${profile?.intelligence?.confirmedPercent ?? profile?.completionPercent ?? 0}%`}
+          hint="Confirmed career facts"
+          tone="success"
+        />
+        <StatCard
+          label="Resumes"
+          value={resumesLoading ? "—" : (resumes?.length ?? 0)}
+          hint="Master & tailored files"
+          tone="neutral"
+        />
+      </div>
 
       {/* 2. Opportunity Snapshot (Primary Visual Priority) */}
       <OpportunitySnapshot

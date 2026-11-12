@@ -94,7 +94,7 @@ export function ExtensionPairingCard({
             Copy this pairing token now — it won&apos;t be shown again:
           </p>
           <div className="mt-2 flex items-center gap-2">
-            <code className="flex-1 overflow-x-auto rounded bg-white px-2.5 py-1.5 font-mono text-xs text-slate-900">
+            <code className="flex-1 overflow-x-auto rounded bg-white px-2.5 py-1.5 font-mono text-xs text-ui-ink">
               {pairingToken}
             </code>
             <Button
@@ -116,18 +116,18 @@ export function ExtensionPairingCard({
       )}
 
       <div className="mt-5">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ui-muted">
           Extension sessions
         </p>
         {sessionsLoading ? (
-          <div className="h-12 animate-pulse rounded bg-slate-100" />
+          <div className="h-12 animate-pulse rounded bg-ui-linen" />
         ) : sessions && sessions.length > 0 ? (
           <ul className="flex flex-col divide-y divide-slate-100 text-sm">
             {sessions.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-3 py-2.5">
                 <div>
-                  <p className="font-medium text-slate-900">{s.label}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-medium text-ui-ink">{s.label}</p>
+                  <p className="text-xs text-ui-muted">
                     Created {new Date(s.createdAt).toLocaleDateString()}
                     {s.lastUsedAt
                       ? ` · Last used ${new Date(s.lastUsedAt).toLocaleString()}`
@@ -135,7 +135,7 @@ export function ExtensionPairingCard({
                   </p>
                 </div>
                 {s.revokedAt ? (
-                  <Badge className="bg-slate-100 text-slate-500">Revoked</Badge>
+                  <Badge className="bg-ui-linen text-ui-muted">Revoked</Badge>
                 ) : (
                   <button
                     type="button"
@@ -149,7 +149,7 @@ export function ExtensionPairingCard({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-slate-400">No paired extension sessions yet.</p>
+          <p className="text-sm text-ui-muted">No paired extension sessions yet.</p>
         )}
       </div>
     </Card>

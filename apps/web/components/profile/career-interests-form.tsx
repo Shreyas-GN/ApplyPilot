@@ -207,16 +207,16 @@ export function CareerInterestsForm({
       </div>
 
       {aiSuggestedRoles.length > 0 && (
-        <div className="mt-6 rounded-xl border border-ap-vermilion/20 bg-ap-paper-deep/60 p-4">
+        <div className="mt-6 rounded-xl border border-ap-vermilion/20 bg-ui-linen/60 p-4">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-semibold text-ap-ink">
+                <h3 className="text-sm font-semibold text-ui-ink">
                   Suggested career tracks to consider
                 </h3>
                 <ProvenanceBadge kind="ai_suggested" />
               </div>
-              <p className="mt-0.5 text-xs text-ap-muted">
+              <p className="mt-0.5 text-xs text-ui-muted">
                 Generated from your user-confirmed skills and history. These remain unverified suggestions until you add them.
               </p>
             </div>
@@ -228,18 +228,18 @@ export function CareerInterestsForm({
               return (
                 <div
                   key={suggestion.role}
-                  className="flex flex-col justify-between gap-2.5 rounded-lg border border-ap-line bg-ap-surface p-3"
+                  className="flex flex-col justify-between gap-2.5 rounded-lg border border-ui-border bg-ui-surface p-3"
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-ap-ink">
+                      <span className="text-sm font-semibold text-ui-ink">
                         {suggestion.role}
                       </span>
-                      <span className="font-mono text-[11px] uppercase text-ap-muted">
+                      <span className="font-mono text-[11px] uppercase text-ui-muted">
                         {suggestion.kind === "adjacent" ? "Adjacent" : "Core fit"}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-ap-muted">{suggestion.reason}</p>
+                    <p className="mt-1 text-xs text-ui-muted">{suggestion.reason}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     <button
@@ -248,7 +248,7 @@ export function CareerInterestsForm({
                       onClick={() =>
                         handleAcceptSuggestion(suggestion.role, "desired")
                       }
-                      className="rounded-full bg-ap-sage-soft px-2.5 py-1 text-xs font-medium text-ap-sage hover:opacity-90 disabled:opacity-50"
+                      className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:opacity-90 disabled:opacity-50"
                     >
                       + Roles I want
                     </button>
@@ -258,7 +258,7 @@ export function CareerInterestsForm({
                       onClick={() =>
                         handleAcceptSuggestion(suggestion.role, "adjacent")
                       }
-                      className="rounded-full border border-ap-line bg-ap-paper-deep px-2.5 py-1 text-xs font-medium text-ap-ink hover:bg-ap-surface-muted disabled:opacity-50"
+                      className="rounded-full border border-ui-border bg-ui-linen px-2.5 py-1 text-xs font-medium text-ui-ink hover:bg-ui-linen disabled:opacity-50"
                     >
                       + Adjacent
                     </button>
@@ -266,7 +266,7 @@ export function CareerInterestsForm({
                       type="button"
                       disabled={busy}
                       onClick={() => handleDismissSuggestion(suggestion.role)}
-                      className="ml-auto text-xs text-ap-muted hover:text-ap-ink disabled:opacity-50"
+                      className="ml-auto text-xs text-ui-muted hover:text-ui-ink disabled:opacity-50"
                     >
                       Dismiss
                     </button>

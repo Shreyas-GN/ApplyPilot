@@ -15,7 +15,7 @@ export function ProvenanceBadge({
 }) {
   if (kind === "empty") {
     return (
-      <span className="inline-flex items-center rounded-full border border-ap-line bg-ap-surface-muted px-2.5 py-0.5 font-mono text-[11px] font-medium text-ap-muted">
+      <span className="inline-flex items-center rounded-full border border-ui-border bg-ui-linen px-2.5 py-0.5 font-mono text-[11px] font-medium text-ui-muted">
         Not yet added
       </span>
     );
@@ -23,7 +23,7 @@ export function ProvenanceBadge({
 
   if (kind === "user") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-ap-sage-soft px-2.5 py-0.5 font-mono text-[11px] font-medium text-ap-sage">
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 font-mono text-[11px] font-medium text-emerald-700">
         <span aria-hidden="true">✓</span> User-confirmed
       </span>
     );
@@ -31,7 +31,7 @@ export function ProvenanceBadge({
 
   if (kind === "ai_suggested") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-ap-vermilion-soft px-2.5 py-0.5 font-mono text-[11px] font-medium text-ap-vermilion">
+      <span className="inline-flex items-center gap-1 rounded-full bg-ui-lilac-soft px-2.5 py-0.5 font-mono text-[11px] font-medium text-ui-violet">
         AI-suggested · unverified
       </span>
     );
@@ -43,7 +43,7 @@ export function ProvenanceBadge({
       : "";
 
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-ap-butter px-2.5 py-0.5 font-mono text-[11px] font-medium text-ap-ink">
+    <span className="inline-flex items-center gap-1 rounded-full bg-ap-butter px-2.5 py-0.5 font-mono text-[11px] font-medium text-ui-ink">
       AI-extracted{pct} · verify
     </span>
   );
@@ -90,23 +90,23 @@ export function SectionFrame({
     <section
       id={id}
       aria-labelledby={`${id}-heading`}
-      className="scroll-mt-24 rounded-[14px] border border-ap-line bg-ap-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
+      className="scroll-mt-24 rounded-[14px] border border-ui-border bg-ui-surface p-5 shadow-[0_1px_2px_rgba(30,25,21,0.04)] sm:p-6"
     >
-      <div className="mb-5 flex flex-col gap-3 border-b border-ap-line pb-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mb-5 flex flex-col gap-3 border-b border-ui-border pb-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ap-muted">
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-ui-muted">
               {sectionNumber} · {eyebrow}
             </span>
             <ProvenanceBadge kind={provenance} />
           </div>
           <h2
             id={`${id}-heading`}
-            className="font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ap-ink"
+            className="font-display text-[22px] leading-[1.2] tracking-[-0.015em] text-ui-ink"
           >
             {title}
           </h2>
-          <p className="mt-1 text-sm text-ap-muted">{description}</p>
+          <p className="mt-1 text-sm text-ui-muted">{description}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
@@ -115,7 +115,7 @@ export function SectionFrame({
               type="button"
               onClick={confirmAction.onClick}
               disabled={confirmAction.loading}
-              className="inline-flex h-9 items-center justify-center rounded-full border border-ap-sage bg-ap-sage-soft px-3.5 text-xs font-medium text-ap-sage transition hover:opacity-90 disabled:opacity-50"
+              className="inline-flex h-9 items-center justify-center rounded-full border border-ap-sage bg-emerald-50 px-3.5 text-xs font-medium text-emerald-700 transition hover:opacity-90 disabled:opacity-50"
             >
               {confirmAction.loading ? "Confirming…" : confirmAction.label}
             </button>
@@ -126,7 +126,7 @@ export function SectionFrame({
               type="button"
               onClick={onSave}
               loading={saving}
-              className="rounded-full bg-ap-ink px-4 text-xs font-medium text-ap-surface hover:bg-ap-body"
+              className="rounded-full bg-ui-wine px-4 text-xs font-medium text-ap-surface hover:bg-ap-body"
             >
               {saveLabel}
             </Button>
@@ -206,18 +206,18 @@ export function TagListInput({
 
   const chipTone =
     tone === "sage"
-      ? "border-ap-sage/30 bg-ap-sage-soft text-ap-sage"
+      ? "border-ap-sage/30 bg-emerald-50 text-emerald-700"
       : tone === "vermilion"
-        ? "border-ap-vermilion/25 bg-ap-vermilion-soft text-ap-vermilion"
-        : "border-ap-line bg-ap-paper-deep text-ap-ink";
+        ? "border-ap-vermilion/25 bg-ui-lilac-soft text-ui-violet"
+        : "border-ui-border bg-ui-linen text-ui-ink";
 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <label htmlFor={inputId} className="text-sm font-medium text-ap-body">
+        <label htmlFor={inputId} className="text-sm font-medium text-ui-body">
           {label}
         </label>
-        {hint && <span className="text-xs text-ap-muted">{hint}</span>}
+        {hint && <span className="text-xs text-ui-muted">{hint}</span>}
       </div>
 
       {items.length > 0 && (
@@ -250,12 +250,12 @@ export function TagListInput({
           onKeyDown={handleKeyDown}
           onBlur={commitDraft}
           placeholder={placeholder}
-          className="h-9 min-w-0 flex-1 rounded-lg border border-ap-line bg-ap-surface px-3 text-sm text-ap-ink placeholder:text-ap-muted outline-none focus:border-ap-vermilion"
+          className="h-9 min-w-0 flex-1 rounded-lg border border-ui-border bg-ui-surface px-3 text-sm text-ui-ink placeholder:text-ui-muted outline-none focus:border-ap-vermilion"
         />
         <button
           type="button"
           onClick={commitDraft}
-          className="h-9 shrink-0 rounded-lg border border-ap-line bg-ap-paper-deep px-3 text-xs font-medium text-ap-ink hover:bg-ap-surface-muted"
+          className="h-9 shrink-0 rounded-lg border border-ui-border bg-ui-linen px-3 text-xs font-medium text-ui-ink hover:bg-ui-linen"
         >
           Add
         </button>
@@ -316,23 +316,23 @@ export function BulletListInput({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <label htmlFor={inputId} className="text-sm font-medium text-ap-body">
+        <label htmlFor={inputId} className="text-sm font-medium text-ui-body">
           {label}
         </label>
-        {hint && <span className="text-xs text-ap-muted">{hint}</span>}
+        {hint && <span className="text-xs text-ui-muted">{hint}</span>}
       </div>
 
       {items.length > 0 && (
         <ul className="space-y-1.5">
           {items.map((item, index) => (
             <li key={`${index}-${item.slice(0, 12)}`} className="flex items-center gap-2">
-              <span className="font-mono text-xs text-ap-muted">•</span>
+              <span className="font-mono text-xs text-ui-muted">•</span>
               <input
                 type="text"
                 value={item}
                 aria-label={`${label} item ${index + 1}`}
                 onChange={(e) => updateLine(index, e.target.value)}
-                className="h-8 min-w-0 flex-1 rounded-md border border-ap-line bg-ap-surface px-2.5 text-sm text-ap-ink outline-none focus:border-ap-vermilion"
+                className="h-8 min-w-0 flex-1 rounded-md border border-ui-border bg-ui-surface px-2.5 text-sm text-ui-ink outline-none focus:border-ap-vermilion"
               />
               <button
                 type="button"
@@ -360,12 +360,12 @@ export function BulletListInput({
             }
           }}
           placeholder={placeholder}
-          className="h-9 min-w-0 flex-1 rounded-lg border border-ap-line bg-ap-surface px-3 text-sm text-ap-ink placeholder:text-ap-muted outline-none focus:border-ap-vermilion"
+          className="h-9 min-w-0 flex-1 rounded-lg border border-ui-border bg-ui-surface px-3 text-sm text-ui-ink placeholder:text-ui-muted outline-none focus:border-ap-vermilion"
         />
         <button
           type="button"
           onClick={addBullet}
-          className="h-9 shrink-0 rounded-lg border border-ap-line bg-ap-paper-deep px-3 text-xs font-medium text-ap-ink hover:bg-ap-surface-muted"
+          className="h-9 shrink-0 rounded-lg border border-ui-border bg-ui-linen px-3 text-xs font-medium text-ui-ink hover:bg-ui-linen"
         >
           Add
         </button>

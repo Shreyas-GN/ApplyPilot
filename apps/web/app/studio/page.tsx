@@ -6,6 +6,8 @@ import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { MyResumesPanel } from "@/components/studio/my-resumes-panel";
 import { TailoringStudioPanel } from "@/components/studio/tailoring-studio-panel";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 
 type StudioTab = "resumes" | "tailored" | "cover-letters";
 
@@ -65,36 +67,18 @@ function StudioContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Resume Studio</h1>
-        <p className="mt-1 text-sm text-slate-500">{currentTabMeta?.description}</p>
-      </div>
+      <PageHeader
+        eyebrow="Adaptive Resume Engine"
+        title="Resume Studio"
+        description={currentTabMeta?.description}
+      />
 
-      <div
-        role="tablist"
-        aria-label="Resume Studio sections"
-        className="flex flex-wrap gap-1 border-b border-slate-200"
-      >
-        {TABS.map((tab) => {
-          const selected = tab.id === activeTab;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => handleTabChange(tab.id)}
-              className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-                selected
-                  ? "border-brand-600 text-brand-700"
-                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <Tabs
+        ariaLabel="Resume Studio sections"
+        value={activeTab}
+        onChange={handleTabChange}
+        items={TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+      />
 
       {activeTab === "resumes" && <MyResumesPanel embedded />}
       {activeTab === "tailored" && (

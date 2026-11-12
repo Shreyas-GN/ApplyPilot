@@ -19,6 +19,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge, StatusBadge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { api, ApiError } from "@/lib/api-client";
 import { formatFreshness, scoreTone } from "@/lib/job-ui";
 
@@ -319,49 +321,30 @@ function JobsContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Discover Jobs</h1>
-          <p className="mt-1 text-sm text-slate-500">{activeMeta?.description}</p>
-        </div>
-        <Button onClick={handleSync} loading={syncing} variant="secondary">
-          Sync live jobs
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow="Opportunity Intelligence"
+        title="Discover Jobs"
+        description={activeMeta?.description}
+        actions={
+          <Button onClick={handleSync} loading={syncing} variant="secondary">
+            Sync live jobs
+          </Button>
+        }
+      />
 
-      {/* Sitemap tabs */}
-      <div
-        role="tablist"
-        aria-label="Discover Jobs views"
-        className="flex flex-wrap gap-1 border-b border-slate-200"
-      >
-        {UI_TABS.map((tab) => {
-          const selected = tab.id === activeTab;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => handleTabChange(tab.id)}
-              className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-                selected
-                  ? "border-brand-600 text-brand-700"
-                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <Tabs
+        ariaLabel="Discover Jobs views"
+        value={activeTab}
+        onChange={handleTabChange}
+        items={UI_TABS.map((tab) => ({ id: tab.id, label: tab.label }))}
+      />
 
       {activeTab === "adjacent" && (
-        <div className="flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50/70 p-4 text-sm text-slate-700">
-          <Compass className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+        <div className="flex items-start gap-3 rounded-xl border border-ui-lilac bg-ui-lilac-soft p-4 text-sm text-ui-ink">
+          <Compass className="mt-0.5 h-5 w-5 shrink-0 text-ui-violet" />
           <div>
-            <p className="font-semibold text-slate-900">Adjacent-role discovery</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-600">
+            <p className="font-semibold text-ui-ink">Adjacent-role discovery</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-ui-body">
               These roles have titles outside your primary search targets, yet strongly overlap with your verified skills and transferable capabilities.
             </p>
           </div>
@@ -372,14 +355,14 @@ function JobsContent() {
       {syncMessage && <Alert tone="success">{syncMessage}</Alert>}
 
       {lastDismissed && (
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-xs">
-          <span className="text-slate-700">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-ui-border bg-white px-4 py-2.5 text-sm shadow-xs">
+          <span className="text-ui-ink">
             Dismissed <strong>{lastDismissed.title}</strong> at {lastDismissed.company}.
           </span>
           <button
             type="button"
             onClick={() => handleRestoreDismissed(lastDismissed.id)}
-            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-50"
+            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold text-ui-violet hover:bg-ui-lilac-soft"
           >
             <Undo2 className="h-3.5 w-3.5" />
             <span>Undo</span>
@@ -392,13 +375,13 @@ function JobsContent() {
         <form onSubmit={handleSearch} className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative min-w-[240px] flex-1">
-              <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-ui-muted" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search by title, company, skill, or location..."
-                className="w-full rounded-lg border border-slate-300 py-2 pr-3 pl-9 text-sm text-slate-900 focus:border-brand-500 focus:outline-none"
+                className="w-full rounded-lg border border-ui-border py-2 pr-3 pl-9 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
               />
             </div>
             <Button type="submit">Apply filters</Button>
@@ -413,7 +396,7 @@ function JobsContent() {
                 setWorkMode(next);
                 void fetchJobs({ workMode: next });
               }}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 focus:border-brand-500 focus:outline-none"
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               <option value="all">All work modes</option>
               <option value="remote">Remote</option>
@@ -429,7 +412,7 @@ function JobsContent() {
                 setFreshness(next);
                 void fetchJobs({ freshness: next });
               }}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 focus:border-brand-500 focus:outline-none"
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               <option value="all">Any time</option>
               <option value="24h">Last 24 hours</option>
@@ -445,7 +428,7 @@ function JobsContent() {
                 setMinScore(next);
                 void fetchJobs({ minScore: next });
               }}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 focus:border-brand-500 focus:outline-none"
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               <option value="0">Any match score</option>
               <option value="50">50%+ Match</option>
@@ -461,7 +444,7 @@ function JobsContent() {
                 setSeniority(next);
                 void fetchJobs({ seniority: next });
               }}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 focus:border-brand-500 focus:outline-none"
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               <option value="all">All levels</option>
               <option value="junior">Entry / Junior</option>
@@ -471,7 +454,7 @@ function JobsContent() {
             </select>
 
             {activeTab !== "saved" && (
-              <label className="ml-auto flex cursor-pointer items-center gap-2 text-xs text-slate-600">
+              <label className="ml-auto flex cursor-pointer items-center gap-2 text-xs text-ui-body">
                 <input
                   type="checkbox"
                   checked={includeDismissed}
@@ -480,7 +463,7 @@ function JobsContent() {
                     setIncludeDismissed(next);
                     void fetchJobs({ includeDismissed: next });
                   }}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="rounded border-ui-border text-ui-violet focus:ring-brand-500"
                 />
                 <span>Show dismissed</span>
               </label>
@@ -492,20 +475,20 @@ function JobsContent() {
       {loading ? (
         <div className="flex flex-col gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-36 animate-pulse rounded-xl bg-slate-100" />
+            <div key={i} className="h-36 animate-pulse rounded-xl bg-ui-linen" />
           ))}
         </div>
       ) : jobs.length === 0 ? (
         <Card>
           <div className="py-10 text-center">
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-ui-ink">
               {activeTab === "saved"
                 ? "No saved jobs yet."
                 : activeTab === "adjacent"
                   ? "No adjacent roles matched your current skills and filters."
                   : "No jobs found matching your filters."}
             </p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-ui-muted">
               {activeTab === "saved"
                 ? "Save roles from For You or Search Jobs to review and tailor applications later."
                 : 'Try adjusting your filters or click "Sync live jobs" above to pull fresh postings.'}
@@ -525,7 +508,7 @@ function JobsContent() {
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         href={`/jobs/${job.id}`}
-                        className="text-lg font-semibold text-slate-900 hover:text-brand-700 hover:underline"
+                        className="text-lg font-semibold text-ui-ink hover:text-ui-violet hover:underline"
                       >
                         {job.title}
                       </Link>
@@ -537,27 +520,27 @@ function JobsContent() {
                         {job.match.score}% Match
                       </span>
                       {job.match.isAdjacentRole && (
-                        <Badge className="bg-brand-50 text-brand-700">
+                        <Badge className="bg-ui-lilac-soft text-ui-violet">
                           Adjacent Role
                         </Badge>
                       )}
                       {job.applicationStatus && <StatusBadge status={job.applicationStatus} />}
                       {isDismissed && (
-                        <Badge className="bg-slate-100 text-slate-500">Dismissed</Badge>
+                        <Badge className="bg-ui-linen text-ui-muted">Dismissed</Badge>
                       )}
                     </div>
 
-                    <p className="mt-1 text-sm text-slate-600">
-                      <span className="font-medium text-slate-800">{job.company}</span>
+                    <p className="mt-1 text-sm text-ui-body">
+                      <span className="font-medium text-ui-ink">{job.company}</span>
                       {job.location ? ` · ${job.location}` : ""}
                       {job.workMode ? ` · ${job.workMode}` : ""}
                       {" · "}
-                      <span className="text-slate-500">
+                      <span className="text-ui-muted">
                         {formatFreshness(job.postedAt, job.createdAt)}
                       </span>
                     </p>
 
-                    <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                    <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-ui-muted">
                       <span>Skills fit: {job.match.skillsScore}%</span>
                       <span>Experience fit: {job.match.experienceScore}%</span>
                     </div>
@@ -566,7 +549,7 @@ function JobsContent() {
                       <p className="mt-2 text-xs text-brand-800">{job.match.adjacencyReason}</p>
                     ) : (
                       job.match.reasons.length > 0 && (
-                        <ul className="mt-2 flex flex-col gap-0.5 text-xs text-slate-600">
+                        <ul className="mt-2 flex flex-col gap-0.5 text-xs text-ui-body">
                           {job.match.reasons.slice(0, 2).map((reason) => (
                             <li key={reason}>• {reason}</li>
                           ))}
@@ -600,7 +583,7 @@ function JobsContent() {
                           )
                           .slice(0, 4)
                           .map((skill) => (
-                            <Badge key={`s-${skill}`} className="bg-slate-100 text-slate-600">
+                            <Badge key={`s-${skill}`} className="bg-ui-linen text-ui-body">
                               {skill}
                             </Badge>
                           ))}
@@ -611,7 +594,7 @@ function JobsContent() {
                   <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <Link href={`/jobs/${job.id}`}>
                       <Button variant="secondary" className="px-3 py-1.5 text-xs">
-                        <Sparkles className="mr-1.5 inline h-3.5 w-3.5 text-brand-600" />
+                        <Sparkles className="mr-1.5 inline h-3.5 w-3.5 text-ui-violet" />
                         Intelligence
                       </Button>
                     </Link>
@@ -620,7 +603,7 @@ function JobsContent() {
                       href={job.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      className="inline-flex items-center gap-1 rounded-lg border border-ui-border px-2.5 py-1.5 text-xs font-medium text-ui-ink hover:bg-ui-canvas"
                     >
                       <span>Original</span>
                       <ExternalLink className="h-3 w-3" />
@@ -658,7 +641,7 @@ function JobsContent() {
                         type="button"
                         onClick={() => handleDismiss(job)}
                         title="Dismiss job from feed"
-                        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-ui-muted hover:bg-ui-linen hover:text-ui-ink"
                       >
                         <EyeOff className="h-3.5 w-3.5" />
                         <span>Dismiss</span>

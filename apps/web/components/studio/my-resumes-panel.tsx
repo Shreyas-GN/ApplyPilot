@@ -89,7 +89,7 @@ export function MyResumesPanel({ embedded = false }: { embedded?: boolean }) {
     <div className="flex flex-col gap-6">
       {!embedded && (
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-slate-900">Resumes</h1>
+          <h1 className="text-2xl font-semibold text-ui-ink">Resumes</h1>
           {uploadControl}
         </div>
       )}
@@ -107,13 +107,13 @@ export function MyResumesPanel({ embedded = false }: { embedded?: boolean }) {
         {loading ? (
           <div className="flex flex-col gap-3">
             {[1, 2].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100" />
+              <div key={i} className="h-16 animate-pulse rounded-lg bg-ui-linen" />
             ))}
           </div>
         ) : error ? (
           <p className="text-sm text-red-600">Couldn&apos;t load your resumes.</p>
         ) : !resumes || resumes.length === 0 ? (
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-ui-muted">
             No resumes yet. Upload one to get started — we&apos;ll do the rest.
           </p>
         ) : (
@@ -122,14 +122,14 @@ export function MyResumesPanel({ embedded = false }: { embedded?: boolean }) {
               <li key={resume.id} className="flex flex-wrap items-center justify-between gap-4 py-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="truncate font-medium text-slate-900">{resume.versionLabel}</p>
+                    <p className="truncate font-medium text-ui-ink">{resume.versionLabel}</p>
                     {resume.isPrimary && (
-                      <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
+                      <span className="rounded-full bg-ui-lilac-soft px-2 py-0.5 text-xs font-medium text-ui-violet">
                         Primary
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ui-muted">
                     Uploaded {new Date(resume.createdAt).toLocaleDateString()} ·{" "}
                     {(resume.fileSizeBytes / 1024).toFixed(0)} KB
                   </p>

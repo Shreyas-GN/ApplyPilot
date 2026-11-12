@@ -126,20 +126,20 @@ export function ApplicationDetailPanel({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div
-        className="fixed inset-0 bg-slate-900/40"
+        className="fixed inset-0 bg-ui-ink/40"
         onClick={onClose}
         aria-hidden="true"
       />
       <aside className="relative z-10 flex h-full w-full max-w-2xl flex-col overflow-y-auto bg-white shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-6 py-4">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-ui-border bg-white px-6 py-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate text-lg font-semibold text-slate-900">
+              <h2 className="truncate text-lg font-semibold text-ui-ink">
                 {application.title}
               </h2>
               <StatusBadge status={application.status} />
             </div>
-            <p className="mt-0.5 text-sm text-slate-600">
+            <p className="mt-0.5 text-sm text-ui-body">
               {application.company}
               {application.location ? ` · ${application.location}` : ""}
               {application.matchScore !== null ? ` · ${application.matchScore}% match` : ""}
@@ -149,7 +149,7 @@ export function ApplicationDetailPanel({
             type="button"
             onClick={onClose}
             aria-label="Close application details"
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-ui-muted hover:bg-ui-linen hover:text-ui-body"
           >
             <X className="h-5 w-5" />
           </button>
@@ -160,9 +160,9 @@ export function ApplicationDetailPanel({
           {saveNotice && <Alert tone="success">{saveNotice}</Alert>}
 
           {/* Stage & Quick Links */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ui-border bg-ui-canvas/60 p-4">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <label className="text-xs font-semibold uppercase tracking-wide text-ui-muted">
                 Stage
               </label>
               <select
@@ -174,7 +174,7 @@ export function ApplicationDetailPanel({
                     "Stage updated."
                   )
                 }
-                className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:border-brand-500 focus:outline-none"
+                className="rounded-lg border border-ui-border bg-white px-2.5 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
               >
                 {STATUSES.map((st) => (
                   <option key={st} value={st}>
@@ -207,7 +207,7 @@ export function ApplicationDetailPanel({
                   href={application.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                  className="inline-flex items-center gap-1 rounded-lg border border-ui-border bg-white px-2.5 py-1.5 text-xs font-medium text-ui-ink hover:bg-ui-canvas"
                 >
                   <span>Posting</span>
                   <ExternalLink className="h-3 w-3" />
@@ -218,13 +218,13 @@ export function ApplicationDetailPanel({
 
           {/* Application Readiness Checklist */}
           {readiness && (
-            <div className="rounded-xl border border-slate-200 p-4">
+            <div className="rounded-xl border border-ui-border p-4">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900">
+                  <h3 className="text-sm font-semibold text-ui-ink">
                     Application Readiness Checklist
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-ui-muted">
                     Verify materials and final answers before submitting.
                   </p>
                 </div>
@@ -232,7 +232,7 @@ export function ApplicationDetailPanel({
                   className={
                     readiness.completedCount === readiness.totalCount
                       ? "bg-emerald-50 text-emerald-700"
-                      : "bg-brand-50 text-brand-700"
+                      : "bg-ui-lilac-soft text-ui-violet"
                   }
                 >
                   {`${readiness.completedCount}/${readiness.totalCount} ready`}
@@ -240,7 +240,7 @@ export function ApplicationDetailPanel({
               </div>
 
               <ul className="flex flex-col gap-2 text-xs">
-                <li className="flex items-center justify-between gap-2 text-slate-700">
+                <li className="flex items-center justify-between gap-2 text-ui-ink">
                   <span className="flex items-center gap-2">
                     {readiness.profileComplete ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -250,12 +250,12 @@ export function ApplicationDetailPanel({
                     <span>Candidate profile is at least 70% complete</span>
                   </span>
                   {!readiness.profileComplete && (
-                    <Link href="/profile" className="font-medium text-brand-600 hover:underline">
+                    <Link href="/profile" className="font-medium text-ui-violet hover:underline">
                       Complete profile
                     </Link>
                   )}
                 </li>
-                <li className="flex items-center justify-between gap-2 text-slate-700">
+                <li className="flex items-center justify-between gap-2 text-ui-ink">
                   <span className="flex items-center gap-2">
                     {readiness.hasResume ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -267,13 +267,13 @@ export function ApplicationDetailPanel({
                   {!readiness.hasResume && (
                     <Link
                       href="/studio?tab=resumes"
-                      className="font-medium text-brand-600 hover:underline"
+                      className="font-medium text-ui-violet hover:underline"
                     >
                       Upload resume
                     </Link>
                   )}
                 </li>
-                <li className="flex items-center justify-between gap-2 text-slate-700">
+                <li className="flex items-center justify-between gap-2 text-ui-ink">
                   <span className="flex items-center gap-2">
                     {readiness.tailoredResume ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -285,13 +285,13 @@ export function ApplicationDetailPanel({
                   {!readiness.tailoredResume && (
                     <Link
                       href={`/studio?tab=tailored&applicationId=${application.id}`}
-                      className="font-medium text-brand-600 hover:underline"
+                      className="font-medium text-ui-violet hover:underline"
                     >
                       Tailor now
                     </Link>
                   )}
                 </li>
-                <li className="flex items-center justify-between gap-2 text-slate-700">
+                <li className="flex items-center justify-between gap-2 text-ui-ink">
                   <span className="flex items-center gap-2">
                     {readiness.coverLetter ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
@@ -303,14 +303,14 @@ export function ApplicationDetailPanel({
                   {!readiness.coverLetter && (
                     <Link
                       href={`/studio?tab=cover-letters&applicationId=${application.id}`}
-                      className="font-medium text-brand-600 hover:underline"
+                      className="font-medium text-ui-violet hover:underline"
                     >
                       Draft letter
                     </Link>
                   )}
                 </li>
                 <li>
-                  <label className="flex cursor-pointer items-center gap-2 text-slate-700">
+                  <label className="flex cursor-pointer items-center gap-2 text-ui-ink">
                     <input
                       type="checkbox"
                       checked={readiness.screeningPrepared}
@@ -318,13 +318,13 @@ export function ApplicationDetailPanel({
                       onChange={(e) =>
                         handleToggleChecklist("screeningPrepared", e.target.checked)
                       }
-                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                      className="rounded border-ui-border text-ui-violet focus:ring-brand-500"
                     />
                     <span>Screening answers prepared and grounded</span>
                   </label>
                 </li>
                 <li>
-                  <label className="flex cursor-pointer items-center gap-2 text-slate-700">
+                  <label className="flex cursor-pointer items-center gap-2 text-ui-ink">
                     <input
                       type="checkbox"
                       checked={readiness.finalReviewed}
@@ -332,7 +332,7 @@ export function ApplicationDetailPanel({
                       onChange={(e) =>
                         handleToggleChecklist("finalReviewed", e.target.checked)
                       }
-                      className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                      className="rounded border-ui-border text-ui-violet focus:ring-brand-500"
                     />
                     <span>Final application details verified before submission</span>
                   </label>
@@ -344,12 +344,12 @@ export function ApplicationDetailPanel({
           {/* Notes & Follow-up Reminder */}
           <form
             onSubmit={handleSaveNotesAndReminder}
-            className="flex flex-col gap-4 rounded-xl border border-slate-200 p-4"
+            className="flex flex-col gap-4 rounded-xl border border-ui-border p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <CalendarClock className="h-4 w-4 text-brand-600" />
-                <h3 className="text-sm font-semibold text-slate-900">
+                <CalendarClock className="h-4 w-4 text-ui-violet" />
+                <h3 className="text-sm font-semibold text-ui-ink">
                   Notes & Follow-up Reminder
                 </h3>
               </div>
@@ -359,13 +359,13 @@ export function ApplicationDetailPanel({
                   type="date"
                   value={followUpDate}
                   onChange={(e) => setFollowUpDate(e.target.value)}
-                  className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs text-slate-800 focus:border-brand-500 focus:outline-none"
+                  className="rounded-lg border border-ui-border px-2.5 py-1 text-xs text-ui-ink focus:border-ui-violet focus:outline-none"
                 />
                 {followUpDate && (
                   <button
                     type="button"
                     onClick={() => setFollowUpDate("")}
-                    className="text-xs text-slate-500 hover:text-slate-700"
+                    className="text-xs text-ui-muted hover:text-ui-ink"
                   >
                     Clear
                   </button>
@@ -378,7 +378,7 @@ export function ApplicationDetailPanel({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Recruiter contacts, interview notes, compensation notes, next steps..."
-              className="w-full rounded-lg border border-slate-300 p-2.5 text-sm text-slate-900 focus:border-brand-500 focus:outline-none"
+              className="w-full rounded-lg border border-ui-border p-2.5 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
             />
 
             <div className="flex items-center justify-between">
@@ -396,14 +396,14 @@ export function ApplicationDetailPanel({
           </form>
 
           {/* Screening Question Assistant */}
-          <div className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4">
+          <div className="flex flex-col gap-3 rounded-xl border border-ui-border p-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-brand-600" />
-              <h3 className="text-sm font-semibold text-slate-900">
+              <Sparkles className="h-4 w-4 text-ui-violet" />
+              <h3 className="text-sm font-semibold text-ui-ink">
                 Screening Question Assistant
               </h3>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-ui-muted">
               Generate concise answers strictly grounded in your verified profile for this application.
             </p>
 
@@ -413,7 +413,7 @@ export function ApplicationDetailPanel({
                   key={prompt}
                   type="button"
                   onClick={() => setQuestion(prompt)}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-left text-[11px] text-slate-700 hover:bg-slate-100"
+                  className="rounded-full border border-ui-border bg-ui-canvas px-2.5 py-1 text-left text-[11px] text-ui-ink hover:bg-ui-linen"
                 >
                   {prompt}
                 </button>
@@ -426,7 +426,7 @@ export function ApplicationDetailPanel({
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Paste a screening question from the application form..."
-                className="w-full rounded-lg border border-slate-300 p-2.5 text-sm text-slate-900 focus:border-brand-500 focus:outline-none"
+                className="w-full rounded-lg border border-ui-border p-2.5 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
               />
               <div>
                 <Button type="submit" className="px-3 py-1.5 text-xs" loading={answering}>
@@ -436,9 +436,9 @@ export function ApplicationDetailPanel({
             </form>
 
             {screeningResult && (
-              <div className="rounded-lg border border-brand-200 bg-brand-50/40 p-3">
+              <div className="rounded-lg border border-ui-lilac bg-ui-lilac-soft/40 p-3">
                 <div className="mb-1.5 flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">
+                  <span className="text-[11px] font-semibold uppercase tracking-wide text-ui-violet">
                     Suggested Answer
                   </span>
                   <button
@@ -447,17 +447,17 @@ export function ApplicationDetailPanel({
                       void navigator.clipboard.writeText(screeningResult.answer);
                       setCopiedAnswer(true);
                     }}
-                    className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-brand-700 hover:bg-brand-100"
+                    className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-ui-violet hover:bg-brand-100"
                   >
                     <Copy className="h-3 w-3" />
                     <span>{copiedAnswer ? "Copied" : "Copy"}</span>
                   </button>
                 </div>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-slate-800">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-ui-ink">
                   {screeningResult.answer}
                 </p>
                 {screeningResult.groundedFacts.length > 0 && (
-                  <p className="mt-2 text-[11px] text-slate-500">
+                  <p className="mt-2 text-[11px] text-ui-muted">
                     Grounded in: {screeningResult.groundedFacts.join(" · ")}
                   </p>
                 )}
@@ -466,8 +466,8 @@ export function ApplicationDetailPanel({
           </div>
 
           {/* Application History */}
-          <div className="rounded-xl border border-slate-200 p-4">
-            <h3 className="mb-2.5 text-sm font-semibold text-slate-900">
+          <div className="rounded-xl border border-ui-border p-4">
+            <h3 className="mb-2.5 text-sm font-semibold text-ui-ink">
               Application History
             </h3>
             {application.events && application.events.length > 0 ? (
@@ -475,17 +475,17 @@ export function ApplicationDetailPanel({
                 {application.events.map((ev) => (
                   <li
                     key={ev.id}
-                    className="flex items-start justify-between gap-3 text-xs text-slate-600"
+                    className="flex items-start justify-between gap-3 text-xs text-ui-body"
                   >
                     <span>• {ev.description}</span>
-                    <span className="shrink-0 text-slate-400">
+                    <span className="shrink-0 text-ui-muted">
                       {new Date(ev.createdAt).toLocaleDateString()}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-slate-400">No history events recorded yet.</p>
+              <p className="text-xs text-ui-muted">No history events recorded yet.</p>
             )}
           </div>
         </div>

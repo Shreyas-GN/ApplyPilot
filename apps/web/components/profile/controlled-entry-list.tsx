@@ -53,10 +53,10 @@ export function ControlledEntryList({
 
   return (
     <div>
-      {items.length === 0 && <p className="mb-3 text-sm text-slate-400">{emptyLabel}</p>}
+      {items.length === 0 && <p className="mb-3 text-sm text-ui-muted">{emptyLabel}</p>}
       <div className="flex flex-col gap-4">
         {items.map((item, index) => (
-          <div key={index} className="rounded-lg border border-slate-200 p-4">
+          <div key={index} className="rounded-lg border border-ui-border p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 {item.source === "ai" && <Badge>AI-suggested</Badge>}
@@ -79,7 +79,7 @@ export function ControlledEntryList({
               {fields.map((field) => {
                 if (field.type === "checkbox") {
                   return (
-                    <label key={field.name} className="flex items-center gap-2 text-sm text-slate-700">
+                    <label key={field.name} className="flex items-center gap-2 text-sm text-ui-ink">
                       <input
                         type="checkbox"
                         checked={Boolean(item.values[field.name])}

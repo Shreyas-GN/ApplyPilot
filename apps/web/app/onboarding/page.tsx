@@ -51,19 +51,19 @@ function OnboardingWizard() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <p className="mb-6 text-center text-lg font-semibold text-brand-700">ApplyPilot</p>
+        <p className="mb-6 text-center text-lg font-semibold text-ui-violet">ApplyPilot</p>
         <Card>
           <div className="mb-4 flex gap-1">
-            <div className={`h-1 flex-1 rounded-full ${step >= 1 ? "bg-brand-500" : "bg-slate-200"}`} />
-            <div className={`h-1 flex-1 rounded-full ${step >= 2 ? "bg-brand-500" : "bg-slate-200"}`} />
+            <div className={`h-1 flex-1 rounded-full ${step >= 1 ? "bg-ui-lilac-soft0" : "bg-slate-200"}`} />
+            <div className={`h-1 flex-1 rounded-full ${step >= 2 ? "bg-ui-lilac-soft0" : "bg-slate-200"}`} />
           </div>
 
           {step === 1 ? (
             <>
-              <h1 className="mb-1 text-xl font-semibold text-slate-900">Tell us about yourself</h1>
-              <p className="mb-6 text-sm text-slate-500">
+              <h1 className="mb-1 text-xl font-semibold text-ui-ink">Tell us about yourself</h1>
+              <p className="mb-6 text-sm text-ui-muted">
                 A couple of basics to get your profile started. You can fill in everything else later.
               </p>
               {error && (
@@ -99,8 +99,8 @@ function OnboardingWizard() {
             </>
           ) : (
             <>
-              <h1 className="mb-1 text-xl font-semibold text-slate-900">Upload your resume</h1>
-              <p className="mb-6 text-sm text-slate-500">
+              <h1 className="mb-1 text-xl font-semibold text-ui-ink">Upload your resume</h1>
+              <p className="mb-6 text-sm text-ui-muted">
                 We&apos;ll extract your experience, education, and skills automatically — you review
                 and confirm everything before it&apos;s added to your profile.
               </p>

@@ -7,11 +7,13 @@ import { CalendarClock, Columns3, LayoutList } from "lucide-react";
 import type { ApplicationDto, ApplicationStatus } from "@/lib/types";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
-import { Card } from "@/components/ui/card";
+import { Card, StatCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { Alert } from "@/components/ui/alert";
 import { Badge, StatusBadge } from "@/components/ui/badge";
+import { Modal } from "@/components/ui/modal";
+import { PageHeader } from "@/components/ui/page-header";
 import { ApplicationDetailPanel } from "@/components/applications/application-detail-panel";
 import { api, ApiError } from "@/lib/api-client";
 
@@ -173,44 +175,50 @@ function ApplicationsContent() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Applications</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Track application stages in List or Kanban view, verify readiness, draft screening answers, and manage follow-up reminders.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-lg border border-slate-200 bg-white p-0.5">
-            <button
-              type="button"
-              onClick={() => setViewMode("list")}
-              className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium ${
-                viewMode === "list"
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <LayoutList className="h-3.5 w-3.5" />
-              <span>List</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("kanban")}
-              className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium ${
-                viewMode === "kanban"
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Columns3 className="h-3.5 w-3.5" />
-              <span>Kanban Board</span>
-            </button>
-          </div>
-          <Button onClick={() => setShowAddForm((v) => !v)}>
-            {showAddForm ? "Cancel" : "+ Add application"}
-          </Button>
-        </div>
+      <PageHeader
+        eyebrow="Application Intelligence"
+        title="Applications"
+        description="Track application stages in List or Kanban view, verify readiness, draft screening answers, and manage follow-up reminders."
+        actions={
+          <>
+            <div className="inline-flex rounded-xl border border-ui-border bg-ui-surface p-0.5">
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  viewMode === "list"
+                    ? "bg-ui-lilac-soft text-ui-ink"
+                    : "text-ui-body hover:text-ui-ink"
+                }`}
+              >
+                <LayoutList className="h-3.5 w-3.5" />
+                <span>List</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("kanban")}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  viewMode === "kanban"
+                    ? "bg-ui-lilac-soft text-ui-ink"
+                    : "text-ui-body hover:text-ui-ink"
+                }`}
+              >
+                <Columns3 className="h-3.5 w-3.5" />
+                <span>Kanban Board</span>
+              </button>
+            </div>
+            <Button onClick={() => setShowAddForm((v) => !v)}>
+              {showAddForm ? "Cancel" : "+ Add application"}
+            </Button>
+          </>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard label="Saved" value={counts.saved} hint="Ready to tailor" tone="neutral" />
+        <StatCard label="Applied" value={counts.applied} hint="Awaiting response" tone="accent" />
+        <StatCard label="Interviewing" value={counts.interviewing} hint="Active rounds" tone="warning" />
+        <StatCard label="Offers" value={counts.offer} hint="Received" tone="success" />
       </div>
 
       {dueFollowUpsCount > 0 && (
@@ -237,74 +245,77 @@ function ApplicationsContent() {
 
       {error && <Alert tone="error">{error}</Alert>}
 
-      {showAddForm && (
-        <Card>
-          <h2 className="mb-4 text-base font-semibold text-slate-900">
-            Track a new role
-          </h2>
-          <form onSubmit={handleAddApplication} className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              label="Company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              placeholder="Acme Corp"
-              required
+      <Modal
+        open={showAddForm}
+        onClose={() => setShowAddForm(false)}
+        title="Track a new role"
+        description="Add an external or manually sourced job application to your pipeline."
+      >
+        <form onSubmit={handleAddApplication} className="grid gap-4 sm:grid-cols-2">
+          <TextField
+            label="Company"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="Acme Corp"
+            required
+          />
+          <TextField
+            label="Job title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Senior Frontend Engineer"
+            required
+          />
+          <TextField
+            label="Location (optional)"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Remote / Bengaluru"
+          />
+          <TextField
+            label="Job URL (optional)"
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://..."
+          />
+          <div>
+            <label className="mb-1.5 block text-[13px] font-medium text-ui-ink">
+              Initial status
+            </label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ApplicationStatus)}
+              className="w-full rounded-[10px] border border-ui-border bg-ui-surface px-3 py-2 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
+            >
+              {STATUSES.map((st) => (
+                <option key={st} value={st} className="capitalize">
+                  {st.charAt(0).toUpperCase() + st.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-[13px] font-medium text-ui-ink">
+              Follow-up reminder (optional)
+            </label>
+            <input
+              type="date"
+              value={followUpDate}
+              onChange={(e) => setFollowUpDate(e.target.value)}
+              className="w-full rounded-[10px] border border-ui-border bg-ui-surface px-3 py-2 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
             />
-            <TextField
-              label="Job title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Senior Frontend Engineer"
-              required
-            />
-            <TextField
-              label="Location (optional)"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Remote / Bengaluru"
-            />
-            <TextField
-              label="Job URL (optional)"
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://..."
-            />
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Initial status
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ApplicationStatus)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none"
-              >
-                {STATUSES.map((st) => (
-                  <option key={st} value={st} className="capitalize">
-                    {st.charAt(0).toUpperCase() + st.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Follow-up reminder (optional)
-              </label>
-              <input
-                type="date"
-                value={followUpDate}
-                onChange={(e) => setFollowUpDate(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-brand-500 focus:outline-none"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <Button type="submit" loading={submitting}>
-                Save application
-              </Button>
-            </div>
-          </form>
-        </Card>
-      )}
+          </div>
+          <div className="flex justify-end gap-2 sm:col-span-2">
+            <Button type="button" variant="secondary" onClick={() => setShowAddForm(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={submitting}>
+              Save application
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {viewMode === "list" && (
         <div className="flex flex-wrap gap-2">
@@ -313,8 +324,8 @@ function ApplicationsContent() {
             onClick={() => setFilterStatus("all")}
             className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
               filterStatus === "all"
-                ? "bg-slate-900 text-white"
-                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+                ? "bg-ui-ink text-white"
+                : "border border-ui-border bg-white text-ui-body hover:bg-ui-linen"
             }`}
           >
             All ({applications.length})
@@ -326,8 +337,8 @@ function ApplicationsContent() {
               onClick={() => setFilterStatus(st)}
               className={`rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
                 filterStatus === st
-                  ? "bg-slate-900 text-white"
-                  : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+                  ? "bg-ui-ink text-white"
+                  : "border border-ui-border bg-white text-ui-body hover:bg-ui-linen"
               }`}
             >
               {st} ({counts[st]})
@@ -339,7 +350,7 @@ function ApplicationsContent() {
             className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
               filterStatus === "followups"
                 ? "bg-amber-700 text-white"
-                : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100"
+                : "border border-ui-border bg-white text-ui-body hover:bg-ui-linen"
             }`}
           >
             With reminders ({applications.filter((a) => Boolean(a.followUpAt)).length})
@@ -350,16 +361,16 @@ function ApplicationsContent() {
       {loading ? (
         <div className="flex flex-col gap-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-slate-100" />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-ui-linen" />
           ))}
         </div>
       ) : applications.length === 0 ? (
         <Card>
           <div className="py-10 text-center">
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-ui-ink">
               No tracked applications yet.
             </p>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-ui-muted">
               Save roles from Discover Jobs or click &ldquo;+ Add application&rdquo; above.
             </p>
           </div>
@@ -371,19 +382,19 @@ function ApplicationsContent() {
             return (
               <div
                 key={colStatus}
-                className="flex min-w-[220px] flex-col gap-3 rounded-xl border border-slate-200 bg-slate-100/70 p-3"
+                className="flex min-w-[220px] flex-col gap-3 rounded-xl border border-ui-border bg-ui-linen/70 p-3"
               >
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-ui-ink">
                     {colStatus}
                   </span>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-600">
+                  <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-ui-body">
                     {colApps.length}
                   </span>
                 </div>
 
                 {colApps.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-slate-300 py-6 text-center text-xs text-slate-400">
+                  <p className="rounded-lg border border-dashed border-ui-border py-6 text-center text-xs text-ui-muted">
                     No {colStatus} roles
                   </p>
                 ) : (
@@ -393,22 +404,22 @@ function ApplicationsContent() {
                       return (
                         <div
                           key={app.id}
-                          className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3 shadow-xs"
+                          className="flex flex-col gap-2 rounded-lg border border-ui-border bg-white p-3 shadow-xs"
                         >
                           <div>
                             <button
                               type="button"
                               onClick={() => setSelectedAppId(app.id)}
-                              className="text-left text-sm font-semibold text-slate-900 hover:text-brand-700 hover:underline"
+                              className="text-left text-sm font-semibold text-ui-ink hover:text-ui-violet hover:underline"
                             >
                               {app.title}
                             </button>
-                            <p className="text-xs text-slate-600">{app.company}</p>
+                            <p className="text-xs text-ui-body">{app.company}</p>
                           </div>
 
                           <div className="flex flex-wrap gap-1">
                             {app.matchScore !== null && (
-                              <Badge className="bg-slate-100 text-slate-700">
+                              <Badge className="bg-ui-linen text-ui-ink">
                                 {`${app.matchScore}%`}
                               </Badge>
                             )}
@@ -418,7 +429,7 @@ function ApplicationsContent() {
                                   app.readiness.completedCount ===
                                   app.readiness.totalCount
                                     ? "bg-emerald-50 text-emerald-700"
-                                    : "bg-brand-50 text-brand-700"
+                                    : "bg-ui-lilac-soft text-ui-violet"
                                 }
                               >
                                 {`${app.readiness.completedCount}/${app.readiness.totalCount} ready`}
@@ -429,7 +440,7 @@ function ApplicationsContent() {
                                 className={
                                   dueSoon
                                     ? "bg-amber-100 text-amber-800"
-                                    : "bg-slate-100 text-slate-600"
+                                    : "bg-ui-linen text-ui-body"
                                 }
                               >
                                 {`Follow-up ${new Date(app.followUpAt).toLocaleDateString()}`}
@@ -448,7 +459,7 @@ function ApplicationsContent() {
                                   e.target.value as ApplicationStatus
                                 )
                               }
-                              className="rounded border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-700 focus:border-brand-500 focus:outline-none"
+                              className="rounded border border-ui-border bg-white px-2 py-1 text-[11px] font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
                             >
                               {STATUSES.map((st) => (
                                 <option key={st} value={st}>
@@ -459,7 +470,7 @@ function ApplicationsContent() {
                             <button
                               type="button"
                               onClick={() => setSelectedAppId(app.id)}
-                              className="text-xs font-medium text-brand-700 hover:underline"
+                              className="text-xs font-medium text-ui-violet hover:underline"
                             >
                               Details
                             </button>
@@ -476,7 +487,7 @@ function ApplicationsContent() {
       ) : filtered.length === 0 ? (
         <Card>
           <div className="py-8 text-center">
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-ui-ink">
               No applications match this filter.
             </p>
           </div>
@@ -493,13 +504,13 @@ function ApplicationsContent() {
                       <button
                         type="button"
                         onClick={() => setSelectedAppId(app.id)}
-                        className="text-left font-semibold text-slate-900 hover:text-brand-700 hover:underline"
+                        className="text-left font-semibold text-ui-ink hover:text-ui-violet hover:underline"
                       >
                         {app.title}
                       </button>
                       <StatusBadge status={app.status} />
                       {app.matchScore !== null && (
-                        <Badge className="bg-slate-100 text-slate-700">
+                        <Badge className="bg-ui-linen text-ui-ink">
                           {`${app.matchScore}% match`}
                         </Badge>
                       )}
@@ -509,7 +520,7 @@ function ApplicationsContent() {
                             app.readiness.completedCount ===
                             app.readiness.totalCount
                               ? "bg-emerald-50 text-emerald-700"
-                              : "bg-brand-50 text-brand-700"
+                              : "bg-ui-lilac-soft text-ui-violet"
                           }
                         >
                           {`${app.readiness.completedCount}/${app.readiness.totalCount} ready`}
@@ -520,15 +531,15 @@ function ApplicationsContent() {
                           className={
                             dueSoon
                               ? "bg-amber-100 text-amber-800"
-                              : "bg-slate-100 text-slate-600"
+                              : "bg-ui-linen text-ui-body"
                           }
                         >
                           {`Follow up ${new Date(app.followUpAt).toLocaleDateString()}`}
                         </Badge>
                       )}
                     </div>
-                    <p className="mt-1 text-sm text-slate-600">
-                      <span className="font-medium text-slate-800">{app.company}</span>
+                    <p className="mt-1 text-sm text-ui-body">
+                      <span className="font-medium text-ui-ink">{app.company}</span>
                       {app.location ? ` · ${app.location}` : ""}
                       {app.appliedAt
                         ? ` · Applied ${new Date(app.appliedAt).toLocaleDateString()}`
@@ -544,7 +555,7 @@ function ApplicationsContent() {
                       onChange={(e) =>
                         handleStatusChange(app.id, e.target.value as ApplicationStatus)
                       }
-                      className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:border-brand-500 focus:outline-none"
+                      className="rounded-lg border border-ui-border bg-white px-2.5 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
                     >
                       {STATUSES.map((st) => (
                         <option key={st} value={st}>
@@ -557,7 +568,7 @@ function ApplicationsContent() {
                         href={app.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                        className="rounded-lg border border-ui-border px-2.5 py-1.5 text-xs font-medium text-ui-ink hover:bg-ui-canvas"
                       >
                         Posting ↗
                       </a>
