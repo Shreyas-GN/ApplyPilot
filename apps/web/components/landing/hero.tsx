@@ -1,184 +1,267 @@
 "use client";
 
-import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  Layers,
+  MapPin,
+  Search,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
-import { ArrowRight, MapPin, Search, Sparkles, CheckCircle2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowAnnotation } from "./annotation";
-import { PreviewBadge } from "./preview-badge";
-import { ProductWindow, Tag, StatusDot } from "./product-window";
-import { sampleOpportunityList } from "./sample-data";
+import { useState } from "react";
+import { sampleCandidate, sampleOpportunities } from "./sample-data";
 
 export function Hero() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const selected = sampleOpportunityList[selectedIndex]!;
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const selected = sampleOpportunities[selectedIdx] ?? sampleOpportunities[0]!;
 
   return (
-    <section className="relative overflow-hidden bg-ap-paper bg-dot-pattern">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,480px)_1fr] lg:items-center lg:gap-16 lg:py-28">
-        <div>
+    <section className="relative overflow-hidden border-b border-lp-border bg-lp-bg pt-14 pb-20 sm:pt-20 sm:pb-28">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+        {/* Centered Hero Header */}
+        <div className="mx-auto max-w-[780px] text-center">
           <motion.div
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 rounded-full border border-ap-vermilion/20 bg-ap-vermilion-soft/50 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ap-vermilion"
+            transition={{ duration: 0.35 }}
+            className="inline-flex items-center gap-2 rounded-full border border-lp-border bg-lp-surface-subtle px-3.5 py-1 font-ui text-xs font-medium text-lp-body"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ap-vermilion opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-ap-vermilion" />
-            </span>
-            Candidate-controlled opportunity workspace
+            <span className="h-1.5 w-1.5 rounded-full bg-lp-accent" aria-hidden="true" />
+            A more considered way to find your next role
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-            className="mt-4 font-display text-[42px] leading-[1.05] text-ap-ink sm:text-[56px] lg:text-[68px]"
+            transition={{ duration: 0.4, delay: 0.06 }}
+            className="mt-6 font-ui text-[40px] font-semibold leading-[1.08] tracking-[-0.03em] text-lp-ink sm:text-[54px] lg:text-[62px]"
           >
-            Find better jobs.
-            <br />
-            Apply smarter.
+            Your next opportunity deserves a better approach.
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.16 }}
-            className="mt-5 max-w-md font-ui text-lg leading-relaxed text-ap-body"
+            transition={{ duration: 0.4, delay: 0.12 }}
+            className="mx-auto mt-5 max-w-[620px] font-ui text-[17px] leading-[1.6] text-lp-body sm:text-[18px]"
           >
-            ApplyPilot brings your job search into one place — helping you understand fit,
-            prepare thoughtful applications and stay on top of every next step.
+            Discover relevant jobs, understand where you stand, and tailor every application to the
+            opportunity — all from one career workspace.
           </motion.p>
 
+          {/* Three core pillars */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.24 }}
-            className="mt-8 flex flex-wrap items-center gap-4"
+            transition={{ duration: 0.4, delay: 0.18 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-[13px] font-medium text-lp-ink"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <UserRound className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
+              One career profile
+            </span>
+            <span className="text-lp-border" aria-hidden="true">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Search className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
+              Smarter job matching
+            </span>
+            <span className="text-lp-border" aria-hidden="true">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
+              Tailored applications
+            </span>
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.24 }}
+            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
           >
             <Link
               href="/signup"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-button bg-ap-ink px-6 font-ui text-sm font-medium text-ap-paper shadow-sm transition-all duration-150 hover:bg-ap-ink/90 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ap-vermilion"
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-lp-ink px-6 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
             >
-              Get started
-              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" strokeWidth={1.75} aria-hidden="true" />
+              Get started — it&apos;s free
+              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
             <a
               href="#how-it-works"
-              className="inline-flex h-12 items-center justify-center rounded-button border border-ap-line bg-ap-surface px-6 font-ui text-sm font-medium text-ap-ink transition-all duration-150 hover:bg-ap-surface-muted hover:border-ap-body/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ap-vermilion"
+              className="inline-flex h-12 w-full items-center justify-center rounded-lg border border-lp-border bg-lp-bg px-6 font-ui text-sm font-medium text-lp-ink transition-colors duration-150 hover:bg-lp-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
             >
               See how it works
             </a>
           </motion.div>
 
-          <div className="mt-8 flex items-center gap-4 text-xs font-ui text-ap-muted">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-ap-sage" />
-              Verified ATS parsers
-            </span>
-            <span className="text-ap-line">·</span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-ap-sage" />
-              Strict data isolation
-            </span>
-          </div>
+          <p className="mt-3.5 font-ui text-xs text-lp-muted">
+            No credit card required · You&apos;re always in control
+          </p>
         </div>
 
+        {/* Connected Product Workspace Demonstration directly below */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.55, delay: 0.15 }}
-          className="relative"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.28 }}
+          className="mt-14 sm:mt-16"
         >
-          <div className="hidden lg:block">
-            <ArrowAnnotation className="absolute -left-10 top-6 h-14 w-20 -scale-x-100 text-ap-vermilion" />
-          </div>
-
-          <ProductWindow
-            title="Opportunity workspace"
-            icon={Search}
-            badge={<PreviewBadge label="Product preview" />}
-          >
-            <div className="mb-2 flex items-center justify-between text-xs text-ap-muted font-ui">
-              <span>Select a role to preview instant AI alignment:</span>
-              <span className="font-mono text-[11px] text-ap-vermilion font-medium">Click to inspect</span>
+          <div className="overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_1px_3px_rgba(17,24,39,0.04),0_20px_48px_rgba(17,24,39,0.08)]">
+            {/* Workspace Top Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface-subtle px-4 py-3 sm:px-6">
+              <div className="flex items-center gap-2.5">
+                <Layers className="h-4 w-4 text-lp-accent" aria-hidden="true" />
+                <span className="font-ui text-[13px] font-semibold text-lp-ink">
+                  ApplyPilot Career Workspace
+                </span>
+                <span className="hidden rounded-full border border-lp-border bg-lp-bg px-2 py-0.5 font-mono text-[11px] text-lp-muted sm:inline-block">
+                  Illustrative workspace preview
+                </span>
+              </div>
+              <div className="flex items-center gap-2 font-ui text-xs text-lp-muted">
+                <span>Select an opportunity to see live tailoring:</span>
+                <div className="inline-flex rounded-lg border border-lp-border bg-lp-bg p-0.5">
+                  {sampleOpportunities.map((opp, idx) => (
+                    <button
+                      key={opp.id}
+                      type="button"
+                      onClick={() => setSelectedIdx(idx)}
+                      className={`rounded-md px-2.5 py-1 font-ui text-xs font-medium transition-colors ${selectedIdx === idx
+                          ? "bg-lp-ink text-white"
+                          : "text-lp-body hover:text-lp-ink"
+                        }`}
+                    >
+                      {opp.role}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <ul className="divide-y divide-ap-line rounded-lg border border-ap-line/70 bg-ap-surface p-1">
-              {sampleOpportunityList.map((item, index) => {
-                const isSelected = selectedIndex === index;
-                return (
-                  <li
-                    key={item.id}
-                    onClick={() => {
-                      setSelectedIndex(index);
-                    }}
-                    className={`relative cursor-pointer rounded-md p-3 transition-all duration-150 ${
-                      isSelected
-                        ? "bg-ap-surface-muted/90 shadow-2xs"
-                        : "hover:bg-ap-surface-muted/40 opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          {isSelected && <StatusDot tone="vermilion" />}
-                          <p className={`truncate font-ui text-sm font-medium ${isSelected ? "text-ap-ink font-semibold" : "text-ap-body"}`}>
-                            {item.role}
-                          </p>
-                        </div>
-                        <p className="mt-0.5 flex items-center gap-1 font-ui text-[13px] text-ap-muted">
-                          {item.company}
-                          <span aria-hidden="true">·</span>
-                          <MapPin className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
-                          {item.location}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-mono text-[11px] font-semibold ${
-                          isSelected ? "bg-ap-sage-soft text-ap-sage border border-ap-sage/30" : "bg-ap-surface-muted text-ap-muted"
-                        }`}>
-                          <Sparkles className="h-2.5 w-2.5" />
-                          {item.fitLevel}
-                        </span>
-
-                        <div className="hidden flex-shrink-0 gap-1.5 sm:flex">
-                          {item.tags.map((tag) => (
-                            <Tag key={tag}>{tag}</Tag>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selected.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="mt-4 rounded-card border border-ap-vermilion-soft bg-ap-vermilion-soft/40 p-4"
-              >
+            {/* Three-Column Connected Workspace */}
+            <div className="grid divide-y divide-lp-border lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+              {/* Column 1: Master Candidate Profile */}
+              <div className="p-5 sm:p-6">
                 <div className="flex items-center justify-between">
-                  <p className="font-ui text-[11px] font-medium uppercase tracking-wide text-ap-vermilion">
-                    Why this fits · {selected.company}
-                  </p>
-                  <span className="font-mono text-xs font-semibold text-ap-ink">
-                    Alignment: {selected.fitLevel}
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-wider text-lp-muted">
+                    01 · Master Profile
+                  </span>
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-ui text-[11px] font-medium text-emerald-700">
+                    Verified
                   </span>
                 </div>
-                <p className="mt-1.5 font-ui text-[13px] leading-relaxed text-ap-body">
-                  {selected.reasoning}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </ProductWindow>
+                <div className="mt-4">
+                  <p className="font-ui text-base font-semibold text-lp-ink">{sampleCandidate.name}</p>
+                  <p className="mt-0.5 font-ui text-xs text-lp-body">{sampleCandidate.targetRole}</p>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {sampleCandidate.skills.slice(0, 5).map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded-md border border-lp-border bg-lp-surface-subtle px-2 py-0.5 font-ui text-xs font-medium text-lp-ink"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 rounded-lg border border-lp-border bg-lp-surface-subtle p-3">
+                  <p className="font-ui text-xs font-medium text-lp-ink">
+                    {sampleCandidate.experience[0]!.role} · {sampleCandidate.experience[0]!.company}
+                  </p>
+                  <p className="mt-1 font-ui text-xs leading-relaxed text-lp-body">
+                    {sampleCandidate.experience[0]!.bullet}
+                  </p>
+                </div>
+              </div>
+
+              {/* Column 2: Opportunity Fit */}
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-wider text-lp-muted">
+                    02 · Opportunity Fit
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-lp-accent-soft px-2.5 py-0.5 font-ui text-[11px] font-medium text-lp-accent">
+                    <Sparkles className="h-3 w-3" aria-hidden="true" />
+                    {selected.alignmentLabel}
+                  </span>
+                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selected.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                    className="mt-4"
+                  >
+                    <p className="font-ui text-base font-semibold text-lp-ink">{selected.role}</p>
+                    <p className="mt-0.5 flex items-center gap-1 font-ui text-xs text-lp-muted">
+                      {selected.company} · <MapPin className="h-3 w-3" aria-hidden="true" />
+                      {selected.location}
+                    </p>
+                    <p className="mt-3 font-ui text-xs leading-relaxed text-lp-body">
+                      {selected.summary}
+                    </p>
+                    <ul className="mt-3 space-y-1.5">
+                      {selected.aligns.slice(0, 2).map((item) => (
+                        <li key={item.label} className="flex items-start gap-2 font-ui text-xs text-lp-ink">
+                          <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-emerald-600" aria-hidden="true" />
+                          <span>{item.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Column 3: Tailored Resume Output */}
+              <div className="bg-lp-surface-subtle/60 p-5 sm:p-6">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-wider text-lp-muted">
+                    03 · Tailored Resume
+                  </span>
+                  <span className="font-mono text-[11px] text-lp-body">
+                    Candidate review required
+                  </span>
+                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selected.id}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18 }}
+                    className="mt-4"
+                  >
+                    <div className="rounded-lg border border-lp-accent/25 bg-lp-bg p-3.5 shadow-2xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-[11px] font-medium text-lp-accent">
+                          Suggested adaptation
+                        </span>
+                        <span className="rounded bg-lp-surface px-1.5 py-0.5 font-mono text-[10px] text-lp-muted">
+                          {selected.resumeVersion}
+                        </span>
+                      </div>
+                      <p className="mt-2 font-ui text-xs font-semibold text-lp-ink">
+                        {selected.tailoredTitle}
+                      </p>
+                      <p className="mt-1 font-ui text-xs leading-relaxed text-lp-body">
+                        {selected.tailoredBullet}
+                      </p>
+                    </div>
+                    <p className="mt-3 font-ui text-[11px] leading-relaxed text-lp-muted">
+                      <span className="font-medium text-lp-ink">Grounded in evidence: </span>
+                      {selected.tailoringReason}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -34,6 +34,18 @@
   --font-ui: var(--font-inter), "DM Sans", system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 
+  /* Landing page design system tokens (Linear x Stripe precision) */
+  --color-lp-ink: #111827;
+  --color-lp-body: #4b5563;
+  --color-lp-muted: #6b7280;
+  --color-lp-bg: #ffffff;
+  --color-lp-surface: #f3f4f6;
+  --color-lp-surface-subtle: #f9fafb;
+  --color-lp-border: #e5e7eb;
+  --color-lp-accent: #2563eb;
+  --color-lp-accent-hover: #1d4ed8;
+  --color-lp-accent-soft: #eff6ff;
+
   --radius-button: 999px;
   --radius-panel: 20px;
   --radius-window: 14px;

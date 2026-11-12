@@ -8,42 +8,52 @@ const FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is ApplyPilot?",
     answer:
-      "ApplyPilot is an AI-assisted job-search workspace. It connects your candidate profile, relevant opportunities, application preparation and follow-through in one unified workspace.",
+      "ApplyPilot is a career intelligence workspace that helps you organize your professional profile, discover relevant job opportunities, prepare tailored applications and manage your job search.",
   },
   {
-    question: "Who is it for?",
+    question: "Who is ApplyPilot for?",
     answer:
-      "New graduates, active job seekers applying to multiple roles, career switchers, and experienced candidates exploring better opportunities without compromising their privacy.",
+      "ApplyPilot is designed for job seekers at different career stages, from fresh graduates and early-career professionals to experienced candidates looking for their next opportunity.",
   },
   {
-    question: "Does it work with my existing résumé?",
+    question: "Do I need to create a new resume?",
     answer:
-      "Yes. Upload a PDF or DOCX résumé and ApplyPilot extracts a structured profile from it — you review and confirm every field before it's saved.",
+      "No. You can start with your existing resume and build a structured professional profile from your experience, skills, education and projects.",
   },
   {
-    question: "Does ApplyPilot apply to jobs automatically?",
+    question: "Can I use a different resume for every job?",
     answer:
-      "Not today. Application preparation and submission automation are candidate-controlled. Nothing is sent or submitted without your review and approval.",
+      "Yes. ApplyPilot's Adaptive Resume Engine is designed to create job-specific resume versions using your existing professional information. You can review and approve suggested changes before using them.",
   },
   {
-    question: "Can I review and edit application material?",
+    question: "Does ApplyPilot guarantee ATS compatibility?",
     answer:
-      "Yes — reviewing and editing is the default. Any AI-suggested change is shown to you side-by-side before it's used, and you can edit or discard it.",
+      "No platform can guarantee that every employer's ATS will parse a resume perfectly. ApplyPilot aims to create clear, structured and machine-readable application documents.",
   },
   {
-    question: "Which résumé formats and systems are supported?",
+    question: "Do I have to apply through ApplyPilot?",
     answer:
-      "ApplyPilot parses PDF and DOCX résumés into a structured candidate profile, ingests open roles from Greenhouse and Lever public boards, and pairs with our Chrome Extension Co-pilot to review and autofill Greenhouse and Lever applications.",
+      "No. The product is designed around your job-search workflow, including applications that take place on external employer websites. Browser extension assistance depends on supported functionality.",
   },
   {
-    question: "Is my personal information secure?",
+    question: "Does ApplyPilot apply automatically?",
     answer:
-      "Your account is protected with industry-standard password hashing and session security, and your profile data is strictly isolated to your account.",
+      "ApplyPilot prioritizes candidate control. You review your application materials and confirm consequential submissions.",
+  },
+  {
+    question: "Can I track jobs I found outside ApplyPilot?",
+    answer:
+      "The intended experience includes connecting external opportunities to your application tracker. The exact import and extension capabilities depend on the available implementation.",
+  },
+  {
+    question: "Is my existing resume information editable?",
+    answer:
+      "Yes. You should be able to review, correct and update information extracted from your resume before using it.",
   },
   {
     question: "Is there a free plan?",
     answer:
-      "You can create a profile and manage your résumés today at no cost — we'll share transparent pricing details before any paid tiers are introduced.",
+      "You can start with the free account option shown on the current signup flow. Any usage limits and paid features should be described in the published pricing information.",
   },
 ];
 
@@ -51,24 +61,29 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="bg-ap-paper py-16 sm:py-24 lg:py-28">
+    <section id="faq" className="border-b border-lp-border bg-lp-surface py-20 sm:py-28">
       <div className="mx-auto max-w-[760px] px-5 sm:px-8">
-        <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-ap-vermilion font-semibold">
-          Got Questions?
+        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
+          Got questions?
         </p>
-        <h2 className="mt-2 font-display text-[32px] leading-[1.1] text-ap-ink sm:text-[40px]">
+        <h2 className="mt-2 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[40px]">
           Questions, answered plainly.
         </h2>
 
-        <div className="mt-10 divide-y divide-ap-line border-t border-ap-line">
+        <div className="mt-10 divide-y divide-lp-border border-y border-lp-border">
           {FAQS.map((item, index) => {
             const isOpen = openIndex === index;
+            const panelId = `faq-panel-${index}`;
+            const buttonId = `faq-button-${index}`;
             return (
               <div key={item.question} className="py-5">
                 <button
+                  id={buttonId}
                   type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full cursor-pointer list-none items-center justify-between gap-4 text-left font-ui text-[16px] font-medium text-ap-ink transition-colors hover:text-ap-vermilion focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ap-vermilion"
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left font-ui text-[16px] font-medium text-lp-ink transition-colors hover:text-lp-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent"
                 >
                   <span>{item.question}</span>
                   <motion.div
@@ -76,20 +91,23 @@ export function Faq() {
                     transition={{ duration: 0.2 }}
                     className="flex-shrink-0"
                   >
-                    <ChevronDown className="h-5 w-5 text-ap-muted" strokeWidth={1.75} aria-hidden="true" />
+                    <ChevronDown className="h-5 w-5 text-lp-muted" strokeWidth={1.75} aria-hidden="true" />
                   </motion.div>
                 </button>
 
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      transition={{ duration: 0.22, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <p className="mt-3 max-w-xl font-ui text-[15px] leading-relaxed text-ap-body">
+                      <p className="mt-3 max-w-2xl font-ui text-[15px] leading-relaxed text-lp-body">
                         {item.answer}
                       </p>
                     </motion.div>

@@ -28,18 +28,18 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://applypilot.app"),
   title: {
-    default: "ApplyPilot — Find Better Jobs. Apply Smarter.",
+    default: "ApplyPilot — Your next opportunity deserves a better approach.",
     template: "%s | ApplyPilot",
   },
   description:
-    "An intentional workspace for candidates. Connect your profile, explore evidence-based job fit, and prepare thoughtful applications with full control.",
+    "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work. A personal career intelligence platform.",
   keywords: [
-    "job search",
-    "career workspace",
-    "resume parser",
-    "job matching",
-    "ATS application",
-    "career copilot",
+    "career intelligence platform",
+    "job search workspace",
+    "adaptive resume",
+    "opportunity matching",
+    "application tracker",
+    "ApplyPilot",
   ],
   authors: [{ name: "ApplyPilot" }],
   creator: "ApplyPilot",
@@ -47,16 +47,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://applypilot.app",
-    title: "ApplyPilot — Find Better Jobs. Apply Smarter.",
+    title: "ApplyPilot — Your next opportunity deserves a better approach.",
     description:
-      "An intentional workspace for candidates. Connect your profile, explore evidence-based job fit, and prepare thoughtful applications with full control.",
+      "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work.",
     siteName: "ApplyPilot",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ApplyPilot — Find Better Jobs. Apply Smarter.",
+    title: "ApplyPilot — Your next opportunity deserves a better approach.",
     description:
-      "An intentional workspace for candidates. Connect your profile, explore evidence-based job fit, and prepare thoughtful applications with full control.",
+      "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work.",
   },
   robots: {
     index: true,
