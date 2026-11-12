@@ -200,9 +200,9 @@ export function AdaptiveResume() {
               <button
                 type="button"
                 onClick={toggleApprove}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-ui text-xs font-medium transition-colors ${isApproved
+                className={`inline-flex items-center gap-1.5 rounded-[10px] px-4 py-2 font-ui text-xs font-medium transition-colors ${isApproved
                     ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                    : "bg-lp-ink text-white hover:bg-lp-ink/90"
+                    : "bg-lp-wine text-white hover:bg-lp-wine-hover"
                   }`}
               >
                 {isApproved ? (

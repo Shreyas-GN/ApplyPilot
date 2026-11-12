@@ -90,7 +90,7 @@ export function WorkspaceIntro() {
                 onClick={() => setActiveId(pillar.id)}
                 className={`group flex flex-col rounded-xl border p-5 text-left transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent ${
                   isActive
-                    ? "border-lp-ink bg-lp-ink text-white shadow-sm"
+                    ? "border-lp-wine bg-lp-wine text-white shadow-sm"
                     : "border-lp-border bg-lp-bg text-lp-ink hover:border-lp-muted/50 hover:bg-lp-surface-subtle"
                 }`}
               >
@@ -103,7 +103,7 @@ export function WorkspaceIntro() {
                     {pillar.number}.
                   </span>
                   <pillar.icon
-                    className={`h-4 w-4 ${isActive ? "text-blue-400" : "text-lp-muted group-hover:text-lp-ink"}`}
+                    className={`h-4 w-4 ${isActive ? "text-[#d4c7ff]" : "text-lp-muted group-hover:text-lp-ink"}`}
                     aria-hidden="true"
                   />
                 </div>

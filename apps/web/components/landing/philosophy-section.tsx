@@ -16,10 +16,10 @@ const APPLYPILOT_WAY = [
 
 export function PhilosophySection() {
   return (
-    <section id="philosophy" className="bg-lp-ink py-20 text-white sm:py-28">
+    <section id="philosophy" className="bg-lp-lagoon py-20 text-white sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
         <div className="max-w-[740px]">
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-blue-400">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[#d4c7ff]">
             The ApplyPilot approach
           </p>
           <h2 className="mt-3 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-white sm:text-[42px]">
@@ -51,14 +51,14 @@ export function PhilosophySection() {
           </div>
 
           {/* ApplyPilot Approach */}
-          <div className="rounded-2xl border border-blue-500/40 bg-blue-950/30 p-6 sm:p-8">
-            <p className="font-mono text-xs uppercase tracking-wider text-blue-400">
+          <div className="rounded-2xl border border-[#d4c7ff]/30 bg-white/[0.06] p-6 sm:p-8">
+            <p className="font-mono text-xs uppercase tracking-wider text-[#d4c7ff]">
               The ApplyPilot approach
             </p>
             <ul className="mt-5 space-y-3.5">
               {APPLYPILOT_WAY.map((item) => (
                 <li key={item} className="flex items-center gap-3 font-ui text-[15px] font-medium text-white">
-                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-white">
+                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-lp-accent text-white">
                     <Check className="h-3.5 w-3.5" aria-hidden="true" />
                   </span>
                   <span>{item}</span>

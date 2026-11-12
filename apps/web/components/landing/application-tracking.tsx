@@ -21,7 +21,7 @@ const STAGES: PipelineStage[] = ["Saved", "Applied", "Interview", "Offers"];
 
 const STAGE_BADGE: Record<PipelineStage, string> = {
   Saved: "bg-gray-100 text-gray-700",
-  Applied: "bg-blue-50 text-blue-700",
+  Applied: "bg-lp-accent-soft text-lp-accent",
   Interview: "bg-amber-50 text-amber-800",
   Offers: "bg-emerald-50 text-emerald-700",
 };

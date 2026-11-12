@@ -31,26 +31,26 @@ const COLUMNS: Array<{ title: string; links: Array<{ href: string; label: string
 
 export function Footer() {
   return (
-    <footer className="border-t border-lp-border bg-lp-bg">
+    <footer className="bg-lp-wine text-white">
       <div className="mx-auto max-w-[1200px] px-5 py-14 sm:px-8 sm:py-16">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-5">
           <div className="col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lp-ink font-ui text-xs font-semibold tracking-tight text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white font-ui text-xs font-semibold tracking-tight text-lp-wine">
                 AP
               </span>
-              <span className="font-ui text-[17px] font-semibold tracking-tight text-lp-ink">
+              <span className="font-ui text-[17px] font-semibold tracking-tight text-white">
                 ApplyPilot
               </span>
             </Link>
-            <p className="mt-3 max-w-xs font-ui text-sm leading-relaxed text-lp-muted">
+            <p className="mt-3 max-w-xs font-ui text-sm leading-relaxed text-white/70">
               A more considered way to navigate your career.
             </p>
           </div>
 
           {COLUMNS.map((column) => (
             <div key={column.title}>
-              <p className="font-ui text-xs font-semibold uppercase tracking-wider text-lp-ink">
+              <p className="font-ui text-xs font-semibold uppercase tracking-wider text-white">
                 {column.title}
               </p>
               <ul className="mt-3.5 space-y-2.5">
@@ -58,7 +58,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="font-ui text-sm text-lp-muted transition-colors duration-150 hover:text-lp-ink"
+                      className="font-ui text-sm text-white/70 transition-colors duration-150 hover:text-white"
                     >
                       {link.label}
                     </Link>
@@ -69,7 +69,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col justify-between gap-2 border-t border-lp-border pt-6 font-ui text-xs text-lp-muted sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col justify-between gap-2 border-t border-white/15 pt-6 font-ui text-xs text-white/60 sm:flex-row sm:items-center">
           <p>© 2026 ApplyPilot · Built for better career decisions.</p>
           <p>Better career decisions, not more applications.</p>
         </div>

@@ -85,14 +85,14 @@ export function Hero() {
           >
             <Link
               href="/signup"
-              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-lp-ink px-6 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
+              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-lp-wine px-6 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
             >
               Get started — it&apos;s free
               <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
             <a
               href="#how-it-works"
-              className="inline-flex h-12 w-full items-center justify-center rounded-lg border border-lp-border bg-lp-bg px-6 font-ui text-sm font-medium text-lp-ink transition-colors duration-150 hover:bg-lp-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
+              className="inline-flex h-12 w-full items-center justify-center rounded-[12px] border border-lp-border bg-lp-surface-subtle px-6 font-ui text-sm font-medium text-lp-ink transition-colors duration-150 hover:bg-lp-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
             >
               See how it works
             </a>

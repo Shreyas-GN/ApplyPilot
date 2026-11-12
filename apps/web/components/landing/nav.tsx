@@ -20,7 +20,7 @@ export function Nav() {
     <header className="sticky top-0 z-40 border-b border-lp-border bg-lp-bg/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-8">
         <Link href="/" className="group flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lp-ink font-ui text-xs font-semibold tracking-tight text-white transition-transform duration-150 group-hover:scale-105">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lp-wine font-ui text-xs font-semibold tracking-tight text-white transition-transform duration-150 group-hover:scale-105">
             AP
           </span>
           <span className="font-ui text-[17px] font-semibold tracking-tight text-lp-ink">
@@ -49,7 +49,7 @@ export function Nav() {
           </Link>
           <Link
             href="/signup"
-            className="group inline-flex items-center justify-center gap-1.5 rounded-lg bg-lp-ink px-4 py-2 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent"
+            className="group inline-flex items-center justify-center gap-1.5 rounded-[10px] bg-lp-wine px-4 py-2 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent"
           >
             Get started — it&apos;s free
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -103,7 +103,7 @@ export function Nav() {
               <Link
                 href="/signup"
                 onClick={() => setOpen(false)}
-                className="rounded-lg bg-lp-ink px-4 py-2.5 text-center font-ui text-sm font-medium text-white transition-colors hover:bg-lp-ink/90"
+                className="rounded-[12px] bg-lp-wine px-4 py-2.5 text-center font-ui text-sm font-medium text-white transition-colors hover:bg-lp-wine-hover"
               >
                 Get started — it&apos;s free
               </Link>
