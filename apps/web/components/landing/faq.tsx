@@ -61,61 +61,86 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="border-b border-lp-border bg-lp-surface py-20 sm:py-28">
-      <div className="mx-auto max-w-[760px] px-5 sm:px-8">
-        <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-          Got questions?
-        </p>
-        <h2 className="mt-2 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[40px]">
-          Questions, answered plainly.
-        </h2>
+    <section id="faq" className="border-b border-lp-border bg-lp-bg py-20 sm:py-28">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+        <div className="grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-16">
+          {/* Left Column: Heading & Support Link (HeyRetro-style) */}
+          <div>
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-wine">
+              Got questions?
+            </p>
+            <h2 className="mt-2 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[42px]">
+              Questions, answered plainly.
+            </h2>
+            <p className="mt-4 font-ui text-[15px] leading-relaxed text-lp-body">
+              Everything you need to know about our candidate intelligence platform, privacy
+              guarantees, and tailoring workflow.
+            </p>
+            <div className="mt-6">
+              <a
+                href="mailto:support@applypilot.com"
+                className="inline-flex items-center gap-1.5 font-ui text-sm font-semibold text-lp-wine hover:underline"
+              >
+                Still have questions? Reach out to support →
+              </a>
+            </div>
+          </div>
 
-        <div className="mt-10 divide-y divide-lp-border border-y border-lp-border">
-          {FAQS.map((item, index) => {
-            const isOpen = openIndex === index;
-            const panelId = `faq-panel-${index}`;
-            const buttonId = `faq-button-${index}`;
-            return (
-              <div key={item.question} className="py-5">
-                <button
-                  id={buttonId}
-                  type="button"
-                  aria-expanded={isOpen}
-                  aria-controls={panelId}
-                  onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="flex w-full cursor-pointer items-center justify-between gap-4 text-left font-ui text-[16px] font-medium text-lp-ink transition-colors hover:text-lp-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent"
+          {/* Right Column: Accordion Cards */}
+          <div className="space-y-3">
+            {FAQS.map((item, index) => {
+              const isOpen = openIndex === index;
+              const panelId = `faq-panel-${index}`;
+              const buttonId = `faq-button-${index}`;
+              return (
+                <div
+                  key={item.question}
+                  className="rounded-2xl border border-lp-border bg-white p-5 shadow-[0_2px_8px_rgba(43,35,32,0.02)] transition-colors hover:border-lp-border/80"
                 >
-                  <span>{item.question}</span>
-                  <motion.div
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex-shrink-0"
+                  <button
+                    id={buttonId}
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    className="flex w-full cursor-pointer items-center justify-between gap-4 text-left font-ui text-[16px] font-semibold text-lp-ink transition-colors hover:text-lp-wine focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-wine"
                   >
-                    <ChevronDown className="h-5 w-5 text-lp-muted" strokeWidth={1.75} aria-hidden="true" />
-                  </motion.div>
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {isOpen && (
+                    <span>{item.question}</span>
                     <motion.div
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={buttonId}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: "easeInOut" }}
-                      className="overflow-hidden"
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-shrink-0"
                     >
-                      <p className="mt-3 max-w-2xl font-ui text-[15px] leading-relaxed text-lp-body">
-                        {item.answer}
-                      </p>
+                      <ChevronDown
+                        className="h-5 w-5 text-lp-muted"
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                      />
                     </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        id={panelId}
+                        role="region"
+                        aria-labelledby={buttonId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="mt-3.5 pt-3 border-t border-lp-border/60 font-ui text-[15px] leading-relaxed text-lp-body">
+                          {item.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

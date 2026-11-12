@@ -34,20 +34,22 @@
   --font-ui: var(--font-inter), "DM Sans", system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 
-  /* Landing page design system tokens (Harmonized Warm Editorial Workspace) */
-  --color-lp-ink: #292827;
-  --color-lp-body: #666666;
-  --color-lp-muted: #8c8b88;
-  --color-lp-bg: #f6f5f1;
-  --color-lp-surface: #efede7;
+  /* Landing page design system tokens (HeyRetro-inspired Warm Tactile Workspace) */
+  --color-lp-ink: #2b2320;
+  --color-lp-body: #52433d;
+  --color-lp-muted: #84756d;
+  --color-lp-bg: #faf7f4;
+  --color-lp-surface: #f7ece4;
   --color-lp-surface-subtle: #ffffff;
-  --color-lp-border: #e3e3e2;
-  --color-lp-accent: #714cb6;
-  --color-lp-accent-hover: #5b389d;
-  --color-lp-accent-soft: #ede8ff;
-  --color-lp-wine: #421d24;
-  --color-lp-wine-hover: #32141a;
-  --color-lp-lagoon: #0c4243;
+  --color-lp-border: #e6dad0;
+  --color-lp-accent: #1f7a6c;
+  --color-lp-accent-hover: #176156;
+  --color-lp-accent-soft: #e6f4f1;
+  --color-lp-wine: #ec5a38;
+  --color-lp-wine-hover: #d64827;
+  --color-lp-lagoon: #2b2320;
+  --color-lp-peach: #fae6d9;
+  --color-lp-sage: #eef0e5;
 
   /* Authenticated App Design System — "Warm Editorial Workspace"
      Synthesizing Superhuman + Intercom + Bevel + ClickUp + Handshake */

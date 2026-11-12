@@ -4,12 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   CheckCircle2,
-  FileText,
   Layers,
   MapPin,
-  Search,
   Sparkles,
-  UserRound,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -20,25 +17,25 @@ export function Hero() {
   const selected = sampleOpportunities[selectedIdx] ?? sampleOpportunities[0]!;
 
   return (
-    <section className="relative overflow-hidden border-b border-lp-border bg-lp-bg pt-14 pb-20 sm:pt-20 sm:pb-28">
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-        {/* Centered Hero Header */}
-        <div className="mx-auto max-w-[780px] text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
-            className="inline-flex items-center gap-2 rounded-full border border-lp-border bg-lp-surface-subtle px-3.5 py-1 font-ui text-xs font-medium text-lp-body"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-lp-accent" aria-hidden="true" />
-            A more considered way to find your next role
-          </motion.div>
+    <section className="relative overflow-hidden border-b border-lp-border bg-lp-bg pt-12 pb-20 sm:pt-16 sm:pb-24">
+      {/* Subtle HeyRetro-style ambient radial glows */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-44 left-1/2 -z-0 h-[420px] w-[960px] -translate-x-1/2 opacity-75"
+        style={{
+          background:
+            "radial-gradient(circle at 22% 50%, rgba(236, 90, 56, 0.16), transparent 48%), radial-gradient(circle at 78% 45%, rgba(83, 179, 163, 0.16), transparent 48%)",
+        }}
+      />
 
+      <div className="relative z-10 mx-auto max-w-[1200px] px-5 sm:px-8">
+        {/* Centered Hero Header */}
+        <div className="mx-auto max-w-[760px] text-center">
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.06 }}
-            className="mt-6 font-ui text-[40px] font-semibold leading-[1.08] tracking-[-0.03em] text-lp-ink sm:text-[54px] lg:text-[62px]"
+            transition={{ duration: 0.4 }}
+            className="font-ui text-[40px] font-bold leading-[1.06] tracking-[-0.035em] text-lp-ink sm:text-[56px] lg:text-[64px]"
           >
             Your next opportunity deserves a better approach.
           </motion.h1>
@@ -46,101 +43,116 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.12 }}
-            className="mx-auto mt-5 max-w-[620px] font-ui text-[17px] leading-[1.6] text-lp-body sm:text-[18px]"
+            transition={{ duration: 0.4, delay: 0.08 }}
+            className="mx-auto mt-4 max-w-[580px] font-ui text-[16px] leading-[1.6] text-lp-body sm:text-[18px]"
           >
-            Discover relevant jobs, understand where you stand, and tailor every application to the
-            opportunity — all from one career workspace.
+            Understand your strengths. Find opportunities that fit. Build an application that
+            reflects your best work — all from one career workspace.
           </motion.p>
-
-          {/* Three core pillars */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.18 }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-ui text-[13px] font-medium text-lp-ink"
-          >
-            <span className="inline-flex items-center gap-1.5">
-              <UserRound className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
-              One career profile
-            </span>
-            <span className="text-lp-border" aria-hidden="true">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <Search className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
-              Smarter job matching
-            </span>
-            <span className="text-lp-border" aria-hidden="true">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-lp-accent" aria-hidden="true" />
-              Tailored applications
-            </span>
-          </motion.div>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.24 }}
-            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
-          >
-            <Link
-              href="/signup"
-              className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-lp-wine px-6 font-ui text-sm font-medium text-white shadow-xs transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
-            >
-              Get started — it&apos;s free
-              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
-            </Link>
-            <a
-              href="#how-it-works"
-              className="inline-flex h-12 w-full items-center justify-center rounded-[12px] border border-lp-border bg-lp-surface-subtle px-6 font-ui text-sm font-medium text-lp-ink transition-colors duration-150 hover:bg-lp-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
-            >
-              See how it works
-            </a>
-          </motion.div>
-
-          <p className="mt-3.5 font-ui text-xs text-lp-muted">
-            No credit card required · You&apos;re always in control
-          </p>
         </div>
 
-        {/* Connected Product Workspace Demonstration directly below */}
+        {/* Floating Collage Composition (HeyRetro-style center board + tilted flanking cards) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.28 }}
-          className="mt-14 sm:mt-16"
+          transition={{ duration: 0.5, delay: 0.14 }}
+          className="relative mx-auto mt-10 max-w-[1060px] sm:mt-12 lg:px-10"
         >
-          <div className="overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_1px_3px_rgba(17,24,39,0.04),0_20px_48px_rgba(17,24,39,0.08)]">
-            {/* Workspace Top Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface-subtle px-4 py-3 sm:px-6">
-              <div className="flex items-center gap-2.5">
-                <Layers className="h-4 w-4 text-lp-accent" aria-hidden="true" />
-                <span className="font-ui text-[13px] font-semibold text-lp-ink">
-                  ApplyPilot Career Workspace
-                </span>
-                <span className="hidden rounded-full border border-lp-border bg-lp-bg px-2 py-0.5 font-mono text-[11px] text-lp-muted sm:inline-block">
-                  Illustrative workspace preview
-                </span>
-              </div>
-              <div className="flex items-center gap-2 font-ui text-xs text-lp-muted">
-                <span>Select an opportunity to see live tailoring:</span>
-                <div className="inline-flex rounded-lg border border-lp-border bg-lp-bg p-0.5">
-                  {sampleOpportunities.map((opp, idx) => (
-                    <button
-                      key={opp.id}
-                      type="button"
-                      onClick={() => setSelectedIdx(idx)}
-                      className={`rounded-md px-2.5 py-1 font-ui text-xs font-medium transition-colors ${selectedIdx === idx
-                          ? "bg-lp-ink text-white"
-                          : "text-lp-body hover:text-lp-ink"
-                        }`}
-                    >
-                      {opp.role}
-                    </button>
-                  ))}
+          {/* Top-left floating card */}
+          <div className="pointer-events-none absolute -top-5 -left-2 z-20 hidden w-[210px] -rotate-3 rounded-2xl border border-lp-border bg-white p-3.5 shadow-[0_12px_30px_rgba(43,35,32,0.09)] xl:block">
+            <div className="flex items-center justify-between">
+              <span className="rounded-full bg-lp-accent-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-lp-accent">
+                Profile Verified
+              </span>
+              <span className="font-mono text-[10px] text-lp-muted">4/4</span>
+            </div>
+            <p className="mt-2 font-ui text-xs font-semibold text-lp-ink">
+              {sampleCandidate.targetRole}
+            </p>
+            <p className="mt-1 font-ui text-[11px] text-lp-body">
+              All claims backed by source history
+            </p>
+          </div>
+
+          {/* Top-right floating card */}
+          <div className="pointer-events-none absolute -top-4 -right-2 z-20 hidden w-[215px] rotate-3 rounded-2xl border border-lp-border bg-white p-3.5 shadow-[0_12px_30px_rgba(43,35,32,0.09)] xl:block">
+            <div className="flex items-center justify-between">
+              <span className="rounded-full bg-lp-peach px-2 py-0.5 font-mono text-[10px] font-semibold text-lp-wine">
+                {selected.alignmentLabel}
+              </span>
+              <Sparkles className="h-3.5 w-3.5 text-lp-wine" aria-hidden="true" />
+            </div>
+            <p className="mt-2 font-ui text-xs font-semibold text-lp-ink">{selected.role}</p>
+            <p className="mt-0.5 font-ui text-[11px] text-lp-muted">{selected.company}</p>
+          </div>
+
+          {/* Bottom-left floating card */}
+          <div className="pointer-events-none absolute -bottom-5 left-2 z-20 hidden w-[220px] rotate-2 rounded-2xl border border-lp-border bg-white p-3.5 shadow-[0_12px_30px_rgba(43,35,32,0.09)] xl:block">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+              <span className="font-ui text-xs font-semibold text-lp-ink">
+                Zero hallucinations
+              </span>
+            </div>
+            <p className="mt-1 font-ui text-[11px] leading-snug text-lp-body">
+              Every tailored bullet links to your verified experience.
+            </p>
+          </div>
+
+          {/* Bottom-right dark floating card */}
+          <div className="pointer-events-none absolute -right-1 -bottom-5 z-20 hidden w-[225px] -rotate-2 rounded-2xl border border-white/10 bg-[#141413] p-3.5 text-white shadow-[0_14px_34px_rgba(20,20,19,0.22)] xl:block">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-white/75">
+                <span className="h-1.5 w-1.5 rounded-full bg-lp-wine" />
+                Companion Active
+              </span>
+              <span className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/80">
+                Synced
+              </span>
+            </div>
+            <p className="mt-2 font-ui text-xs font-semibold text-white">
+              {selected.resumeVersion}
+            </p>
+            <p className="mt-0.5 font-ui text-[11px] text-white/65">
+              Ready for review &amp; export
+            </p>
+          </div>
+
+          {/* Center Main Interactive Board */}
+          <div className="rounded-[24px] border border-lp-border bg-white shadow-[0_20px_60px_rgba(43,35,32,0.1)]">
+            <div className="overflow-hidden rounded-[24px]">
+              {/* Workspace Top Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-bg/70 px-4 py-3.5 sm:px-6">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lp-peach text-lp-wine">
+                    <Layers className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="font-ui text-[13px] font-semibold text-lp-ink">
+                    ApplyPilot Career Board
+                  </span>
+                  <span className="hidden rounded-full bg-lp-accent-soft px-2.5 py-0.5 font-mono text-[11px] font-medium text-lp-accent sm:inline-block">
+                    Interactive preview
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 font-ui text-xs text-lp-muted">
+                  <span>Select an opportunity:</span>
+                  <div className="inline-flex rounded-full border border-lp-border bg-white p-0.5">
+                    {sampleOpportunities.map((opp, idx) => (
+                      <button
+                        key={opp.id}
+                        type="button"
+                        onClick={() => setSelectedIdx(idx)}
+                        className={`rounded-full px-3 py-1 font-ui text-xs font-semibold transition-colors ${selectedIdx === idx
+                            ? "bg-[#141413] text-white"
+                            : "text-lp-body hover:text-lp-ink"
+                          }`}
+                      >
+                        {opp.role}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
             {/* Three-Column Connected Workspace */}
             <div className="grid divide-y divide-lp-border lg:grid-cols-3 lg:divide-x lg:divide-y-0">
@@ -261,7 +273,35 @@ export function Hero() {
                 </AnimatePresence>
               </div>
             </div>
+            </div>
           </div>
+        </motion.div>
+
+        {/* CTAs below floating collage (HeyRetro-style) */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.24 }}
+          className="mt-10 text-center"
+        >
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-3.5">
+            <Link
+              href="/signup"
+              className="group inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#141413] px-6 font-ui text-sm font-semibold text-white shadow-[0_6px_18px_rgba(20,20,19,0.18)] transition-all duration-150 hover:-translate-y-0.5 hover:bg-[#2b2320] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-wine sm:w-auto"
+            >
+              Get started — it&apos;s free
+              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
+            <a
+              href="#how-it-works"
+              className="inline-flex h-11 w-full items-center justify-center rounded-xl border border-lp-border bg-white px-6 font-ui text-sm font-semibold text-lp-ink shadow-2xs transition-colors duration-150 hover:bg-lp-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-accent sm:w-auto"
+            >
+              See how it works
+            </a>
+          </div>
+          <p className="mt-3 font-ui text-xs text-lp-muted">
+            Free account creation · No credit card required
+          </p>
         </motion.div>
       </div>
     </section>

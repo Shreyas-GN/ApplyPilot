@@ -25,47 +25,48 @@ export function CandidateIntelligence() {
   const [confirmed, setConfirmed] = useState(true);
 
   return (
-    <section id="candidate-intelligence" className="border-b border-lp-border bg-lp-surface py-20 sm:py-28">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-5 sm:px-8 lg:grid-cols-[minmax(0,440px)_1fr] lg:gap-16">
-        {/* Left: Copy */}
-        <div>
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-            Your professional foundation
-          </p>
-          <h2 className="mt-3 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[40px]">
-            Your experience, understood.
-          </h2>
-          <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
-            Your resume is only one part of your professional story.
-          </p>
-          <p className="mt-3 font-ui text-[15px] leading-[1.65] text-lp-body">
-            Bring your skills, experience, education and projects into one structured profile.
-            Review what ApplyPilot extracts, correct anything that needs attention, and build a
-            profile that grows with your career.
-          </p>
+    <section id="candidate-intelligence" className="border-b border-lp-border bg-lp-bg py-16 sm:py-20">
+      <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+        <div className="grid items-center gap-10 rounded-[32px] border border-lp-border bg-white p-7 shadow-[0_8px_32px_rgba(43,35,32,0.05)] sm:p-10 lg:grid-cols-[minmax(0,440px)_1fr] lg:gap-14 lg:p-12">
+          {/* Left: Copy */}
+          <div>
+            <p className="inline-flex rounded-full bg-lp-accent-soft px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-lp-accent">
+              Your professional foundation
+            </p>
+            <h2 className="mt-4 font-ui text-[32px] font-bold leading-[1.12] tracking-[-0.025em] text-lp-ink sm:text-[40px]">
+              Your experience, understood.
+            </h2>
+            <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
+              Your resume is only one part of your professional story.
+            </p>
+            <p className="mt-3 font-ui text-[15px] leading-[1.65] text-lp-body">
+              Bring your skills, experience, education and projects into one structured profile.
+              Review what ApplyPilot extracts, correct anything that needs attention, and build a
+              profile that grows with your career.
+            </p>
 
-          <ul className="mt-7 space-y-3">
-            {HIGHLIGHTS.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 font-ui text-[14px] text-lp-ink">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-lp-accent" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Right: Structured Candidate Profile Demonstration */}
-        <div className="overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_1px_3px_rgba(17,24,39,0.04),0_16px_40px_rgba(17,24,39,0.06)]">
-          {/* Header */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-lp-border bg-lp-surface-subtle px-5 py-3.5">
-            <div className="flex items-center gap-2">
-              <UserRound className="h-4 w-4 text-lp-ink" aria-hidden="true" />
-              <span className="font-ui text-sm font-semibold text-lp-ink">Candidate Profile</span>
-            </div>
-            <span className="rounded-full border border-lp-border bg-lp-bg px-2.5 py-0.5 font-mono text-[11px] text-lp-muted">
-              Illustrative sample
-            </span>
+            <ul className="mt-7 space-y-3">
+              {HIGHLIGHTS.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 font-ui text-[14px] text-lp-ink">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-lp-accent" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
+
+          {/* Right: Structured Candidate Profile Demonstration */}
+          <div className="overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_8px_30px_rgba(43,35,32,0.07)]">
+            {/* Dark Obsidian Header */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-[#141413] px-5 py-3.5 text-white">
+              <div className="flex items-center gap-2">
+                <UserRound className="h-4 w-4 text-[#f9a68f]" aria-hidden="true" />
+                <span className="font-ui text-sm font-semibold">Candidate Profile</span>
+              </div>
+              <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[11px] text-white/80">
+                Illustrative sample
+              </span>
+            </div>
 
           <div className="p-5 sm:p-6">
             {/* Candidate Summary + Progress */}
@@ -183,6 +184,7 @@ export function CandidateIntelligence() {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </section>

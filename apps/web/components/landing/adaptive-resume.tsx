@@ -67,31 +67,31 @@ export function AdaptiveResume() {
         </div>
 
         {/* Large Split-Screen Interactive Demonstration */}
-        <div className="mt-12 overflow-hidden rounded-2xl border border-lp-border bg-lp-bg shadow-[0_1px_3px_rgba(17,24,39,0.04),0_20px_48px_rgba(17,24,39,0.08)]">
+        <div className="mt-12 overflow-hidden rounded-[28px] border border-lp-border bg-white shadow-[0_12px_44px_rgba(43,35,32,0.06)]">
           {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-lp-border bg-lp-surface-subtle px-5 py-4 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-lp-border bg-lp-bg/60 px-5 py-4 sm:px-6">
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
-                <FileEdit className="h-4 w-4 text-lp-accent" aria-hidden="true" />
+                <FileEdit className="h-4 w-4 text-lp-wine" aria-hidden="true" />
                 <span className="font-ui text-sm font-semibold text-lp-ink">
                   Resume comparison
                 </span>
               </div>
-              <span className="rounded-full border border-lp-border bg-lp-bg px-2.5 py-0.5 font-mono text-[11px] text-lp-muted">
+              <span className="rounded-full border border-lp-border bg-white px-2.5 py-0.5 font-mono text-[11px] text-lp-muted">
                 Illustrative preview
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-ui text-xs text-lp-muted">Target job description:</span>
-              <div className="inline-flex rounded-lg border border-lp-border bg-lp-bg p-0.5">
+              <div className="inline-flex rounded-full border border-lp-border bg-white p-0.5">
                 {sampleOpportunities.map((opp, idx) => (
                   <button
                     key={opp.id}
                     type="button"
                     onClick={() => setSelectedIdx(idx)}
-                    className={`rounded-md px-3 py-1 font-ui text-xs font-medium transition-colors ${selectedIdx === idx
-                        ? "bg-lp-ink text-white"
+                    className={`rounded-full px-3 py-1 font-ui text-xs font-semibold transition-colors ${selectedIdx === idx
+                        ? "bg-[#141413] text-white"
                         : "text-lp-body hover:text-lp-ink"
                       }`}
                   >

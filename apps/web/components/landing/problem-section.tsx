@@ -1,61 +1,91 @@
 export function ProblemSection() {
-  const columns = [
+  const pillars = [
     {
-      number: "01",
-      title: "Too many opportunities, too little clarity",
-      description:
-        "Finding a vacancy doesn't tell you whether it's actually right for your experience.",
+      title: "Master Profile",
+      description: "One structured source of truth for skills & impact.",
+      bg: "bg-lp-peach",
+      dot: "bg-lp-wine",
+      previewTitle: "Verified Experience",
+      previewMeta: "12 skills · 4 roles",
     },
     {
-      number: "02",
-      title: "One resume doesn't fit every role",
-      description:
-        "Different jobs need different emphasis on your experience, skills and projects.",
+      title: "Fit Scoring",
+      description: "See honest alignment & gaps before you apply.",
+      bg: "bg-lp-accent-soft",
+      dot: "bg-lp-accent",
+      previewTitle: "92% Role Fit",
+      previewMeta: "2 strong signals",
     },
     {
-      number: "03",
-      title: "Applications become difficult to manage",
-      description:
-        "Multiple websites, different resume versions, follow-ups and interview updates.",
+      title: "Adaptive Resume",
+      description: "Tailored bullets grounded in real evidence.",
+      bg: "bg-lp-sage",
+      dot: "bg-emerald-600",
+      previewTitle: "Resume v3 · Tailored",
+      previewMeta: "Approved by you",
+    },
+    {
+      title: "Companion",
+      description: "Prepare screening answers on employer sites.",
+      bg: "bg-amber-50",
+      dot: "bg-amber-600",
+      previewTitle: "Drafted Response",
+      previewMeta: "Ready to review",
+    },
+    {
+      title: "Pipeline Tracker",
+      description: "Follow every stage, version & next step.",
+      bg: "bg-stone-100",
+      dot: "bg-[#141413]",
+      previewTitle: "Interview Stage",
+      previewMeta: "3 active roles",
     },
   ];
 
   return (
-    <section className="border-b border-lp-border bg-lp-surface py-20 sm:py-24">
+    <section className="border-b border-lp-border bg-lp-bg py-20 sm:py-24">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
-        <div className="max-w-[720px]">
-          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-            The way we apply needs a better approach
-          </p>
-          <h2 className="mt-3 font-ui text-[30px] font-semibold leading-[1.15] tracking-[-0.02em] text-lp-ink sm:text-[38px]">
-            Finding a job is one thing. Getting your application right is another.
+        <div className="max-w-[680px]">
+          <h2 className="font-ui text-[32px] font-bold leading-[1.1] tracking-[-0.03em] text-lp-ink sm:text-[42px]">
+            Everything your search needs.
+            <span className="block text-lp-muted">Nothing it doesn&apos;t.</span>
           </h2>
-          <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
-            The job search is scattered across job boards, company websites, resumes, spreadsheets
-            and endless application forms. Every opportunity requires decisions. Every application
-            needs preparation. And keeping track of it all can become a job in itself.
+          <p className="mt-4 font-ui text-[16px] leading-[1.6] text-lp-body">
+            The job search shouldn&apos;t live across scattered job boards, disconnected resume
+            files, and messy spreadsheets.
           </p>
         </div>
 
-        {/* Three editorial columns — no oversized decorative cards */}
-        <div className="mt-12 grid gap-10 border-t border-lp-border pt-10 md:grid-cols-3 md:gap-12">
-          {columns.map((col) => (
-            <div key={col.number}>
-              <span className="font-mono text-xs font-medium text-lp-muted">{col.number}</span>
-              <h3 className="mt-2.5 font-ui text-lg font-semibold leading-snug text-lp-ink">
-                {col.title}
-              </h3>
-              <p className="mt-2 font-ui text-[15px] leading-relaxed text-lp-body">
-                {col.description}
-              </p>
+        {/* HeyRetro-style 5-card horizontal illustrated strip */}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {pillars.map((item) => (
+            <div
+              key={item.title}
+              className="group rounded-2xl border border-lp-border bg-white p-3 shadow-[0_2px_10px_rgba(43,35,32,0.03)] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_rgba(43,35,32,0.07)]"
+            >
+              <div className={`flex h-28 flex-col justify-between rounded-xl p-3.5 ${item.bg}`}>
+                <div className="flex items-center justify-between">
+                  <span className={`h-2.5 w-2.5 rounded-full ${item.dot}`} />
+                  <span className="rounded bg-white/80 px-1.5 py-0.5 font-mono text-[10px] font-medium text-lp-ink">
+                    Live
+                  </span>
+                </div>
+                <div className="rounded-lg bg-white/95 p-2 shadow-2xs">
+                  <p className="font-ui text-[11px] font-semibold text-lp-ink">
+                    {item.previewTitle}
+                  </p>
+                  <p className="font-mono text-[10px] text-lp-muted">{item.previewMeta}</p>
+                </div>
+              </div>
+              <div className="px-1 pt-3 pb-1">
+                <h3 className="font-ui text-sm font-semibold text-lp-ink">{item.title}</h3>
+                <p className="mt-1 font-ui text-xs leading-relaxed text-lp-body">
+                  {item.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
-
-        <p className="mt-12 border-t border-lp-border pt-8 font-ui text-[16px] font-medium text-lp-ink sm:text-[17px]">
-          You don&apos;t need another place to send applications. You need a better way to manage
-          the decisions behind them.
-        </p>
       </div>
     </section>
   );
