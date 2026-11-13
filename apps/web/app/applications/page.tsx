@@ -20,9 +20,12 @@ import { api, ApiError } from "@/lib/api-client";
 const STATUSES: ApplicationStatus[] = [
   "saved",
   "applied",
+  "phone_screen",
   "interviewing",
+  "background_check",
   "offer",
   "rejected",
+  "withdrawn",
 ];
 
 function isFollowUpDueSoon(iso: string | null): boolean {

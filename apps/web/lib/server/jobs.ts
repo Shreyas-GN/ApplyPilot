@@ -1,8 +1,9 @@
-import { desc, eq, ilike, or, and, gte, count, sql } from 'drizzle-orm';
+import { desc, eq, ilike, or, and, gte, count, inArray, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   applicationEvents,
   applications,
+  jobBoards,
   jobs,
   jobStates,
   tailoredDocuments,
@@ -29,12 +30,16 @@ export interface BoardSource {
   companyName: string;
 }
 
+// Seeded board definitions — only boards whose ATS endpoints are publicly accessible
 const DEFAULT_BOARDS: BoardSource[] = [
   { provider: 'greenhouse', slug: 'vercel', companyName: 'Vercel' },
   { provider: 'greenhouse', slug: 'anthropic', companyName: 'Anthropic' },
   { provider: 'greenhouse', slug: 'stripe', companyName: 'Stripe' },
   { provider: 'greenhouse', slug: 'figma', companyName: 'Figma' },
 ];
+
+// Number of consecutive missed syncs before a job is closed
+const CLOSURE_MISS_THRESHOLD = 2;
 
 interface GreenhouseJob {
   id: number;
@@ -58,41 +63,150 @@ interface LeverPosting {
   createdAt?: number;
 }
 
-export async function syncPublicJobs(
-  customBoards?: BoardSource[]
-): Promise<{ synced: number; boardsChecked: number }> {
-  const boards = customBoards && customBoards.length > 0 ? customBoards : DEFAULT_BOARDS;
-  let totalSynced = 0;
+interface BoardSyncResult {
+  synced: number;
+  closed: number;
+  reopened: number;
+  skipped: boolean;
+  skipReason?: string;
+}
 
-  for (const board of boards) {
-    try {
-      if (board.provider === 'greenhouse') {
-        const count = await ingestGreenhouseBoard(board.slug, board.companyName);
-        totalSynced += count;
-      } else if (board.provider === 'lever') {
-        const count = await ingestLeverBoard(board.slug, board.companyName);
-        totalSynced += count;
-      }
-    } catch (error) {
-      console.warn(
-        `[Jobs Sync] Failed syncing ${board.provider}:${board.slug}`,
-        error
-      );
+// ─── Board registry ──────────────────────────────────────────────────────────
+
+export async function ensureDefaultBoardsSeeded(): Promise<void> {
+  for (const board of DEFAULT_BOARDS) {
+    await db
+      .insert(jobBoards)
+      .values({
+        provider: board.provider,
+        slug: board.slug,
+        companyName: board.companyName,
+        isEnabled: true,
+      })
+      .onConflictDoNothing();
+  }
+}
+
+async function getEnabledBoards(): Promise<BoardSource[]> {
+  const rows = await db
+    .select({
+      provider: jobBoards.provider,
+      slug: jobBoards.slug,
+      companyName: jobBoards.companyName,
+    })
+    .from(jobBoards)
+    .where(eq(jobBoards.isEnabled, true));
+
+  return rows as BoardSource[];
+}
+
+async function markBoardSynced(provider: string, slug: string, errorOccurred: boolean): Promise<void> {
+  await db
+    .update(jobBoards)
+    .set({
+      lastSyncedAt: new Date(),
+      errorCount: errorOccurred
+        ? sql`${jobBoards.errorCount} + 1`
+        : sql`0`,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(jobBoards.provider, provider), eq(jobBoards.slug, slug)));
+}
+
+async function disableBoard(provider: string, slug: string): Promise<void> {
+  await db
+    .update(jobBoards)
+    .set({ isEnabled: false, updatedAt: new Date() })
+    .where(and(eq(jobBoards.provider, provider), eq(jobBoards.slug, slug)));
+}
+
+// ─── Closure detection ───────────────────────────────────────────────────────
+
+/**
+ * Detect and apply closures for a board after a successful, non-empty sync.
+ * - Jobs not seen in this sync have their miss_count incremented.
+ * - Jobs seen after being inactive are reopened (miss_count reset, is_active = true).
+ * - Jobs with miss_count >= CLOSURE_MISS_THRESHOLD are marked closed.
+ *
+ * MUST NOT be called when the provider returned an empty or partial response.
+ */
+async function detectClosures(
+  boardSource: string,
+  boardSlug: string,
+  seenExternalIds: Set<string>
+): Promise<{ closed: number; reopened: number }> {
+  const sourceKey = boardSource;
+
+  // Find all active jobs for this board that were NOT seen in this sync
+  const activeJobs = await db
+    .select({ id: jobs.id, externalId: jobs.externalId, missCount: jobs.missCount })
+    .from(jobs)
+    .where(and(eq(jobs.source, sourceKey), eq(jobs.isActive, true)));
+
+  const missedJobs = activeJobs.filter(
+    (j) => !seenExternalIds.has(j.externalId)
+  );
+
+  let closed = 0;
+
+  for (const job of missedJobs) {
+    const newMissCount = job.missCount + 1;
+    if (newMissCount >= CLOSURE_MISS_THRESHOLD) {
+      await db
+        .update(jobs)
+        .set({
+          isActive: false,
+          closedAt: new Date(),
+          missCount: newMissCount,
+        })
+        .where(eq(jobs.id, job.id));
+      closed++;
+    } else {
+      await db
+        .update(jobs)
+        .set({ missCount: newMissCount })
+        .where(eq(jobs.id, job.id));
     }
   }
 
-  return { synced: totalSynced, boardsChecked: boards.length };
+  // Reopen any previously-closed jobs that reappeared in this sync
+  const seenIdsList = [...seenExternalIds];
+  const reopened = seenIdsList.length > 0
+    ? (await db
+        .update(jobs)
+        .set({ isActive: true, closedAt: null, missCount: 0 })
+        .where(
+          and(
+            eq(jobs.source, sourceKey),
+            eq(jobs.isActive, false),
+            inArray(jobs.externalId, seenIdsList)
+          )
+        )
+        .returning({ id: jobs.id })).length
+    : 0;
+
+  if (closed > 0 || reopened > 0) {
+    console.info(
+      `[Jobs Closure] ${sourceKey}:${boardSlug} — closed: ${closed}, reopened: ${reopened}`
+    );
+  }
+
+  return { closed, reopened };
 }
+
+// ─── Upsert helpers ──────────────────────────────────────────────────────────
 
 type UpsertJobRow = typeof jobs.$inferInsert;
 
-async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
-  if (rows.length === 0) return 0;
+async function upsertJobBatch(rows: UpsertJobRow[]): Promise<{ upserted: number; seenIds: Set<string> }> {
+  if (rows.length === 0) return { upserted: 0, seenIds: new Set() };
+
   const dedupedMap = new Map<string, UpsertJobRow>();
   for (const row of rows) {
     dedupedMap.set(`${row.source}:${row.externalId}`, row);
   }
   const deduped = [...dedupedMap.values()];
+  const seenIds = new Set(deduped.map((r) => r.externalId));
 
   await db
     .insert(jobs)
@@ -107,27 +221,67 @@ async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
         description: sql`excluded.description`,
         skills: sql`excluded.skills`,
         postedAt: sql`excluded.posted_at`,
+        isActive: true,
+        missCount: 0,
+        closedAt: null,
       },
     });
 
-  return deduped.length;
+  return { upserted: deduped.length, seenIds };
 }
 
-async function ingestGreenhouseBoard(
-  slug: string,
-  companyName: string
-): Promise<number> {
+// ─── Provider fetchers ───────────────────────────────────────────────────────
+
+async function fetchGreenhouseJobs(slug: string): Promise<GreenhouseJob[] | null> {
   const url = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(slug)}/jobs?content=true`;
   const res = await fetch(url, {
     next: { revalidate: 0 },
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) {
-    throw new Error(`Greenhouse API returned ${res.status}`);
+    throw new Error(`Greenhouse API returned ${res.status} for ${slug}`);
+  }
+  const data = (await res.json()) as { jobs?: GreenhouseJob[] };
+  return data.jobs ?? null;
+}
+
+async function fetchLeverPostings(slug: string): Promise<LeverPosting[] | null> {
+  const url = `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json`;
+  const res = await fetch(url, {
+    next: { revalidate: 0 },
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) {
+    throw new Error(`Lever API returned ${res.status} for ${slug}`);
+  }
+  const data = await res.json() as unknown;
+  if (!Array.isArray(data)) return null;
+  return data as LeverPosting[];
+}
+
+// ─── Board ingestion ─────────────────────────────────────────────────────────
+
+async function ingestGreenhouseBoard(slug: string, companyName: string): Promise<BoardSyncResult> {
+  let items: GreenhouseJob[];
+
+  try {
+    const fetched = await fetchGreenhouseJobs(slug);
+
+    if (fetched === null) {
+      console.warn(`[Jobs Sync] Greenhouse ${slug}: unexpected null response — skipping closure detection`);
+      return { synced: 0, closed: 0, reopened: 0, skipped: true, skipReason: 'null_response' };
+    }
+
+    if (fetched.length === 0) {
+      console.warn(`[Jobs Sync] Greenhouse ${slug}: returned 0 jobs (suspicious empty response) — skipping closure detection`);
+      return { synced: 0, closed: 0, reopened: 0, skipped: true, skipReason: 'empty_response' };
+    }
+
+    items = fetched.slice(0, 20);
+  } catch (error) {
+    throw error;
   }
 
-  const data = (await res.json()) as { jobs?: GreenhouseJob[] };
-  const items = (data.jobs ?? []).slice(0, 20);
   const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription = stripHtml(item.content ?? '');
     const location = item.location?.name ?? null;
@@ -149,23 +303,33 @@ async function ingestGreenhouseBoard(
     };
   });
 
-  return upsertJobBatch(rows);
+  const { upserted, seenIds } = await upsertJobBatch(rows);
+  const { closed, reopened } = await detectClosures('greenhouse', slug, seenIds);
+
+  return { synced: upserted, closed, reopened, skipped: false };
 }
 
-async function ingestLeverBoard(
-  slug: string,
-  companyName: string
-): Promise<number> {
-  const url = `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json`;
-  const res = await fetch(url, {
-    next: { revalidate: 0 },
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!res.ok) {
-    throw new Error(`Lever API returned ${res.status}`);
+async function ingestLeverBoard(slug: string, companyName: string): Promise<BoardSyncResult> {
+  let items: LeverPosting[];
+
+  try {
+    const fetched = await fetchLeverPostings(slug);
+
+    if (fetched === null) {
+      console.warn(`[Jobs Sync] Lever ${slug}: unexpected null/non-array response — skipping closure detection`);
+      return { synced: 0, closed: 0, reopened: 0, skipped: true, skipReason: 'null_response' };
+    }
+
+    if (fetched.length === 0) {
+      console.warn(`[Jobs Sync] Lever ${slug}: returned 0 postings (suspicious empty response) — skipping closure detection`);
+      return { synced: 0, closed: 0, reopened: 0, skipped: true, skipReason: 'empty_response' };
+    }
+
+    items = fetched.slice(0, 20);
+  } catch (error) {
+    throw error;
   }
 
-  const items = ((await res.json()) as LeverPosting[]).slice(0, 20);
   const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription =
       item.descriptionPlain ?? stripHtml(item.description ?? '');
@@ -188,8 +352,64 @@ async function ingestLeverBoard(
     };
   });
 
-  return upsertJobBatch(rows);
+  const { upserted, seenIds } = await upsertJobBatch(rows);
+  const { closed, reopened } = await detectClosures('lever', slug, seenIds);
+
+  return { synced: upserted, closed, reopened, skipped: false };
 }
+
+// ─── Public sync entry point ─────────────────────────────────────────────────
+
+export async function syncPublicJobs(
+  customBoards?: BoardSource[]
+): Promise<{ synced: number; closed: number; boardsChecked: number; boardsFailed: number }> {
+  let boards: BoardSource[];
+
+  if (customBoards && customBoards.length > 0) {
+    boards = customBoards;
+  } else {
+    // Try DB-configured boards; fall back to defaults if table is empty
+    try {
+      const dbBoards = await getEnabledBoards();
+      boards = dbBoards.length > 0 ? dbBoards : DEFAULT_BOARDS;
+    } catch {
+      boards = DEFAULT_BOARDS;
+    }
+  }
+
+  let totalSynced = 0;
+  let totalClosed = 0;
+  let boardsFailed = 0;
+
+  for (const board of boards) {
+    try {
+      let result: BoardSyncResult | null = null;
+      if (board.provider === 'greenhouse') {
+        result = await ingestGreenhouseBoard(board.slug, board.companyName);
+      } else if (board.provider === 'lever') {
+        result = await ingestLeverBoard(board.slug, board.companyName);
+      }
+
+      if (result) {
+        totalSynced += result.synced;
+        totalClosed += result.closed;
+        await markBoardSynced(board.provider, board.slug, false);
+      }
+    } catch (error) {
+      boardsFailed++;
+      console.warn(`[Jobs Sync] Failed syncing ${board.provider}:${board.slug}`, error);
+      try {
+        await markBoardSynced(board.provider, board.slug, true);
+      } catch {
+        // best-effort board tracking; never block other boards
+      }
+    }
+  }
+
+  return { synced: totalSynced, closed: totalClosed, boardsChecked: boards.length, boardsFailed };
+}
+
+// ─── Job listing and details (unchanged) ─────────────────────────────────────
 
 export type DiscoverJobsTab = 'for_you' | 'search' | 'adjacent' | 'saved';
 
@@ -254,6 +474,9 @@ export async function listMatchedJobs(
   } = options;
 
   const conditions = [];
+  // Only show active jobs in discovery
+  conditions.push(eq(jobs.isActive, true));
+
   if (q && q.trim()) {
     const term = `%${q.trim()}%`;
     conditions.push(
@@ -279,7 +502,7 @@ export async function listMatchedJobs(
     db
       .select()
       .from(jobs)
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .where(and(...conditions))
       .orderBy(desc(jobs.postedAt), desc(jobs.createdAt))
       .limit(limit),
     getProfile(userId),
@@ -467,6 +690,7 @@ export async function setJobState(
         url: jobRow.url,
         status: 'saved',
         matchScore: match.score,
+        source: 'discover_jobs',
       })
       .returning({ id: applications.id, status: applications.status });
 
@@ -502,4 +726,3 @@ export async function clearJobState(
     .returning({ id: jobStates.id });
   return deleted.length > 0;
 }
-

@@ -18,7 +18,7 @@ const createApplicationSchema = z.object({
     .nullable()
     .optional(),
   status: z
-    .enum(['saved', 'applied', 'interviewing', 'offer', 'rejected'])
+    .enum(['saved', 'applied', 'phone_screen', 'interviewing', 'background_check', 'offer', 'rejected', 'withdrawn'])
     .optional(),
   matchScore: z.number().int().min(0).max(100).nullable().optional(),
   notes: z.string().trim().max(5000).nullable().optional(),

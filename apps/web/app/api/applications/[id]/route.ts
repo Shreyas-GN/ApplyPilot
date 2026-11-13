@@ -8,7 +8,7 @@ import {
 
 const updateApplicationSchema = z.object({
   status: z
-    .enum(['saved', 'applied', 'interviewing', 'offer', 'rejected'])
+    .enum(['saved', 'applied', 'phone_screen', 'interviewing', 'background_check', 'offer', 'rejected', 'withdrawn'])
     .optional(),
   notes: z.string().trim().max(5000).nullable().optional(),
   followUpAt: z.string().trim().max(64).nullable().optional(),

@@ -12,9 +12,12 @@ const STATUS_TONE: Record<string, string> = {
   processing: "bg-blue-50 text-blue-700 border-blue-200/80",
   saved: "bg-ui-linen text-ui-ink border-ui-border",
   applied: "bg-blue-50 text-blue-700 border-blue-200/80",
+  phone_screen: "bg-sky-50 text-sky-700 border-sky-200/80",
   interviewing: "bg-amber-50 text-amber-800 border-amber-200/80",
+  background_check: "bg-violet-50 text-violet-700 border-violet-200/80",
   offer: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
   rejected: "bg-red-50 text-red-700 border-red-200/80",
+  withdrawn: "bg-slate-50 text-slate-600 border-slate-200/80",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -31,9 +34,12 @@ const STATUS_LABEL: Record<string, string> = {
   processing: "Processing",
   saved: "Saved",
   applied: "Applied",
+  phone_screen: "Phone Screen",
   interviewing: "Interviewing",
+  background_check: "Background Check",
   offer: "Offer",
   rejected: "Rejected",
+  withdrawn: "Withdrawn",
 };
 
 export function StatusBadge({ status }: { status: string }) {

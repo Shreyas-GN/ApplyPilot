@@ -17,7 +17,7 @@ const captureSchema = z.object({
   url: z.string().trim().url('Valid job URL is required'),
   ats: z.string().trim().max(60).optional(),
   status: z
-    .enum(['saved', 'applied', 'interviewing', 'offer', 'rejected'])
+    .enum(['saved', 'applied', 'phone_screen', 'interviewing', 'background_check', 'offer', 'rejected', 'withdrawn'])
     .optional(),
   filledFields: z.array(z.string().trim().max(100)).max(30).optional(),
 });
