@@ -186,6 +186,20 @@ async function detectClosures(
       )
     );
 
+  // Anomaly guard: an empty response when stored jobs exist is suspicious.
+  // A partial parse failure, transient network error, or misconfigured slug can
+  // produce a valid HTTP 200 with an empty payload. Processing closures against
+  // that would start the two-miss countdown on every stored job simultaneously.
+  // Suppress closure detection and log a warning instead. The normal two-consecutive-
+  // miss cycle resumes on the next sync that returns at least one job.
+  if (returnedExternalIds.size === 0 && boardJobs.length > 0) {
+    console.warn(
+      `[Jobs Sync] ANOMALY ${source}:${boardSlug} — returned 0 jobs but has ` +
+        `${boardJobs.length} stored open jobs. Closure detection suppressed for this sync.`
+    );
+    return;
+  }
+
   const toIncrement: string[] = [];
   const toClose: string[] = [];
 

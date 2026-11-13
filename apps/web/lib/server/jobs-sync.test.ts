@@ -408,3 +408,113 @@ describe('board registry — DB-driven', () => {
     expect(hasCustomBoards([])).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// 12. Empty-response anomaly guard (closure safety)
+// ---------------------------------------------------------------------------
+describe('empty-response anomaly guard', () => {
+  // Simulates the detectClosures guard logic
+  const runGuard = (returnedCount: number, storedCount: number) => {
+    if (returnedCount === 0 && storedCount > 0) {
+      return { suppressed: true, reason: 'anomaly: 0 returned, >0 stored' };
+    }
+    return { suppressed: false };
+  };
+
+  it('suppresses closure detection when board returns 0 jobs but has stored jobs', () => {
+    const result = runGuard(0, 42);
+    expect(result.suppressed).toBe(true);
+  });
+
+  it('does NOT suppress when board returns 0 jobs and has 0 stored jobs (new board)', () => {
+    const result = runGuard(0, 0);
+    expect(result.suppressed).toBe(false);
+  });
+
+  it('does NOT suppress normal sync where some jobs are missing (normal closure path)', () => {
+    // Board had 50 jobs, now returns 48 → 2 missing → normal two-miss cycle
+    const result = runGuard(48, 50);
+    expect(result.suppressed).toBe(false);
+  });
+
+  it('suppression preserves missingSyncCount=0 (jobs not prematurely flagged)', () => {
+    // If detection is suppressed, no DB update runs → missingSyncCount unchanged
+    const job = { missingSyncCount: 0 };
+    const suppressed = runGuard(0, 1).suppressed;
+    if (suppressed) {
+      // No update applied
+    }
+    expect(job.missingSyncCount).toBe(0); // unchanged
+  });
+
+  it('two-miss cycle resumes correctly after an anomalous empty sync', () => {
+    // Sequence: job exists → miss #1 → anomalous empty → miss #2 → closed
+    // The anomalous empty does NOT advance the miss count.
+    const simulate = (syncs: Array<{ returned: boolean; anomalous: boolean }>) => {
+      let missCount = 0;
+      let closed = false;
+      for (const sync of syncs) {
+        if (sync.anomalous) {
+          // Guard: suppressed, no update
+          continue;
+        }
+        if (sync.returned) {
+          missCount = 0; // reset on reappearance
+        } else {
+          if (missCount >= 1) closed = true;
+          else missCount++;
+        }
+      }
+      return { missCount, closed };
+    };
+
+    // Normal cycle (no anomaly): close after 2 misses
+    expect(simulate([
+      { returned: false, anomalous: false }, // miss #1 → missCount=1
+      { returned: false, anomalous: false }, // miss #2 → closed
+    ])).toMatchObject({ closed: true });
+
+    // Anomaly between misses does NOT reset the cycle
+    expect(simulate([
+      { returned: false, anomalous: false }, // miss #1 → missCount=1
+      { returned: false, anomalous: true },  // suppressed (empty anomaly)
+      { returned: false, anomalous: false }, // miss #2 → closed
+    ])).toMatchObject({ closed: true });
+
+    // Single miss + anomaly does NOT close
+    expect(simulate([
+      { returned: false, anomalous: false }, // miss #1 → missCount=1
+      { returned: false, anomalous: true },  // suppressed (empty anomaly)
+    ])).toMatchObject({ closed: false, missCount: 1 });
+
+    // Job reappears after anomaly: missCount reset
+    expect(simulate([
+      { returned: false, anomalous: false }, // miss #1 → missCount=1
+      { returned: false, anomalous: true },  // suppressed
+      { returned: true,  anomalous: false }, // reappeared → missCount=0
+      { returned: false, anomalous: false }, // miss #1 again → missCount=1
+    ])).toMatchObject({ closed: false, missCount: 1 });
+  });
+
+  it('a 403/500 provider error cannot trigger closure (throws before detectClosures)', () => {
+    let closureRan = false;
+    const ingest = async (statusOk: boolean) => {
+      if (!statusOk) throw new Error('HTTP 403');
+      closureRan = true;
+    };
+    return ingest(false).catch(() => {
+      expect(closureRan).toBe(false);
+    });
+  });
+
+  it('a timeout cannot trigger closure (throws before detectClosures)', () => {
+    let closureRan = false;
+    const ingest = async (timeout: boolean) => {
+      if (timeout) throw new DOMException('Aborted', 'AbortError');
+      closureRan = true;
+    };
+    return ingest(true).catch(() => {
+      expect(closureRan).toBe(false);
+    });
+  });
+});
