@@ -50,6 +50,13 @@
       "when": 1794415648495,
       "tag": "0006_cold_expediter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794584300369,
+      "tag": "0007_job_boards_closure",
+      "breakpoints": true
     }
   ]
 }

@@ -1,9 +1,10 @@
-import { desc, eq, ilike, or, and, gte, count, sql } from 'drizzle-orm';
+import { desc, eq, ilike, or, and, gte, count, sql, isNull, inArray, like } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   applicationEvents,
   applications,
   jobs,
+  jobBoards,
   jobStates,
   tailoredDocuments,
 } from '@/lib/db/schema';
@@ -24,17 +25,14 @@ import {
 } from './job-matching';
 
 export interface BoardSource {
-  provider: 'greenhouse' | 'lever';
+  provider: 'greenhouse' | 'lever' | 'ashby';
   slug: string;
   companyName: string;
 }
 
-const DEFAULT_BOARDS: BoardSource[] = [
-  { provider: 'greenhouse', slug: 'vercel', companyName: 'Vercel' },
-  { provider: 'greenhouse', slug: 'anthropic', companyName: 'Anthropic' },
-  { provider: 'greenhouse', slug: 'stripe', companyName: 'Stripe' },
-  { provider: 'greenhouse', slug: 'figma', companyName: 'Figma' },
-];
+// ---------------------------------------------------------------------------
+// ATS response types
+// ---------------------------------------------------------------------------
 
 interface GreenhouseJob {
   id: number;
@@ -58,31 +56,79 @@ interface LeverPosting {
   createdAt?: number;
 }
 
+interface AshbyPosting {
+  id: string;
+  title: string;
+  teamName?: string;
+  locationName?: string;
+  employmentType?: string;
+  descriptionHtml?: string;
+  applyUrl: string;
+  publishedAt?: string;
+  isRemote?: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Sync entry point
+// ---------------------------------------------------------------------------
+
 export async function syncPublicJobs(
   customBoards?: BoardSource[]
 ): Promise<{ synced: number; boardsChecked: number }> {
-  const boards = customBoards && customBoards.length > 0 ? customBoards : DEFAULT_BOARDS;
+  let boards: BoardSource[];
+
+  if (customBoards && customBoards.length > 0) {
+    boards = customBoards;
+  } else {
+    const rows = await db
+      .select({
+        provider: jobBoards.provider,
+        slug: jobBoards.slug,
+        companyName: jobBoards.companyName,
+      })
+      .from(jobBoards)
+      .where(eq(jobBoards.enabled, true));
+
+    boards = rows as BoardSource[];
+  }
+
   let totalSynced = 0;
 
   for (const board of boards) {
     try {
+      let count = 0;
       if (board.provider === 'greenhouse') {
-        const count = await ingestGreenhouseBoard(board.slug, board.companyName);
-        totalSynced += count;
+        count = await ingestGreenhouseBoard(board.slug, board.companyName);
       } else if (board.provider === 'lever') {
-        const count = await ingestLeverBoard(board.slug, board.companyName);
-        totalSynced += count;
+        count = await ingestLeverBoard(board.slug, board.companyName);
+      } else if (board.provider === 'ashby') {
+        count = await ingestAshbyBoard(board.slug, board.companyName);
+      }
+      totalSynced += count;
+      console.log(`[Jobs Sync] ${board.provider}:${board.slug} → ${count} jobs`);
+
+      // Update board registry metadata only after a successful sync
+      if (!customBoards) {
+        await db
+          .update(jobBoards)
+          .set({ lastSyncedAt: new Date(), lastSyncCount: count })
+          .where(and(eq(jobBoards.provider, board.provider), eq(jobBoards.slug, board.slug)));
       }
     } catch (error) {
       console.warn(
         `[Jobs Sync] Failed syncing ${board.provider}:${board.slug}`,
         error
       );
+      // Continue with remaining boards – do not update board metadata on failure
     }
   }
 
   return { synced: totalSynced, boardsChecked: boards.length };
 }
+
+// ---------------------------------------------------------------------------
+// Upsert helpers
+// ---------------------------------------------------------------------------
 
 type UpsertJobRow = typeof jobs.$inferInsert;
 
@@ -94,9 +140,11 @@ async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
   }
   const deduped = [...dedupedMap.values()];
 
+  const now = new Date();
+
   await db
     .insert(jobs)
-    .values(deduped)
+    .values(deduped.map((r) => ({ ...r, lastSyncedAt: now, missingSyncCount: 0 })))
     .onConflictDoUpdate({
       target: [jobs.source, jobs.externalId],
       set: {
@@ -107,11 +155,71 @@ async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
         description: sql`excluded.description`,
         skills: sql`excluded.skills`,
         postedAt: sql`excluded.posted_at`,
+        lastSyncedAt: now,
+        // Reset closure tracking when job reappears
+        missingSyncCount: 0,
+        closedAt: null,
       },
     });
 
   return deduped.length;
 }
+
+// ---------------------------------------------------------------------------
+// Closed-job detection (requires a successful complete board fetch)
+// ---------------------------------------------------------------------------
+
+async function detectClosures(
+  source: string,
+  boardSlug: string,
+  returnedExternalIds: Set<string>
+): Promise<void> {
+  // All currently-open jobs stored for this board
+  const boardJobs = await db
+    .select({ id: jobs.id, externalId: jobs.externalId, missingSyncCount: jobs.missingSyncCount })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.source, source),
+        like(jobs.externalId, `${boardSlug}:%`),
+        isNull(jobs.closedAt)
+      )
+    );
+
+  const toIncrement: string[] = [];
+  const toClose: string[] = [];
+
+  for (const job of boardJobs) {
+    if (returnedExternalIds.has(job.externalId)) continue; // job still active
+    const currentCount = job.missingSyncCount ?? 0;
+    if (currentCount >= 1) {
+      // Second consecutive miss → close
+      toClose.push(job.id);
+    } else {
+      // First miss → record but don't close yet
+      toIncrement.push(job.id);
+    }
+  }
+
+  if (toIncrement.length > 0) {
+    await db
+      .update(jobs)
+      .set({ missingSyncCount: sql`missing_sync_count + 1` })
+      .where(inArray(jobs.id, toIncrement));
+  }
+
+  if (toClose.length > 0) {
+    await db
+      .update(jobs)
+      .set({ closedAt: new Date(), missingSyncCount: sql`missing_sync_count + 1` })
+      .where(inArray(jobs.id, toClose));
+    console.log(`[Jobs Sync] Closed ${toClose.length} job(s) for ${source}:${boardSlug}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Greenhouse connector
+// ---------------------------------------------------------------------------
 
 async function ingestGreenhouseBoard(
   slug: string,
@@ -120,14 +228,14 @@ async function ingestGreenhouseBoard(
   const url = `https://boards-api.greenhouse.io/v1/boards/${encodeURIComponent(slug)}/jobs?content=true`;
   const res = await fetch(url, {
     next: { revalidate: 0 },
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(15000),
   });
   if (!res.ok) {
-    throw new Error(`Greenhouse API returned ${res.status}`);
+    throw new Error(`Greenhouse API returned ${res.status} for ${slug}`);
   }
 
   const data = (await res.json()) as { jobs?: GreenhouseJob[] };
-  const items = (data.jobs ?? []).slice(0, 20);
+  const items = data.jobs ?? [];
   const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription = stripHtml(item.content ?? '');
     const location = item.location?.name ?? null;
@@ -149,8 +257,15 @@ async function ingestGreenhouseBoard(
     };
   });
 
-  return upsertJobBatch(rows);
+  const synced = await upsertJobBatch(rows);
+  const returnedIds = new Set(rows.map((r) => r.externalId as string));
+  await detectClosures('greenhouse', slug, returnedIds);
+  return synced;
 }
+
+// ---------------------------------------------------------------------------
+// Lever connector
+// ---------------------------------------------------------------------------
 
 async function ingestLeverBoard(
   slug: string,
@@ -159,13 +274,13 @@ async function ingestLeverBoard(
   const url = `https://api.lever.co/v0/postings/${encodeURIComponent(slug)}?mode=json`;
   const res = await fetch(url, {
     next: { revalidate: 0 },
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(15000),
   });
   if (!res.ok) {
-    throw new Error(`Lever API returned ${res.status}`);
+    throw new Error(`Lever API returned ${res.status} for ${slug}`);
   }
 
-  const items = ((await res.json()) as LeverPosting[]).slice(0, 20);
+  const items = (await res.json()) as LeverPosting[];
   const rows: UpsertJobRow[] = items.map((item) => {
     const cleanDescription =
       item.descriptionPlain ?? stripHtml(item.description ?? '');
@@ -188,8 +303,63 @@ async function ingestLeverBoard(
     };
   });
 
-  return upsertJobBatch(rows);
+  const synced = await upsertJobBatch(rows);
+  const returnedIds = new Set(rows.map((r) => r.externalId as string));
+  await detectClosures('lever', slug, returnedIds);
+  return synced;
 }
+
+// ---------------------------------------------------------------------------
+// Ashby connector
+// ---------------------------------------------------------------------------
+
+async function ingestAshbyBoard(
+  slug: string,
+  companyName: string
+): Promise<number> {
+  const url = `https://api.ashbyhq.com/posting-api/job-board/${encodeURIComponent(slug)}`;
+  const res = await fetch(url, {
+    next: { revalidate: 0 },
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok) {
+    throw new Error(`Ashby API returned ${res.status} for ${slug}`);
+  }
+
+  const data = (await res.json()) as { jobPostings?: AshbyPosting[] };
+  const items = data.jobPostings ?? [];
+  const rows: UpsertJobRow[] = items.map((item) => {
+    const cleanDescription = stripHtml(item.descriptionHtml ?? '');
+    const location = item.locationName ?? null;
+    const workMode = item.isRemote
+      ? 'remote'
+      : inferWorkMode(item.title, location, cleanDescription);
+    const skills = extractJobSkills(item.title, cleanDescription);
+    const postedAt = item.publishedAt ? new Date(item.publishedAt) : null;
+    return {
+      source: 'ashby',
+      externalId: `${slug}:${item.id}`,
+      company: companyName,
+      title: item.title,
+      location,
+      workMode,
+      employmentType: item.employmentType ?? 'full_time',
+      url: item.applyUrl,
+      description: cleanDescription.slice(0, 12000),
+      skills,
+      postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
+    };
+  });
+
+  const synced = await upsertJobBatch(rows);
+  const returnedIds = new Set(rows.map((r) => r.externalId as string));
+  await detectClosures('ashby', slug, returnedIds);
+  return synced;
+}
+
+// ---------------------------------------------------------------------------
+// Discovery query
+// ---------------------------------------------------------------------------
 
 export type DiscoverJobsTab = 'for_you' | 'search' | 'adjacent' | 'saved';
 
@@ -254,6 +424,12 @@ export async function listMatchedJobs(
   } = options;
 
   const conditions = [];
+
+  // Exclude closed jobs from all tabs except 'saved' (users keep access to saved/applied jobs)
+  if (tab !== 'saved') {
+    conditions.push(isNull(jobs.closedAt));
+  }
+
   if (q && q.trim()) {
     const term = `%${q.trim()}%`;
     conditions.push(
@@ -502,4 +678,3 @@ export async function clearJobState(
     .returning({ id: jobStates.id });
   return deleted.length > 0;
 }
-

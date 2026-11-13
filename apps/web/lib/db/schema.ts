@@ -408,7 +408,7 @@ export const jobs = pgTable(
   'jobs',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    source: text('source').notNull(), // 'greenhouse' | 'lever' | 'manual'
+    source: text('source').notNull(), // 'greenhouse' | 'lever' | 'ashby'
     externalId: text('external_id').notNull(),
     company: text('company').notNull(),
     title: text('title').notNull(),
@@ -422,6 +422,9 @@ export const jobs = pgTable(
       .notNull()
       .default(sql`'{}'::text[]`),
     postedAt: timestamp('posted_at', { withTimezone: true }),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+    lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+    missingSyncCount: integer('missing_sync_count').default(0).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -432,11 +435,34 @@ export const jobs = pgTable(
       table.externalId
     ),
     index('jobs_company_idx').on(table.company),
+    index('jobs_closed_at_idx').on(table.closedAt),
     pgPolicy('jobs_authenticated_read_policy', {
       for: 'select',
       to: authenticatedRole,
       using: sql`true`,
     }),
+  ]
+);
+
+// 10b. Job Boards (ATS board registry)
+export const jobBoards = pgTable(
+  'job_boards',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    provider: text('provider').notNull(), // 'greenhouse' | 'lever' | 'ashby'
+    slug: text('slug').notNull(),
+    companyName: text('company_name').notNull(),
+    country: text('country'),
+    enabled: boolean('enabled').default(true).notNull(),
+    lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+    lastSyncCount: integer('last_sync_count'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('job_boards_provider_slug_idx').on(table.provider, table.slug),
+    index('job_boards_enabled_idx').on(table.enabled),
   ]
 );
 

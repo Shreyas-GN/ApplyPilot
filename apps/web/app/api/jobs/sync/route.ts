@@ -5,7 +5,7 @@ import { syncPublicJobs } from '@/lib/server/jobs';
 
 const syncSchema = z
   .object({
-    provider: z.enum(['greenhouse', 'lever']),
+    provider: z.enum(['greenhouse', 'lever', 'ashby']),
     slug: z.string().trim().min(1).max(100),
     companyName: z.string().trim().min(1).max(100),
   })
