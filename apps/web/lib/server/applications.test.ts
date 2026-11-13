@@ -75,16 +75,22 @@ describe('summarizeApplicationProgress', () => {
     expect(result.counts.rejected).toBe(1);
   });
 
-  it('activeCount sums saved + applied + interviewing (not offer/rejected)', () => {
+  it('activeCount sums saved + preparing + ready_to_apply + applied + interviewing', () => {
     const apps = [
       makeApp({ status: 'saved' }),
-      makeApp({ id: 'app-2', status: 'applied' }),
-      makeApp({ id: 'app-3', status: 'interviewing' }),
-      makeApp({ id: 'app-4', status: 'offer' }),
-      makeApp({ id: 'app-5', status: 'rejected' }),
+      makeApp({ id: 'app-2', status: 'preparing' }),
+      makeApp({ id: 'app-3', status: 'ready_to_apply' }),
+      makeApp({ id: 'app-4', status: 'applied' }),
+      makeApp({ id: 'app-5', status: 'interviewing' }),
+      makeApp({ id: 'app-6', status: 'offer' }),
+      makeApp({ id: 'app-7', status: 'rejected' }),
+      makeApp({ id: 'app-8', status: 'withdrawn' }),
     ];
     const result = summarizeApplicationProgress(apps);
-    expect(result.activeCount).toBe(3); // saved + applied + interviewing
+    expect(result.activeCount).toBe(5); // saved + preparing + ready_to_apply + applied + interviewing
+    expect(result.counts.withdrawn).toBe(1);
+    expect(result.counts.preparing).toBe(1);
+    expect(result.counts.ready_to_apply).toBe(1);
   });
 
   it('counts follow-up reminders', () => {
@@ -144,17 +150,20 @@ describe('application readiness completedCount', () => {
 describe('application status coverage', () => {
   const ALL_STATUSES: ApplicationStatus[] = [
     'saved',
+    'preparing',
+    'ready_to_apply',
     'applied',
     'interviewing',
     'offer',
     'rejected',
+    'withdrawn',
   ];
 
-  it('ALL_STATUSES has exactly 5 entries', () => {
-    expect(ALL_STATUSES).toHaveLength(5);
+  it('ALL_STATUSES has exactly 8 entries', () => {
+    expect(ALL_STATUSES).toHaveLength(8);
   });
 
-  it('status can be any of the 5 valid values', () => {
+  it('status can be any of the 8 valid values', () => {
     for (const status of ALL_STATUSES) {
       const app = makeApp({ status });
       expect(app.status).toBe(status);

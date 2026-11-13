@@ -34,10 +34,13 @@ export const itemSourceEnum = pgEnum('item_source', ['user', 'ai']);
 
 export const applicationStatusEnum = pgEnum('application_status', [
   'saved',
+  'preparing',
+  'ready_to_apply',
   'applied',
   'interviewing',
   'offer',
   'rejected',
+  'withdrawn',
 ]);
 
 export const jobStateEnum = pgEnum('job_state', ['saved', 'dismissed']);

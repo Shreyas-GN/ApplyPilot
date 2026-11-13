@@ -63,10 +63,13 @@ export function summarizeApplicationProgress(
 ): ApplicationProgressSummary {
   const counts: Record<ApplicationStatus, number> = {
     saved: 0,
+    preparing: 0,
+    ready_to_apply: 0,
     applied: 0,
     interviewing: 0,
     offer: 0,
     rejected: 0,
+    withdrawn: 0,
   };
 
   if (!applications || applications.length === 0) {
@@ -79,7 +82,7 @@ export function summarizeApplicationProgress(
     if (app.followUpAt) followUpsCount += 1;
   }
 
-  const activeCount = counts.saved + counts.applied + counts.interviewing;
+  const activeCount = counts.saved + counts.preparing + counts.ready_to_apply + counts.applied + counts.interviewing;
   return {
     total: applications.length,
     activeCount,
@@ -326,10 +329,17 @@ export function buildRecentActivity(params: {
 
   for (const app of applications ?? []) {
     // Include application updates (status changes or edits newer than creation)
-    const statusText =
-      app.status === "offer"
-        ? "Offer received"
-        : app.status.charAt(0).toUpperCase() + app.status.slice(1);
+    const STATUS_DISPLAY: Record<string, string> = {
+      saved: "Saved",
+      preparing: "Preparing",
+      ready_to_apply: "Ready to Apply",
+      applied: "Applied",
+      interviewing: "Interviewing",
+      offer: "Offer received",
+      rejected: "Rejected",
+      withdrawn: "Withdrawn",
+    };
+    const statusText = STATUS_DISPLAY[app.status] ?? app.status;
     const updatedRecently =
       Math.abs(
         new Date(app.updatedAt).getTime() - new Date(app.createdAt).getTime()

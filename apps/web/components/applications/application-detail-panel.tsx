@@ -24,11 +24,25 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
+
+const STATUS_LABEL: Record<ApplicationStatus, string> = {
+  saved: "Saved",
+  preparing: "Preparing",
+  ready_to_apply: "Ready to Apply",
+  applied: "Applied",
+  interviewing: "Interviewing",
+  offer: "Offer",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
 
 const QUICK_PROMPTS = [
   "Why are you interested in this role?",
@@ -178,7 +192,7 @@ export function ApplicationDetailPanel({
               >
                 {STATUSES.map((st) => (
                   <option key={st} value={st}>
-                    {st.charAt(0).toUpperCase() + st.slice(1)}
+                    {STATUS_LABEL[st]}
                   </option>
                 ))}
               </select>

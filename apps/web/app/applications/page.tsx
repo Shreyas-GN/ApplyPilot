@@ -19,11 +19,25 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
+
+const STATUS_LABEL: Record<ApplicationStatus, string> = {
+  saved: "Saved",
+  preparing: "Preparing",
+  ready_to_apply: "Ready to Apply",
+  applied: "Applied",
+  interviewing: "Interviewing",
+  offer: "Offer",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
 
 function isFollowUpDueSoon(iso: string | null): boolean {
   if (!iso) return false;
@@ -214,8 +228,10 @@ function ApplicationsContent() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
         <StatCard label="Saved" value={counts.saved} hint="Ready to tailor" tone="neutral" />
+        <StatCard label="Preparing" value={counts.preparing} hint="Tailoring" tone="neutral" />
+        <StatCard label="Ready" value={counts.ready_to_apply} hint="To apply" tone="accent" />
         <StatCard label="Applied" value={counts.applied} hint="Awaiting response" tone="accent" />
         <StatCard label="Interviewing" value={counts.interviewing} hint="Active rounds" tone="warning" />
         <StatCard label="Offers" value={counts.offer} hint="Received" tone="success" />
@@ -289,8 +305,8 @@ function ApplicationsContent() {
               className="w-full rounded-[10px] border border-ui-border bg-ui-surface px-3 py-2 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               {STATUSES.map((st) => (
-                <option key={st} value={st} className="capitalize">
-                  {st.charAt(0).toUpperCase() + st.slice(1)}
+                <option key={st} value={st}>
+                  {STATUS_LABEL[st]}
                 </option>
               ))}
             </select>
@@ -376,7 +392,7 @@ function ApplicationsContent() {
           </div>
         </Card>
       ) : viewMode === "kanban" ? (
-        <div className="grid gap-4 overflow-x-auto pb-2 md:grid-cols-5">
+        <div className="grid auto-cols-[220px] grid-flow-col gap-4 overflow-x-auto pb-2">
           {STATUSES.map((colStatus) => {
             const colApps = applications.filter((a) => a.status === colStatus);
             return (
@@ -463,7 +479,7 @@ function ApplicationsContent() {
                             >
                               {STATUSES.map((st) => (
                                 <option key={st} value={st}>
-                                  {st.charAt(0).toUpperCase() + st.slice(1)}
+                                  {STATUS_LABEL[st]}
                                 </option>
                               ))}
                             </select>
@@ -559,7 +575,7 @@ function ApplicationsContent() {
                     >
                       {STATUSES.map((st) => (
                         <option key={st} value={st}>
-                          {st.charAt(0).toUpperCase() + st.slice(1)}
+                          {STATUS_LABEL[st]}
                         </option>
                       ))}
                     </select>
