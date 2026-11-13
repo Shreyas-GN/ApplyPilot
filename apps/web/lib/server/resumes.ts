@@ -230,16 +230,11 @@ export async function updateParsedData(
     throw new Error('This resume has not finished parsing yet.');
   }
 
-  if (data.reviewStatus === 'confirmed') {
-    throw new Error(
-      "This resume's parsed data has already been confirmed and applied to your profile."
-    );
-  }
-
   const [updated] = await db
     .update(resumeParsedData)
     .set({
       structuredData: corrected,
+      reviewStatus: data.reviewStatus === 'confirmed' ? 'pending_review' : data.reviewStatus,
       updatedAt: new Date(),
     })
     .where(eq(resumeParsedData.resumeId, resumeId))

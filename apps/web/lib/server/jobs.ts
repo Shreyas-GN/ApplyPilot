@@ -30,10 +30,24 @@ export interface BoardSource {
 }
 
 const DEFAULT_BOARDS: BoardSource[] = [
-  { provider: 'greenhouse', slug: 'vercel', companyName: 'Vercel' },
+  // Global tech — Python/backend heavy, all hire remotely or have India offices
   { provider: 'greenhouse', slug: 'anthropic', companyName: 'Anthropic' },
   { provider: 'greenhouse', slug: 'stripe', companyName: 'Stripe' },
+  { provider: 'greenhouse', slug: 'vercel', companyName: 'Vercel' },
   { provider: 'greenhouse', slug: 'figma', companyName: 'Figma' },
+  { provider: 'greenhouse', slug: 'datadog', companyName: 'Datadog' },
+  { provider: 'greenhouse', slug: 'mongodb', companyName: 'MongoDB' },
+  { provider: 'greenhouse', slug: 'elastic', companyName: 'Elastic' },
+  { provider: 'greenhouse', slug: 'hashicorp', companyName: 'HashiCorp' },
+  { provider: 'greenhouse', slug: 'cloudflare', companyName: 'Cloudflare' },
+  { provider: 'greenhouse', slug: 'databricks', companyName: 'Databricks' },
+  { provider: 'greenhouse', slug: 'confluent', companyName: 'Confluent' },
+  { provider: 'greenhouse', slug: 'zapier', companyName: 'Zapier' },
+  // Indian tech companies and companies with large India engineering offices
+  { provider: 'greenhouse', slug: 'freshworks', companyName: 'Freshworks' },
+  { provider: 'greenhouse', slug: 'browserstack', companyName: 'BrowserStack' },
+  // Lever boards
+  { provider: 'lever', slug: 'notion', companyName: 'Notion' },
 ];
 
 interface GreenhouseJob {

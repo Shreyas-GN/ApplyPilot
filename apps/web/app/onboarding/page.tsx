@@ -105,7 +105,7 @@ function OnboardingWizard() {
                 and confirm everything before it&apos;s added to your profile.
               </p>
               <div className="flex flex-col gap-3">
-                <Button onClick={() => router.push("/studio?tab=resumes")} className="w-full">
+                <Button onClick={() => router.push("/resumes")} className="w-full">
                   Upload a resume
                 </Button>
                 <Button

@@ -16,13 +16,23 @@ const KNOWN_SKILLS = [
   'Rust',
   'Java',
   'C++',
+  'C#',
+  '.NET',
+  'PHP',
+  'Laravel',
   'SQL',
   'PostgreSQL',
   'Postgres',
+  'MySQL',
+  'SQLite',
+  'MariaDB',
   'Supabase',
   'MongoDB',
   'Redis',
+  'Elasticsearch',
   'GraphQL',
+  'REST',
+  'gRPC',
   'AWS',
   'GCP',
   'Azure',
@@ -35,26 +45,60 @@ const KNOWN_SKILLS = [
   'Git',
   'CI/CD',
   'Machine Learning',
+  'Deep Learning',
   'LLM',
   'AI',
   'PyTorch',
   'TensorFlow',
+  'Keras',
+  'Scikit-learn',
+  'Pandas',
+  'NumPy',
+  'SciPy',
+  'Matplotlib',
+  'Seaborn',
+  'OpenCV',
+  'Hugging Face',
+  'LangChain',
   'Figma',
   'Product Management',
   'Ruby',
   'Rails',
   'Django',
+  'Flask',
   'FastAPI',
+  'Celery',
+  'RabbitMQ',
+  'Kafka',
   'NestJS',
   'Express',
+  'Spring Boot',
+  'Spring',
+  'Hibernate',
   'Prisma',
   'Drizzle',
+  'SQLAlchemy',
   'Playwright',
   'Vitest',
   'Jest',
+  'PyTest',
   'Linux',
   'Swift',
   'Kotlin',
+  'Microservices',
+  'System Design',
+  'Data Structures',
+  'Algorithms',
+  'OOP',
+  'Design Patterns',
+  'Webpack',
+  'Vite',
+  'Spark',
+  'Hadoop',
+  'Airflow',
+  'dbt',
+  'Tableau',
+  'Power BI',
 ];
 
 const TRANSFERABLE_SKILL_RULES: Array<{
@@ -84,13 +128,33 @@ const TRANSFERABLE_SKILL_RULES: Array<{
   },
   {
     from: ['Node.js', 'Express', 'NestJS'],
-    to: ['FastAPI', 'Django', 'Rails', 'Go', 'GraphQL'],
+    to: ['FastAPI', 'Django', 'Flask', 'Rails', 'Go', 'GraphQL', 'REST', 'gRPC'],
     reason: 'API design, async concurrency, and service architecture patterns carry over cleanly.',
   },
   {
-    from: ['Python', 'Django', 'FastAPI'],
-    to: ['Node.js', 'Machine Learning', 'AI', 'LLM', 'PyTorch', 'TensorFlow', 'SQL'],
+    from: ['Python', 'Django', 'FastAPI', 'Flask'],
+    to: ['Node.js', 'Machine Learning', 'Deep Learning', 'AI', 'LLM', 'PyTorch', 'TensorFlow', 'SQL', 'Celery', 'SQLAlchemy'],
     reason: 'Python engineering experience bridges backend services, data pipelines, and AI workflows.',
+  },
+  {
+    from: ['Django', 'Flask', 'FastAPI', 'Celery'],
+    to: ['Django', 'Flask', 'FastAPI', 'Celery', 'SQLAlchemy', 'PyTest', 'RabbitMQ', 'Kafka'],
+    reason: 'Python web and async task framework knowledge transfers across the backend Python ecosystem.',
+  },
+  {
+    from: ['Java', 'Spring', 'Spring Boot'],
+    to: ['Kotlin', 'Hibernate', 'Maven', 'Python', 'Microservices', 'REST', 'gRPC', 'SQL'],
+    reason: 'JVM and enterprise Java patterns transfer to Kotlin, microservices, and backend fundamentals.',
+  },
+  {
+    from: ['PyTorch', 'TensorFlow', 'Scikit-learn', 'Keras'],
+    to: ['Pandas', 'NumPy', 'Hugging Face', 'LangChain', 'OpenCV', 'Matplotlib', 'SciPy'],
+    reason: 'ML library proficiency transfers across the Python data science and AI tooling ecosystem.',
+  },
+  {
+    from: ['MySQL', 'PostgreSQL', 'SQL'],
+    to: ['MySQL', 'MariaDB', 'SQLite', 'PostgreSQL', 'SQL', 'SQLAlchemy', 'Prisma'],
+    reason: 'Relational database skills transfer directly across SQL-compatible engines.',
   },
   {
     from: ['AWS', 'GCP', 'Azure'],
@@ -245,17 +309,14 @@ export function computeJobMatch(
   }
 
   const userSkills = profile.skills
-    .filter((s) => s.source !== 'ai')
     .map((s) => s.name.trim())
     .filter(Boolean);
-  const summaryConfirmed = profile.intelligenceMetadata?.summarySource !== 'ai';
-  const confirmedHeadline = summaryConfirmed ? profile.headline : null;
   const hasPreferences =
     profile.preferredTitles.length > 0 ||
     (profile.desiredRoles?.length ?? 0) > 0 ||
     profile.preferredLocations.length > 0 ||
     Boolean(profile.workMode) ||
-    Boolean(confirmedHeadline);
+    Boolean(profile.headline);
 
   if (userSkills.length === 0 && !hasPreferences) {
     return {
@@ -331,13 +392,11 @@ export function computeJobMatch(
 
   // 2. Title & Headline match (25 points)
   const jobTitleLower = job.title.toLowerCase();
-  const experienceTitles = profile.experience
-    .filter((e) => e.source !== 'ai')
-    .map((e) => e.title);
+  const experienceTitles = profile.experience.map((e) => e.title);
   const titleTargets = [
     ...profile.preferredTitles,
     ...(profile.desiredRoles ?? []),
-    ...(confirmedHeadline ? [confirmedHeadline] : []),
+    ...(profile.headline ? [profile.headline] : []),
     ...experienceTitles,
   ]
     .map((t) => t.trim().toLowerCase())
@@ -426,7 +485,7 @@ export function computeJobMatch(
   const hasExplicitTitles =
     profile.preferredTitles.length > 0 ||
     (profile.desiredRoles?.length ?? 0) > 0 ||
-    Boolean(confirmedHeadline) ||
+    Boolean(profile.headline) ||
     experienceTitles.length > 0;
   const matchesAdjacentInterest = (profile.adjacentRoles ?? []).some((adj) => {
     const words = adj.trim().toLowerCase().split(/\s+/).filter((w) => w.length > 2);
