@@ -34,6 +34,9 @@ export interface UpdateApplicationInput {
   notes?: string | null;
   followUpAt?: string | null;
   checklist?: ApplicationChecklistState;
+  tailoredResumeId?: string | null;
+  coverLetterId?: string | null;
+  applicationSource?: string | null;
 }
 
 function normalizeChecklist(raw: unknown): ApplicationChecklistState {
@@ -280,6 +283,15 @@ export async function updateApplication(
       ...input.checklist,
     };
   }
+  if (input.tailoredResumeId !== undefined) {
+    updateFields.tailoredResumeId = input.tailoredResumeId ?? null;
+  }
+  if (input.coverLetterId !== undefined) {
+    updateFields.coverLetterId = input.coverLetterId ?? null;
+  }
+  if (input.applicationSource !== undefined) {
+    updateFields.applicationSource = input.applicationSource?.trim() || null;
+  }
 
   const updated = await db.transaction(async (tx) => {
     const [row] = await tx
@@ -398,6 +410,9 @@ function toApplicationDto(
       coverLetter,
       checklist,
     }),
+    tailoredResumeId: row.tailoredResumeId ?? null,
+    coverLetterId: row.coverLetterId ?? null,
+    applicationSource: row.applicationSource ?? null,
     appliedAt: row.appliedAt ? row.appliedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

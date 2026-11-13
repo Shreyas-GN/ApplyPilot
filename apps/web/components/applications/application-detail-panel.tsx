@@ -17,6 +17,7 @@ import type {
   ApplicationStatus,
   ScreeningAnswerResult,
 } from "@/lib/types";
+import { APPLICATION_STATUS_LABELS } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge, StatusBadge } from "@/components/ui/badge";
@@ -24,10 +25,13 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
 
 const QUICK_PROMPTS = [
@@ -178,7 +182,7 @@ export function ApplicationDetailPanel({
               >
                 {STATUSES.map((st) => (
                   <option key={st} value={st}>
-                    {st.charAt(0).toUpperCase() + st.slice(1)}
+                    {APPLICATION_STATUS_LABELS[st]}
                   </option>
                 ))}
               </select>

@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CalendarClock, Columns3, LayoutList } from "lucide-react";
 import type { ApplicationDto, ApplicationStatus } from "@/lib/types";
+import { APPLICATION_STATUS_LABELS } from "@/lib/types";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, StatCard } from "@/components/ui/card";
@@ -19,10 +20,13 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
 
 function isFollowUpDueSoon(iso: string | null): boolean {
@@ -215,7 +219,7 @@ function ApplicationsContent() {
       />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Saved" value={counts.saved} hint="Ready to tailor" tone="neutral" />
+        <StatCard label="Saved" value={counts.saved + counts.preparing + counts.ready_to_apply} hint={`${counts.preparing} preparing · ${counts.ready_to_apply} ready`} tone="neutral" />
         <StatCard label="Applied" value={counts.applied} hint="Awaiting response" tone="accent" />
         <StatCard label="Interviewing" value={counts.interviewing} hint="Active rounds" tone="warning" />
         <StatCard label="Offers" value={counts.offer} hint="Received" tone="success" />
@@ -289,8 +293,8 @@ function ApplicationsContent() {
               className="w-full rounded-[10px] border border-ui-border bg-ui-surface px-3 py-2 text-sm text-ui-ink focus:border-ui-violet focus:outline-none"
             >
               {STATUSES.map((st) => (
-                <option key={st} value={st} className="capitalize">
-                  {st.charAt(0).toUpperCase() + st.slice(1)}
+                <option key={st} value={st}>
+                  {APPLICATION_STATUS_LABELS[st]}
                 </option>
               ))}
             </select>
@@ -335,13 +339,13 @@ function ApplicationsContent() {
               key={st}
               type="button"
               onClick={() => setFilterStatus(st)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 filterStatus === st
                   ? "bg-ui-ink text-white"
                   : "border border-ui-border bg-white text-ui-body hover:bg-ui-linen"
               }`}
             >
-              {st} ({counts[st]})
+              {APPLICATION_STATUS_LABELS[st]} ({counts[st]})
             </button>
           ))}
           <button
@@ -386,7 +390,7 @@ function ApplicationsContent() {
               >
                 <div className="flex items-center justify-between px-1">
                   <span className="text-xs font-semibold uppercase tracking-wide text-ui-ink">
-                    {colStatus}
+                    {APPLICATION_STATUS_LABELS[colStatus]}
                   </span>
                   <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-ui-body">
                     {colApps.length}
@@ -395,7 +399,7 @@ function ApplicationsContent() {
 
                 {colApps.length === 0 ? (
                   <p className="rounded-lg border border-dashed border-ui-border py-6 text-center text-xs text-ui-muted">
-                    No {colStatus} roles
+                    No {APPLICATION_STATUS_LABELS[colStatus].toLowerCase()} roles
                   </p>
                 ) : (
                   <div className="flex flex-col gap-2.5">
@@ -463,7 +467,7 @@ function ApplicationsContent() {
                             >
                               {STATUSES.map((st) => (
                                 <option key={st} value={st}>
-                                  {st.charAt(0).toUpperCase() + st.slice(1)}
+                                  {APPLICATION_STATUS_LABELS[st]}
                                 </option>
                               ))}
                             </select>
@@ -559,7 +563,7 @@ function ApplicationsContent() {
                     >
                       {STATUSES.map((st) => (
                         <option key={st} value={st}>
-                          {st.charAt(0).toUpperCase() + st.slice(1)}
+                          {APPLICATION_STATUS_LABELS[st]}
                         </option>
                       ))}
                     </select>

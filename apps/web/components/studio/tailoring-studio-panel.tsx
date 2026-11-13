@@ -102,7 +102,7 @@ export function TailoringStudioPanel({
     let cancelled = false;
     Promise.all([
       api.get<TailoredDocumentDto[]>("/tailor"),
-      api.get<JobDto[]>("/jobs"),
+      api.get<JobDto[]>("/jobs?tab=saved"),
       api.get<ApplicationDto[]>("/applications"),
     ])
       .then(([loadedDocs, loadedJobs, loadedApps]) => {
@@ -110,7 +110,9 @@ export function TailoringStudioPanel({
         const scopedDocs =
           mode === "all" ? loadedDocs : loadedDocs.filter((d) => d.type === mode);
         setDocs(scopedDocs);
-        setJobs(loadedJobs);
+        // Show saved jobs; fall back to all if none saved yet
+        const savedJobs = loadedJobs.filter((j) => j.userState === "saved" || j.applicationStatus !== null);
+        setJobs(savedJobs.length > 0 ? savedJobs : loadedJobs);
         setApplications(loadedApps);
 
         if (initialJobId) {

@@ -8,7 +8,7 @@ import {
 
 const updateApplicationSchema = z.object({
   status: z
-    .enum(['saved', 'applied', 'interviewing', 'offer', 'rejected'])
+    .enum(['saved', 'preparing', 'ready_to_apply', 'applied', 'interviewing', 'offer', 'rejected', 'withdrawn'])
     .optional(),
   notes: z.string().trim().max(5000).nullable().optional(),
   followUpAt: z.string().trim().max(64).nullable().optional(),
@@ -18,6 +18,9 @@ const updateApplicationSchema = z.object({
       finalReviewed: z.boolean().optional(),
     })
     .optional(),
+  tailoredResumeId: z.string().uuid().nullable().optional(),
+  coverLetterId: z.string().uuid().nullable().optional(),
+  applicationSource: z.string().trim().max(200).nullable().optional(),
 });
 
 export async function PATCH(

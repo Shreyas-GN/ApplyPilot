@@ -34,10 +34,13 @@ export const itemSourceEnum = pgEnum('item_source', ['user', 'ai']);
 
 export const applicationStatusEnum = pgEnum('application_status', [
   'saved',
+  'preparing',
+  'ready_to_apply',
   'applied',
   'interviewing',
   'offer',
   'rejected',
+  'withdrawn',
 ]);
 
 export const jobStateEnum = pgEnum('job_state', ['saved', 'dismissed']);
@@ -458,6 +461,9 @@ export const applications = pgTable(
     notes: text('notes'),
     followUpAt: timestamp('follow_up_at', { withTimezone: true }),
     checklist: jsonb('checklist'),
+    tailoredResumeId: uuid('tailored_resume_id'),
+    coverLetterId: uuid('cover_letter_id'),
+    applicationSource: text('application_source'),
     appliedAt: timestamp('applied_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()

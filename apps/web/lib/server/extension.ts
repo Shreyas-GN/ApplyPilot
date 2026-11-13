@@ -331,6 +331,9 @@ function toExtensionApplicationDto(
       row.checklist && typeof row.checklist === 'object'
         ? (row.checklist as ApplicationDto['checklist'])
         : {},
+    tailoredResumeId: row.tailoredResumeId ?? null,
+    coverLetterId: row.coverLetterId ?? null,
+    applicationSource: row.applicationSource ?? null,
     appliedAt: row.appliedAt ? row.appliedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),

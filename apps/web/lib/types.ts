@@ -258,10 +258,24 @@ export interface ResumeParsedDataDto {
 
 export type ApplicationStatus =
   | "saved"
+  | "preparing"
+  | "ready_to_apply"
   | "applied"
   | "interviewing"
   | "offer"
-  | "rejected";
+  | "rejected"
+  | "withdrawn";
+
+export const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
+  saved: "Saved",
+  preparing: "Preparing",
+  ready_to_apply: "Ready to Apply",
+  applied: "Applied",
+  interviewing: "Interviewing",
+  offer: "Offered",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
 
 export type JobUserState = "saved" | "dismissed" | null;
 
@@ -363,6 +377,9 @@ export interface ApplicationDto {
   followUpAt: string | null;
   checklist: ApplicationChecklistState;
   readiness?: ApplicationReadiness;
+  tailoredResumeId: string | null;
+  coverLetterId: string | null;
+  applicationSource: string | null;
   appliedAt: string | null;
   createdAt: string;
   updatedAt: string;
