@@ -24,10 +24,13 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
 
 const QUICK_PROMPTS = [

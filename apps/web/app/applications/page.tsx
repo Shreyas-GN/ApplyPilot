@@ -19,10 +19,13 @@ import { api, ApiError } from "@/lib/api-client";
 
 const STATUSES: ApplicationStatus[] = [
   "saved",
+  "preparing",
+  "ready_to_apply",
   "applied",
   "interviewing",
   "offer",
   "rejected",
+  "withdrawn",
 ];
 
 function isFollowUpDueSoon(iso: string | null): boolean {
@@ -376,7 +379,7 @@ function ApplicationsContent() {
           </div>
         </Card>
       ) : viewMode === "kanban" ? (
-        <div className="grid gap-4 overflow-x-auto pb-2 md:grid-cols-5">
+        <div className="grid gap-4 overflow-x-auto pb-2 grid-flow-col auto-cols-[220px]">
           {STATUSES.map((colStatus) => {
             const colApps = applications.filter((a) => a.status === colStatus);
             return (

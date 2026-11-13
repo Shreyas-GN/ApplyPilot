@@ -258,10 +258,13 @@ export interface ResumeParsedDataDto {
 
 export type ApplicationStatus =
   | "saved"
+  | "preparing"
+  | "ready_to_apply"
   | "applied"
   | "interviewing"
   | "offer"
-  | "rejected";
+  | "rejected"
+  | "withdrawn";
 
 export type JobUserState = "saved" | "dismissed" | null;
 

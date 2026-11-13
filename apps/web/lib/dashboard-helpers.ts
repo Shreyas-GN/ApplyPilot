@@ -63,10 +63,13 @@ export function summarizeApplicationProgress(
 ): ApplicationProgressSummary {
   const counts: Record<ApplicationStatus, number> = {
     saved: 0,
+    preparing: 0,
+    ready_to_apply: 0,
     applied: 0,
     interviewing: 0,
     offer: 0,
     rejected: 0,
+    withdrawn: 0,
   };
 
   if (!applications || applications.length === 0) {

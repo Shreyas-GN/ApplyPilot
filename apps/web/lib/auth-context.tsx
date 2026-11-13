@@ -1,7 +1,7 @@
 "use client";
 
 import type { AuthUserDto } from "@/lib/types";
-import type { User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session, User } from "@supabase/supabase-js";
 import {
   createContext,
   useCallback,
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       if (session?.user) {
         setUser(toAuthUserDto(session.user));
       } else {

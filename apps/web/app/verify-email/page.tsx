@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import type { EmailOtpType } from "@supabase/supabase-js";
+import type { AuthError, EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
@@ -25,7 +25,7 @@ function VerifyEmailStatus() {
     const supabase = createClient();
     supabase.auth
       .verifyOtp({ token_hash: tokenHash, type })
-      .then(({ error }) => {
+      .then(({ error }: { data: unknown; error: AuthError | null }) => {
         if (cancelled) return;
         if (error) {
           setState("error");

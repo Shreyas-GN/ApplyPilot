@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { eq, desc } from 'drizzle-orm';
+import { and, eq, desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { resumes, resumeParsedData } from '@/lib/db/schema';
 import type { ResumeDto, ResumeParsedDataDto } from '@/lib/types';
@@ -126,14 +126,22 @@ export async function deleteResume(
   userId: string,
   resumeId: string
 ): Promise<void> {
-  const resume = await getResume(userId, resumeId);
+  const [row] = await db
+    .select()
+    .from(resumes)
+    .where(and(eq(resumes.id, resumeId), eq(resumes.userId, userId)))
+    .limit(1);
+
+  if (!row) {
+    throw new Error('Resume not found.');
+  }
 
   await db.delete(resumes).where(eq(resumes.id, resumeId));
 
   const supabase = createAdminClient();
-  await supabase.storage.from('resumes').remove([resume.id]);
+  await supabase.storage.from('resumes').remove([row.storageKey]);
 
-  if (resume.isPrimary) {
+  if (row.isPrimary) {
     const [nextPrimary] = await db
       .select({ id: resumes.id })
       .from(resumes)

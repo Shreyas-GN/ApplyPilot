@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": rootDir,
+      "@applypilot/validators": path.resolve(rootDir, "../../packages/validators/src/index.ts"),
     },
   },
 });
