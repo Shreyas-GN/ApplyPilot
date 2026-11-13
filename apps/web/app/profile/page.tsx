@@ -7,7 +7,7 @@ import {
   replaceEducationSchema,
   replaceProjectsSchema,
   replaceCertificationsSchema,
-} from "@applypilot/validators";
+} from "@applyfocus/validators";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { ProfileIntelligenceOverview } from "@/components/profile/profile-intelligence-overview";

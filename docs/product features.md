@@ -106,7 +106,7 @@ Do not assume that every source permits scraping, redistribution or automated ap
 Every source follows this workflow:
 
 1. Fetch available job postings.
-2. Convert source-specific data into ApplyPilot's common job format.
+2. Convert source-specific data into ApplyFocus's common job format.
 3. Validate required fields.
 4. Normalize job titles, locations, skills and employment types.
 5. Identify duplicates.
@@ -346,7 +346,7 @@ The feed should prioritize relevance but allow users to sort by newest and searc
 ### Tailoring workflow
 
 1. User selects a job.
-2. ApplyPilot selects the candidate's chosen resume.
+2. ApplyFocus selects the candidate's chosen resume.
 3. Compare resume content with the job description.
 4. Identify relevant existing experience and skills.
 5. Generate suggested improvements.
@@ -526,7 +526,7 @@ Do not send notifications for every low-quality job. Let users configure frequen
 
 1. User creates an account.
 2. User uploads a resume.
-3. ApplyPilot extracts candidate information.
+3. ApplyFocus extracts candidate information.
 4. User reviews and confirms the information.
 5. User selects target job titles.
 6. User selects preferred locations and work modes.
@@ -552,9 +552,9 @@ Do not send notifications for every low-quality job. Let users configure frequen
 1. User opens a matched job.
 2. User reviews its requirements and match explanation.
 3. User selects a resume.
-4. ApplyPilot generates a tailored resume.
+4. ApplyFocus generates a tailored resume.
 5. User reviews and approves the changes.
-6. ApplyPilot generates an optional cover letter.
+6. ApplyFocus generates an optional cover letter.
 7. User opens the application.
 8. Copilot fills supported fields.
 9. User reviews and submits.
@@ -575,7 +575,7 @@ Do not send notifications for every low-quality job. Let users configure frequen
 
 1. User enables autopilot.
 2. User defines strict eligibility and submission limits.
-3. ApplyPilot discovers matching jobs.
+3. ApplyFocus discovers matching jobs.
 4. Jobs are evaluated against the user's rules.
 5. Supported applications are prepared.
 6. The system validates all required information.
@@ -767,7 +767,7 @@ Do not rebuild working Phase 1 functionality.
 - Generate grounded explanations.
 - Allow feedback on irrelevant matches.
 
-**Deliverable:** ApplyPilot recommends jobs with understandable reasons.
+**Deliverable:** ApplyFocus recommends jobs with understandable reasons.
 
 ## Stage 4 — Basic application management
 

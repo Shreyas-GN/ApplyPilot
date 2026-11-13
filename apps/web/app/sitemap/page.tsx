@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Sitemap",
-  description: "Complete directory of ApplyPilot workspace routes and pages.",
+  description: "Complete directory of ApplyFocus workspace routes and pages.",
 };
 
 const WORKSPACE_SECTIONS: Array<{
@@ -92,9 +92,9 @@ export default function SitemapPage() {
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <Link href="/" className="text-sm font-semibold text-ui-violet hover:underline">
-              ← Back to ApplyPilot
+              ← Back to ApplyFocus
             </Link>
-            <h1 className="mt-2 text-3xl font-semibold text-ui-ink">ApplyPilot Sitemap</h1>
+            <h1 className="mt-2 text-3xl font-semibold text-ui-ink">ApplyFocus Sitemap</h1>
             <p className="mt-1 text-sm text-ui-body">
               All workspace destinations, discovery tabs, and account pages.
             </p>

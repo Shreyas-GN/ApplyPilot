@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@applypilot/web...",
+  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@applyfocus/web...",
   "crons": [
     {
       "path": "/api/cron/ingest-jobs",

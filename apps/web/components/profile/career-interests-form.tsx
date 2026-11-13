@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ProfileDto } from "@/lib/types";
-import { updatePreferencesSchema } from "@applypilot/validators";
+import { updatePreferencesSchema } from "@applyfocus/validators";
 import { api, ApiError } from "@/lib/api-client";
 import {
   ProvenanceBadge,

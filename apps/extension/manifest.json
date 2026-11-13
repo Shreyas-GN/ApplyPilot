@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ApplyPilot Apply Assistant",
+  "name": "ApplyFocus Apply Assistant",
   "version": "0.1.0",
-  "description": "Pairs with your ApplyPilot account to save jobs and review-before-autofill on supported ATS pages.",
+  "description": "Pairs with your ApplyFocus account to save jobs and review-before-autofill on supported ATS pages.",
   "action": {
     "default_popup": "popup/popup.html"
   },

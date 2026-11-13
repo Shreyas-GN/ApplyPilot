@@ -1,7 +1,7 @@
-ApplyPilot — Design System
+ApplyFocus — Design System
 Design direction: The Opportunity Field Guide
 
-A considered career companion: editorial typography, warm paper, precise product UI and small human annotations. ApplyPilot should feel like a trusted guide through a complicated job search — not another loud AI dashboard.
+A considered career companion: editorial typography, warm paper, precise product UI and small human annotations. ApplyFocus should feel like a trusted guide through a complicated job search — not another loud AI dashboard.
 
 1. Design intent
 Build a distinctive, light-first identity that combines:
@@ -20,7 +20,7 @@ Core principle
 Make the opportunity legible. Every visual should help a job seeker understand what is relevant, why it matters and what to do next.
 2. Visual foundation
 Colour tokens
-Use this ApplyPilot palette as the single source of truth. Do not mix all reference palettes together.
+Use this ApplyFocus palette as the single source of truth. Do not mix all reference palettes together.
 Token	Hex	Use
 --ap-paper	#F7F4ED	Main page canvas; warm, not yellow
 --ap-paper-deep	#EEE9DE	Alternating section bands and tactile workspace backgrounds
@@ -211,7 +211,7 @@ Tally	Sparse human annotations and hand-drawn emphasis	Magenta doodle identity, 
 
 13. Definition of done
 The design is ready when:
-- ApplyPilot is recognisable without its logo.
+- ApplyFocus is recognisable without its logo.
 - The page feels warm, editorial and product-led, not like a generic AI landing page.
 - Product previews look like one coherent, usable product.
 - Every claim matches a real implemented capability or is clearly labelled as a preview.

@@ -1,4 +1,4 @@
-# ApplyPilot — Product Requirements
+# ApplyFocus — Product Requirements
 
 > Independent product definition. Informed by the general "AI-assisted job search /
 > auto-apply" category (see `REVERSE_ENGINEERING.md` for what we could and couldn't verify
@@ -9,7 +9,7 @@
 Job seekers spend disproportionate time on low-leverage, repetitive work: finding relevant
 postings across dozens of fragmented sources, rewriting the same resume/cover letter per
 role, re-entering the same information into every ATS form, and manually tracking where
-each application stands. ApplyPilot's job is to remove the repetitive mechanical work while
+each application stands. ApplyFocus's job is to remove the repetitive mechanical work while
 keeping the user in control of what gets submitted on their behalf and to whom.
 
 ## 2. Target personas
@@ -23,7 +23,7 @@ keeping the user in control of what gets submitted on their behalf and to whom.
 
 ## 3. Product principles
 
-1. **The user is always the applicant of record.** ApplyPilot assists and automates
+1. **The user is always the applicant of record.** ApplyFocus assists and automates
    mechanics; it does not apply "as itself" or misrepresent who is applying.
 2. **No fabrication.** Any AI-generated resume bullet, cover-letter claim, or screening
    question answer must be grounded in information the user actually provided. See
@@ -36,7 +36,7 @@ keeping the user in control of what gets submitted on their behalf and to whom.
 5. **Respect the platforms we touch.** Prefer official APIs; where we fall back to browser
    automation, it runs *in the user's own authenticated session*, never as bulk/anonymous
    scraping against sites we have no relationship with. See `SYSTEM_ARCHITECTURE.md` §2.
-6. **We do not custody credentials we don't need.** ApplyPilot's backend does not store
+6. **We do not custody credentials we don't need.** ApplyFocus's backend does not store
    ATS/job-board passwords or session cookies. See the execution-model decision in
    `SYSTEM_ARCHITECTURE.md` §2.
 

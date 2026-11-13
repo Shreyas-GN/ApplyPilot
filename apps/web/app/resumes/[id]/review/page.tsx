@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { ResumeDto, ResumeParsedDataDto } from "@/lib/types";
-import { resumeParsedDataSchema } from "@applypilot/validators";
+import { resumeParsedDataSchema } from "@applyfocus/validators";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AppShell } from "@/components/layout/app-shell";
 import { Card, CardHeader } from "@/components/ui/card";

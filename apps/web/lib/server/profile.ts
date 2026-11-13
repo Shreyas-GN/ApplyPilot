@@ -26,7 +26,7 @@ import type {
   ResumeParsedData,
   UpdatePreferencesInput,
   UpdateProfileInput,
-} from '@applypilot/validators';
+} from '@applyfocus/validators';
 import { recordAudit } from './audit';
 import {
   computeProfileIntelligence,

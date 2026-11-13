@@ -1,4 +1,4 @@
-# ApplyPilot — User Flows
+# ApplyFocus — User Flows
 
 ## 1. Sign-up & onboarding
 
@@ -11,7 +11,7 @@ Landing page --> Sign up (email or OAuth) --> Upload resume
 Decision points:
 - If resume parsing confidence is low on a field (e.g. dates), that field is flagged for
   the user to confirm rather than silently guessed.
-- Extension install is encouraged but skippable — a user can use ApplyPilot purely as a
+- Extension install is encouraged but skippable — a user can use ApplyFocus purely as a
   tracker/tailoring tool without ever installing it.
 
 ## 2. Install & pair the browser extension

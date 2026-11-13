@@ -108,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               AP
             </span>
             <span className="text-[17px] font-semibold tracking-tight text-ui-ink">
-              ApplyPilot
+              ApplyFocus
             </span>
           </Link>
           {onNavigate && (
@@ -201,7 +201,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium text-ui-muted">ApplyPilot</span>
+              <span className="font-medium text-ui-muted">ApplyFocus</span>
               <span className="text-ui-border" aria-hidden="true">/</span>
               <span className="font-medium text-ui-ink">{routeLabel}</span>
             </div>

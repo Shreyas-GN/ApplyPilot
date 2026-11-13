@@ -152,7 +152,7 @@ export function OpportunityIntelligence() {
             A job title tells you very little about whether a role is right for you.
           </p>
           <p className="mt-3 font-ui text-[15px] leading-[1.65] text-lp-body">
-            ApplyPilot helps you evaluate opportunities against your actual experience, skills and
+            ApplyFocus helps you evaluate opportunities against your actual experience, skills and
             preferences — so you can spend more time on roles that make sense.
           </p>
 

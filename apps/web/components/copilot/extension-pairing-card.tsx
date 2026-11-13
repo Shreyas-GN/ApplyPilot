@@ -110,7 +110,7 @@ export function ExtensionPairingCard({
             </Button>
           </div>
           <p className="mt-2 text-xs text-emerald-800">
-            Load <code>apps/extension/dist</code> as an unpacked extension in Chrome, then paste this token in the ApplyPilot popup.
+            Load <code>apps/extension/dist</code> as an unpacked extension in Chrome, then paste this token in the ApplyFocus popup.
           </p>
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ProfileDto, SkillDto } from "@/lib/types";
-import { replaceSkillsSchema } from "@applypilot/validators";
+import { replaceSkillsSchema } from "@applyfocus/validators";
 import { api, ApiError } from "@/lib/api-client";
 import {
   ProvenanceBadge,

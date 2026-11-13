@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ProfileDto } from "@/lib/types";
-import { replaceWorkExperienceSchema } from "@applypilot/validators";
+import { replaceWorkExperienceSchema } from "@applyfocus/validators";
 import { PersonalInfoForm } from "./personal-info-form";
 import { CareerInterestsForm } from "./career-interests-form";
 import { RepeatableSection } from "./repeatable-section";

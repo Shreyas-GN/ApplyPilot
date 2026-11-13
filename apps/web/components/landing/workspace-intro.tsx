@@ -68,13 +68,13 @@ export function WorkspaceIntro() {
       <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
         <div className="mx-auto max-w-[700px] text-center">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-lp-accent">
-            Introducing ApplyPilot
+            Introducing ApplyFocus
           </p>
           <h2 className="mt-3 font-ui text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-lp-ink sm:text-[42px]">
             Everything behind your next opportunity, connected.
           </h2>
           <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body sm:text-[17px]">
-            ApplyPilot brings your professional profile, job opportunities, application preparation
+            ApplyFocus brings your professional profile, job opportunities, application preparation
             and progress into one organized experience.
           </p>
         </div>

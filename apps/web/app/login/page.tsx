@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { loginSchema } from "@applypilot/validators";
+import { loginSchema } from "@applyfocus/validators";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
@@ -84,7 +84,7 @@ export default function LoginPage() {
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
             AP
           </span>
-          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
+          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyFocus</span>
         </Link>
         <Card>
           <h1 className="mb-1 text-xl font-semibold text-ui-ink">Welcome back</h1>

@@ -6,14 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const FAQS: Array<{ question: string; answer: string }> = [
   {
-    question: "What is ApplyPilot?",
+    question: "What is ApplyFocus?",
     answer:
-      "ApplyPilot is a career intelligence workspace that helps you organize your professional profile, discover relevant job opportunities, prepare tailored applications and manage your job search.",
+      "ApplyFocus is a career intelligence workspace that helps you organize your professional profile, discover relevant job opportunities, prepare tailored applications and manage your job search.",
   },
   {
-    question: "Who is ApplyPilot for?",
+    question: "Who is ApplyFocus for?",
     answer:
-      "ApplyPilot is designed for job seekers at different career stages, from fresh graduates and early-career professionals to experienced candidates looking for their next opportunity.",
+      "ApplyFocus is designed for job seekers at different career stages, from fresh graduates and early-career professionals to experienced candidates looking for their next opportunity.",
   },
   {
     question: "Do I need to create a new resume?",
@@ -23,25 +23,25 @@ const FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "Can I use a different resume for every job?",
     answer:
-      "Yes. ApplyPilot's Adaptive Resume Engine is designed to create job-specific resume versions using your existing professional information. You can review and approve suggested changes before using them.",
+      "Yes. ApplyFocus's Adaptive Resume Engine is designed to create job-specific resume versions using your existing professional information. You can review and approve suggested changes before using them.",
   },
   {
-    question: "Does ApplyPilot guarantee ATS compatibility?",
+    question: "Does ApplyFocus guarantee ATS compatibility?",
     answer:
-      "No platform can guarantee that every employer's ATS will parse a resume perfectly. ApplyPilot aims to create clear, structured and machine-readable application documents.",
+      "No platform can guarantee that every employer's ATS will parse a resume perfectly. ApplyFocus aims to create clear, structured and machine-readable application documents.",
   },
   {
-    question: "Do I have to apply through ApplyPilot?",
+    question: "Do I have to apply through ApplyFocus?",
     answer:
       "No. The product is designed around your job-search workflow, including applications that take place on external employer websites. Browser extension assistance depends on supported functionality.",
   },
   {
-    question: "Does ApplyPilot apply automatically?",
+    question: "Does ApplyFocus apply automatically?",
     answer:
-      "ApplyPilot prioritizes candidate control. You review your application materials and confirm consequential submissions.",
+      "ApplyFocus prioritizes candidate control. You review your application materials and confirm consequential submissions.",
   },
   {
-    question: "Can I track jobs I found outside ApplyPilot?",
+    question: "Can I track jobs I found outside ApplyFocus?",
     answer:
       "The intended experience includes connecting external opportunities to your application tracker. The exact import and extension capabilities depend on the available implementation.",
   },
@@ -78,7 +78,7 @@ export function Faq() {
             </p>
             <div className="mt-6">
               <a
-                href="mailto:support@applypilot.com"
+                href="mailto:support@applyfocus.app"
                 className="inline-flex items-center gap-1.5 font-ui text-sm font-semibold text-lp-accent hover:underline"
               >
                 Still have questions? Reach out to support →

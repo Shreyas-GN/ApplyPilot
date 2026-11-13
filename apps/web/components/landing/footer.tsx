@@ -14,7 +14,7 @@ const COLUMNS: Array<{ title: string; links: Array<{ href: string; label: string
     title: "Company",
     links: [
       { href: "#philosophy", label: "About" },
-      { href: "mailto:hello@applypilot.app", label: "Contact" },
+      { href: "mailto:hello@applyfocus.app", label: "Contact" },
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
     ],
@@ -40,7 +40,7 @@ export function Footer() {
                 AP
               </span>
               <span className="font-ui text-[17px] font-semibold tracking-tight text-lp-ink">
-                ApplyPilot
+                ApplyFocus
               </span>
             </Link>
             <p className="mt-3 max-w-xs font-ui text-sm leading-relaxed text-lp-body">
@@ -70,7 +70,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col justify-between gap-2 border-t border-lp-border pt-6 font-ui text-xs text-lp-muted sm:flex-row sm:items-center">
-          <p>© 2026 ApplyPilot · Built for better career decisions.</p>
+          <p>© 2026 ApplyFocus · Built for better career decisions.</p>
           <p>Better career decisions, not more applications.</p>
         </div>
       </div>

@@ -51,10 +51,10 @@ export function PhilosophySection() {
               </ul>
             </div>
 
-            {/* ApplyPilot Approach */}
+            {/* ApplyFocus Approach */}
             <div className="rounded-2xl border border-[#7c66dc]/40 bg-white/[0.08] p-6 sm:p-8">
               <p className="font-mono text-xs uppercase tracking-wider text-[#d8cefe]">
-                The ApplyPilot approach
+                The ApplyFocus approach
               </p>
               <ul className="mt-5 space-y-3.5">
                 {APPLYPILOT_WAY.map((item) => (
@@ -70,7 +70,7 @@ export function PhilosophySection() {
           </div>
 
           <p className="mt-10 border-t border-white/10 pt-8 font-ui text-[15px] font-medium text-white/70">
-            You make the decisions. ApplyPilot helps you make them with better information.
+            You make the decisions. ApplyFocus helps you make them with better information.
           </p>
         </div>
       </div>

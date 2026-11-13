@@ -1,4 +1,4 @@
-# ApplyPilot — Database Schema
+# ApplyFocus — Database Schema
 
 PostgreSQL + `pgvector`. All PII-bearing tables scoped by `user_id` and covered by
 Row-Level Security as defense in depth (see `SYSTEM_ARCHITECTURE.md` §5).

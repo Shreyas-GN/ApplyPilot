@@ -1,4 +1,4 @@
-# ApplyPilot — UI/UX Guidelines
+# ApplyFocus — UI/UX Guidelines
 
 No Tsenta (or any competitor) visual assets, branding, copy, or layouts are referenced or
 copied here — per `REVERSE_ENGINEERING.md` we never actually saw Tsenta's real UI, and

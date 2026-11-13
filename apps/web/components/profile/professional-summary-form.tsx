@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ProfileDto } from "@/lib/types";
-import { updateProfileSchema } from "@applypilot/validators";
+import { updateProfileSchema } from "@applyfocus/validators";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/field";
 import { api, ApiError } from "@/lib/api-client";
 import { SectionFrame, type ProvenanceKind } from "./profile-editorial-ui";

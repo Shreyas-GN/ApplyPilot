@@ -1,4 +1,4 @@
-# ApplyPilot — Phased MVP Roadmap
+# ApplyFocus — Phased MVP Roadmap
 
 > **Status: Phase 0 and Phase 1 complete** (see §Phase 1 below for what shipped and what
 > changed from the original plan). Phases 2+ are still the Phase 0-era design, not started.
@@ -80,7 +80,7 @@ decided in `SYSTEM_ARCHITECTURE.md` §2–3.
 - Review-before-submit diff screen (co-pilot mode only — this phase does not ship
   auto-pilot).
 - `application_events` audit trail + Compliance Center activity log.
-- Exit criteria: a user can have ApplyPilot autofill and, after their explicit review and
+- Exit criteria: a user can have ApplyFocus autofill and, after their explicit review and
   click, submit an application on a Tier-1 or Tier-2 site, with a complete audit trail.
 
 ## Phase 4 — Auto-Pilot & Analytics

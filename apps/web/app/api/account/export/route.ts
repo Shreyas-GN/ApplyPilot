@@ -10,7 +10,7 @@ export async function GET() {
 
   try {
     const bundle = await exportUserData(user.id);
-    const filename = `applypilot-export-${new Date().toISOString().slice(0, 10)}.json`;
+    const filename = `applyfocus-export-${new Date().toISOString().slice(0, 10)}.json`;
     return new NextResponse(JSON.stringify(bundle, null, 2), {
       status: 200,
       headers: {

@@ -1,10 +1,10 @@
-ApplyPilot — Landing Page Design
+ApplyFocus — Landing Page Design
 Page concept: The Opportunity Field Guide
 Positioning: Find better jobs. Apply smarter.
 1. The job of this page
 Help a job seeker understand, within a few seconds:
 
-1. What ApplyPilot does.
+1. What ApplyFocus does.
 2. How it reduces the effort and uncertainty of a job search.
 3. What the workflow looks like.
 4. Why the candidate remains in control.
@@ -26,13 +26,13 @@ Find better jobs. Apply smarter.
 Supporting message
 Bring your job search into one focused workflow: understand which opportunities fit, prepare stronger applications and keep track of what happens next.
 Product explanation
-ApplyPilot is an AI-assisted job-search workspace. It is designed to connect candidate information, relevant opportunities, application preparation and follow-through.
+ApplyFocus is an AI-assisted job-search workspace. It is designed to connect candidate information, relevant opportunities, application preparation and follow-through.
 Trust principle
 The candidate stays in control. Explain what the system suggests, what it changes and what requires approval. Never imply silent or universal auto-application.
 4. Page structure
 A. Navigation
 
-* ApplyPilot wordmark.
+* ApplyFocus wordmark.
 * Product
 * How it works
 * FAQ
@@ -43,13 +43,13 @@ Keep navigation quiet. No mega-menu and no unnecessary announcement bar unless t
 B. Hero — "A clearer way to move your job search forward"
 Eyebrow: YOUR NEXT OPPORTUNITY, WITH A PLAN
 Headline: Find better jobs. Apply smarter.
-Body: ApplyPilot brings your job search into one place — helping you understand fit, prepare thoughtful applications and stay on top of every next step.
+Body: ApplyFocus brings your job search into one place — helping you understand fit, prepare thoughtful applications and stay on top of every next step.
 Primary CTA: Get started
 Secondary CTA: See how it works
 Visual direction:
 
 * Use an asymmetric editorial hero, not a generic centered SaaS hero.
-* Text block on the left; a large, realistic ApplyPilot product composition on the right/below.
+* Text block on the left; a large, realistic ApplyFocus product composition on the right/below.
 * The product visual should resemble a carefully arranged field-guide workspace: an opportunity list, a selected role, and a compact "why this fits" note.
 * Use a few role/skill tags as meaningful labels, not random floating decoration.
 * Use one vermilion annotation to point to the most important product detail.
@@ -111,10 +111,10 @@ Use realistic, consistent sample data. If any screen is conceptual, label it as 
 H. FAQ
 Answer practical objections:
 
-* What is ApplyPilot?
+* What is ApplyFocus?
 * Who is it for?
 * Does it work with my existing résumé?
-* Does ApplyPilot apply to jobs automatically?
+* Does ApplyFocus apply to jobs automatically?
 * Can I review and edit application material?
 * Which job sources and application systems are supported?
 * Is my personal information secure?

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import { passwordSchema } from "@applypilot/validators";
+import { passwordSchema } from "@applyfocus/validators";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
@@ -85,7 +85,7 @@ export default function ResetPasswordPage() {
           href="/"
           className="mb-6 block text-center text-lg font-semibold text-ui-violet"
         >
-          ApplyPilot
+          ApplyFocus
         </Link>
         <Card>
           <h1 className="mb-6 text-xl font-semibold text-ui-ink">

@@ -64,7 +64,7 @@ describe("Landing HomePage", () => {
     expect(screen.getByRole("button", { name: /Approved/i })).toBeInTheDocument();
 
     const secondFaq = screen.getByRole("button", {
-      name: /Who is ApplyPilot for\?/i,
+      name: /Who is ApplyFocus for\?/i,
     });
     expect(secondFaq).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(secondFaq);

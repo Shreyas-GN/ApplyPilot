@@ -9,7 +9,7 @@ import {
   RESUME_MAX_FILE_SIZE_BYTES,
   resumeParsedDataSchema,
   type ResumeParsedData,
-} from '@applypilot/validators';
+} from '@applyfocus/validators';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sniffFileType, mimeTypeMatchesSniffedType } from './file-signature';
 import { recordAudit } from './audit';

@@ -26,35 +26,35 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://applypilot.app"),
+  metadataBase: new URL("https://applyfocus.app"),
   title: {
-    default: "ApplyPilot — Your next opportunity deserves a better approach.",
-    template: "%s | ApplyPilot",
+    default: "ApplyFocus — AI-powered job search and application intelligence platform.",
+    template: "%s | ApplyFocus",
   },
   description:
-    "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work. A personal career intelligence platform.",
+    "AI-powered job search and application intelligence platform. Understand your strengths. Find opportunities that fit. Build an application that reflects your best work.",
   keywords: [
     "career intelligence platform",
     "job search workspace",
     "adaptive resume",
     "opportunity matching",
     "application tracker",
-    "ApplyPilot",
+    "ApplyFocus",
   ],
-  authors: [{ name: "ApplyPilot" }],
-  creator: "ApplyPilot",
+  authors: [{ name: "ApplyFocus" }],
+  creator: "ApplyFocus",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://applypilot.app",
-    title: "ApplyPilot — Your next opportunity deserves a better approach.",
+    url: "https://applyfocus.app",
+    title: "ApplyFocus — AI-powered job search and application intelligence platform.",
     description:
       "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work.",
-    siteName: "ApplyPilot",
+    siteName: "ApplyFocus",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ApplyPilot — Your next opportunity deserves a better approach.",
+    title: "ApplyFocus — AI-powered job search and application intelligence platform.",
     description:
       "Understand your strengths. Find opportunities that fit. Build an application that reflects your best work.",
   },

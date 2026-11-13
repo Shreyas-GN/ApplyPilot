@@ -1,5 +1,5 @@
 {
-  "name": "@applypilot/validators",
+  "name": "@applyfocus/validators",
   "version": "0.0.0",
   "private": true,
   "main": "./dist/index.js",

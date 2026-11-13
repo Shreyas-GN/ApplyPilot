@@ -1,4 +1,4 @@
-# @applypilot/extension
+# @applyfocus/extension
 
 Phase 0 scaffold only — boots, builds, and loads as an unpacked Manifest V3 extension,
 but has no pairing, detection, or form-fill logic yet. That lands in Phase 6
@@ -14,7 +14,7 @@ Store.
 ## Local build
 
 ```bash
-pnpm --filter @applypilot/extension build
+pnpm --filter @applyfocus/extension build
 ```
 
 Then load `apps/extension/dist` as an unpacked extension in `chrome://extensions`.

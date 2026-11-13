@@ -1,4 +1,4 @@
-# ApplyPilot
+# ApplyFocus
 
 AI-powered job search and application automation platform. Discover relevant
 opportunities, match your skills, tailor resumes, generate cover letters, automate
@@ -70,17 +70,17 @@ experience) — set `ANTHROPIC_API_KEY` in `.env` to use Claude instead.
 
 ```bash
 pnpm test            # everything, via Turborepo
-pnpm --filter @applypilot/api test       # backend only — needs a real Postgres (applypilot_test
-                                          # database, not applypilot_dev) + Redis; see DATABASE_URL
+pnpm --filter @applyfocus/api test       # backend only — needs a real Postgres (applyfocus_test
+                                          # database, not applyfocus_dev) + Redis; see DATABASE_URL
                                           # in .env.example
-pnpm --filter @applypilot/web test       # frontend component tests — fully mocked, no services needed
+pnpm --filter @applyfocus/web test       # frontend component tests — fully mocked, no services needed
 cd services/ai && pytest                 # AI service tests
 ```
 
 The backend integration tests (`apps/api/test/app.e2e-spec.ts`) run against a real,
-separate `applypilot_test` database — create it once with the same migrations as
-`applypilot_dev` (`DATABASE_URL=postgresql://.../applypilot_test pnpm --filter
-@applypilot/api exec prisma migrate deploy`). They clean up every user they create.
+separate `applyfocus_test` database — create it once with the same migrations as
+`applyfocus_dev` (`DATABASE_URL=postgresql://.../applyfocus_test pnpm --filter
+@applyfocus/api exec prisma migrate deploy`). They clean up every user they create.
 
 ## Status
 

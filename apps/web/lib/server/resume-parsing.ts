@@ -6,7 +6,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import {
   resumeParsedDataSchema,
   type ResumeParsedData,
-} from '@applypilot/validators';
+} from '@applyfocus/validators';
 import { eq } from 'drizzle-orm';
 import mammoth from 'mammoth';
 import { extractText } from 'unpdf';

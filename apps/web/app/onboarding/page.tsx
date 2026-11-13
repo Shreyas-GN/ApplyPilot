@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { updateProfileSchema } from "@applypilot/validators";
+import { updateProfileSchema } from "@applyfocus/validators";
 import { ProtectedRoute } from "@/components/layout/protected-route";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ function OnboardingWizard() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
-        <p className="mb-6 text-center text-lg font-semibold text-ui-violet">ApplyPilot</p>
+        <p className="mb-6 text-center text-lg font-semibold text-ui-violet">ApplyFocus</p>
         <Card>
           <div className="mb-4 flex gap-1">
             <div className={`h-1 flex-1 rounded-full ${step >= 1 ? "bg-ui-lilac-soft0" : "bg-slate-200"}`} />

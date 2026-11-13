@@ -77,7 +77,7 @@ function CopilotContent() {
       <Card>
         <CardHeader
           title="Extension Setup"
-          description="Connect Chrome to your ApplyPilot workspace in three quick steps."
+          description="Connect Chrome to your ApplyFocus workspace in three quick steps."
         />
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-lg border border-ui-border bg-ui-canvas/70 p-4">
@@ -95,7 +95,7 @@ function CopilotContent() {
               <span>2. Pair Your Browser</span>
             </div>
             <p className="text-xs leading-relaxed text-ui-body">
-              Generate a pairing token below and paste it into the ApplyPilot extension popup along with this app URL.
+              Generate a pairing token below and paste it into the ApplyFocus extension popup along with this app URL.
             </p>
           </div>
           <div className="rounded-lg border border-ui-border bg-ui-canvas/70 p-4">
@@ -150,7 +150,7 @@ function CopilotContent() {
           <div className="mt-4 flex items-start gap-2.5 rounded-lg bg-ui-lilac-soft/60 p-3 text-xs text-ui-ink">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-ui-violet" />
             <p>
-              <strong>Review-before-submit guarantee:</strong> ApplyPilot populates detected form inputs and suggests answers grounded in your profile, but never clicks final submission buttons automatically.
+              <strong>Review-before-submit guarantee:</strong> ApplyFocus populates detected form inputs and suggests answers grounded in your profile, but never clicks final submission buttons automatically.
             </p>
           </div>
         </Card>

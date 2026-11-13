@@ -1,4 +1,4 @@
-# ApplyPilot — AI Agents & Automation Workflows
+# ApplyFocus — AI Agents & Automation Workflows
 
 These are structured AI-backed pipelines, not unconstrained autonomous agents. Each has a
 narrow responsibility, explicit inputs/outputs, and guardrails (§6). Default LLM provider

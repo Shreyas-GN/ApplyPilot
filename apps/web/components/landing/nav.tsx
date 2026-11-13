@@ -24,7 +24,7 @@ export function Nav() {
             AP
           </span>
           <span className="font-ui text-[17px] font-semibold tracking-tight text-lp-ink">
-            ApplyPilot
+            ApplyFocus
           </span>
         </Link>
 

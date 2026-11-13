@@ -1,4 +1,4 @@
-ApplyPilot — Product Exhibition
+ApplyFocus — Product Exhibition
 Purpose: Define the product visuals that make the landing page feel credible and memorable. These are product demonstrations, not decorative illustrations.
 1. The visual story
 Show one coherent journey:

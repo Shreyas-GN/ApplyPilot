@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ProfileDto } from "@/lib/types";
-import { updateProfileSchema, type UpdateProfileInput } from "@applypilot/validators";
+import { updateProfileSchema, type UpdateProfileInput } from "@applyfocus/validators";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TextField, TextAreaField } from "@/components/ui/field";

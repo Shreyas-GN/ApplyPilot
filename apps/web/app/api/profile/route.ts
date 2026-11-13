@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/supabase/auth';
 import { getProfile, updateBasicInfo } from '@/lib/server/profile';
-import { updateProfileSchema } from '@applypilot/validators';
+import { updateProfileSchema } from '@applyfocus/validators';
 
 export async function GET() {
   const user = await getUser();

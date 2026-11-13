@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@applypilot/validators"],
+  transpilePackages: ["@applyfocus/validators"],
   async headers() {
     return [
       {

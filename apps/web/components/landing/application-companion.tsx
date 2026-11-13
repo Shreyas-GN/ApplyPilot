@@ -31,7 +31,7 @@ export function ApplicationCompanion() {
             </h2>
             <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
               Not every company accepts applications through the platform where you discovered its
-              vacancy. ApplyPilot is designed to help you prepare and manage applications even when
+              vacancy. ApplyFocus is designed to help you prepare and manage applications even when
               the final application happens on an employer&apos;s own website.
             </p>
 
@@ -95,13 +95,13 @@ export function ApplicationCompanion() {
                 </div>
               </div>
 
-              {/* ApplyPilot Companion Side Panel (Right) */}
+              {/* ApplyFocus Companion Side Panel (Right) */}
               <div className="bg-lp-surface-subtle/70 p-5 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <PanelRight className="h-4 w-4 text-lp-accent" aria-hidden="true" />
                     <span className="font-ui text-xs font-semibold text-lp-ink">
-                      ApplyPilot Companion
+                      ApplyFocus Companion
                     </span>
                   </div>
                   <span className="rounded bg-lp-accent-soft px-2 py-0.5 font-mono text-[10px] font-medium text-lp-accent">

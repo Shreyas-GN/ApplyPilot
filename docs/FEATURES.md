@@ -1,4 +1,4 @@
-# ApplyPilot — Feature List
+# ApplyFocus — Feature List
 
 Organized by module. `MVP` = Phase 1–3 of `MVP_ROADMAP.md`. `Later` = Phase 4+.
 

@@ -73,7 +73,7 @@ async function inspectActiveTab() {
     (response) => {
       if (chrome.runtime.lastError || !response?.ok) {
         atsBadgeEl.textContent = "Reload tab";
-        jobSummaryEl.textContent = "Refresh this ATS page to activate ApplyPilot Co-pilot.";
+        jobSummaryEl.textContent = "Refresh this ATS page to activate ApplyFocus Co-pilot.";
         return;
       }
       detectedJob = response.job as JobMeta;
@@ -121,7 +121,7 @@ document.getElementById("connect-btn")?.addEventListener("click", () => {
   const apiBaseUrl = apiUrlInput.value.trim().replace(/\/+$/, "");
   const token = tokenInput.value.trim();
   if (!apiBaseUrl || !token) {
-    setStatus("Enter both your ApplyPilot URL and pairing token.", "error");
+    setStatus("Enter both your ApplyFocus URL and pairing token.", "error");
     return;
   }
   setStatus("Verifying token…");
@@ -149,7 +149,7 @@ document.getElementById("save-job-btn")?.addEventListener("click", () => {
     },
     (res) => {
       setStatus(
-        res?.ok ? "Saved to ApplyPilot tracker." : res?.error || "Save failed.",
+        res?.ok ? "Saved to ApplyFocus tracker." : res?.error || "Save failed.",
         res?.ok ? "ok" : "error"
       );
     }

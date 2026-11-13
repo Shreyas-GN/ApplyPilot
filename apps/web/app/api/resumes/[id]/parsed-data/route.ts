@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/supabase/auth';
 import { getParsedData, updateParsedData } from '@/lib/server/resumes';
-import { resumeParsedDataSchema } from '@applypilot/validators';
+import { resumeParsedDataSchema } from '@applyfocus/validators';
 
 export async function GET(
   _request: NextRequest,

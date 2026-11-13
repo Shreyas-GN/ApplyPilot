@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": rootDir,
+      "@applyfocus/validators": path.resolve(rootDir, "../../packages/validators/src/index.ts"),
     },
   },
 });

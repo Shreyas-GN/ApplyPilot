@@ -1,4 +1,4 @@
-# ApplyPilot — System Architecture
+# ApplyFocus — System Architecture
 
 ## 1. High-level diagram
 
@@ -6,7 +6,7 @@
                          ┌──────────────────────────┐
                          │   User's Browser          │
                          │  ┌──────────────────────┐ │
-                         │  │ ApplyPilot Extension │ │  <- runs IN the user's own
+                         │  │ ApplyFocus Extension │ │  <- runs IN the user's own
                          │  │ (Manifest V3, TS)    │ │     authenticated session.
                          │  │  - content script     │ │     No ATS credentials ever
                          │  │  - service worker      │ │     leave the browser.
@@ -16,7 +16,7 @@
                                        │ HTTPS (scoped device token)
                                        ▼
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                              ApplyPilot Backend                           │
+│                              ApplyFocus Backend                           │
 │                                                                            │
 │  API Gateway / BFF  (NestJS, TypeScript)                                  │
 │      │                                                                     │

@@ -1,12 +1,12 @@
 {
-  "name": "@applypilot/extension",
+  "name": "@applyfocus/extension",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "build": "node build.mjs",
     "dev": "node build.mjs --watch",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "echo \"(no lint rules configured yet for @applypilot/extension)\""
+    "lint": "echo \"(no lint rules configured yet for @applyfocus/extension)\""
   },
   "devDependencies": {
     "@types/chrome": "0.0.287",

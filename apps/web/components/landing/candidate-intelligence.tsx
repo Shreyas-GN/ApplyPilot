@@ -41,7 +41,7 @@ export function CandidateIntelligence() {
             </p>
             <p className="mt-3 font-ui text-[15px] leading-[1.65] text-lp-body">
               Bring your skills, experience, education and projects into one structured profile.
-              Review what ApplyPilot extracts, correct anything that needs attention, and build a
+              Review what ApplyFocus extracts, correct anything that needs attention, and build a
               profile that grows with your career.
             </p>
 

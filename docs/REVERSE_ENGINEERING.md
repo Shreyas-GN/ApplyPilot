@@ -110,7 +110,7 @@ not inventing one.
 | Freemium, unspecified tiers | Unattributed listing |
 | 25 free applications, then $19–$99/mo | Competitor review (resumeup.ai) `[COMPETITOR CLAIM]` |
 
-No two sources agree. We are not using any of these numbers as ApplyPilot inputs beyond
+No two sources agree. We are not using any of these numbers as ApplyFocus inputs beyond
 "freemium-with-paid-tiers is the category norm."
 
 ## 7. Reported limitations / user experience — mostly anecdotal, low confidence
@@ -163,9 +163,9 @@ We did not confirm, and are not guessing at:
 - Rose-Hulman Institute press release on founders/funding
 - Trustpilot listing page (existence only, content unread)
 
-## 11. Implication for ApplyPilot
+## 11. Implication for ApplyFocus
 
-Given this access ceiling, ApplyPilot's requirements in this repo are **not** a clone of
+Given this access ceiling, ApplyFocus's requirements in this repo are **not** a clone of
 confirmed Tsenta behavior — they are an **independent design** for the same product
 category (AI-assisted job search and application automation), informed loosely by the
 category patterns above (auto-apply agents, co-pilot review steps, ATS-coverage marketing

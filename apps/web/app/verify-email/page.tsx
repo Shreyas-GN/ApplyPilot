@@ -58,7 +58,7 @@ export default function VerifyEmailPage() {
     <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
         <Link href="/" className="mb-6 block text-center text-lg font-semibold text-ui-violet">
-          ApplyPilot
+          ApplyFocus
         </Link>
         <Card>
           <h1 className="mb-6 text-xl font-semibold text-ui-ink">Email verification</h1>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { jobStateSchema } from '@applypilot/validators';
+import { jobStateSchema } from '@applyfocus/validators';
 import { getUser } from '@/lib/supabase/auth';
 import { clearJobState, setJobState } from '@/lib/server/jobs';
 

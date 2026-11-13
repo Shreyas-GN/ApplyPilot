@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { forgotPasswordSchema } from "@applypilot/validators";
+import { forgotPasswordSchema } from "@applyfocus/validators";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-ui-canvas px-4">
       <div className="w-full max-w-md">
         <Link href="/" className="mb-6 block text-center text-lg font-semibold text-ui-violet">
-          ApplyPilot
+          ApplyFocus
         </Link>
         <Card>
           <h1 className="mb-1 text-xl font-semibold text-ui-ink">Reset your password</h1>

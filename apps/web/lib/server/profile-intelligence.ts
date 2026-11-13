@@ -572,7 +572,7 @@ export function computeProfileIntelligence(
       sectionId: "career_preferences",
       title: "Set target roles, work mode, and compensation",
       description:
-        "Complete Career Preferences so ApplyPilot filters and ranks opportunities to your exact targets.",
+        "Complete Career Preferences so ApplyFocus filters and ranks opportunities to your exact targets.",
       actionLabel: "Set preferences",
       priority: "medium",
       kind: "complete_missing",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { registerSchema } from "@applypilot/validators";
+import { registerSchema } from "@applyfocus/validators";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api-client";
 import { createClient } from "@/lib/supabase/client";
@@ -83,7 +83,7 @@ export default function SignupPage() {
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
               AP
             </span>
-            <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
+            <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyFocus</span>
           </Link>
           <Card>
             <h1 className="mb-1 text-xl font-semibold text-ui-ink">Check your email</h1>
@@ -130,7 +130,7 @@ export default function SignupPage() {
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-ui-wine text-xs font-semibold tracking-tight text-white">
             AP
           </span>
-          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyPilot</span>
+          <span className="text-lg font-semibold tracking-tight text-ui-ink">ApplyFocus</span>
         </Link>
         <Card>
           <h1 className="mb-1 text-xl font-semibold text-ui-ink">Create your account</h1>

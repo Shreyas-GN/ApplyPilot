@@ -1,4 +1,4 @@
-# ApplyPilot — API Design
+# ApplyFocus — API Design
 
 REST over HTTPS, JSON, versioned under `/api/v1`. OpenAPI spec is the source of truth once
 one is generated; this document is kept in sync with the actual NestJS controllers.

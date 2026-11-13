@@ -38,7 +38,7 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^1.8.0
         version: 1.8.0(zod@4.6.7)
-      '@applypilot/validators':
+      '@applyfocus/validators':
         specifier: workspace:*
         version: link:../../packages/validators
       '@supabase/ssr':

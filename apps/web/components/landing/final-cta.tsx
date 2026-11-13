@@ -22,7 +22,7 @@ export function FinalCta() {
               href="/signup"
               className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-lp-wine px-7 font-ui text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-lp-wine-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lp-wine"
             >
-              Get started with ApplyPilot
+              Get started with ApplyFocus
               <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
             <Link

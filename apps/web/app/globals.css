@@ -14,7 +14,7 @@
 
   --font-sans: var(--font-geist-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
 
-  /* ApplyPilot marketing design system — "The Opportunity Field Guide" (docs/design/DESIGN.md).
+  /* ApplyFocus marketing design system — "The Opportunity Field Guide" (docs/design/DESIGN.md).
      Scoped to --ap-* tokens so the authenticated app's brand-* theme above is untouched. */
   --color-ap-paper: #f7f4ed;
   --color-ap-paper-deep: #eee9de;
@@ -34,7 +34,7 @@
   --font-ui: var(--font-inter), "DM Sans", system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
 
-  /* Landing page design system tokens — ApplyPilot Executive Modernist */
+  /* Landing page design system tokens — ApplyFocus Executive Modernist */
   --color-lp-ink: #181716;
   --color-lp-body: #4a4744;
   --color-lp-muted: #827e78;

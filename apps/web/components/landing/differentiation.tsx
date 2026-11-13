@@ -5,7 +5,7 @@ import { CheckCircle2, AlertCircle, HelpCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UnderlineAnnotation } from "./annotation";
 
-const APPLYPILOT_EVIDENCE = [
+const APPLYFOCUS_EVIDENCE = [
   {
     icon: CheckCircle2,
     tone: "text-ap-sage",
@@ -48,7 +48,7 @@ const BOT_EVIDENCE = [
 ];
 
 export function Differentiation() {
-  const [mode, setMode] = useState<"applypilot" | "bots">("applypilot");
+  const [mode, setMode] = useState<"applyfocus" | "bots">("applyfocus");
 
   return (
     <section className="bg-ap-paper-deep py-16 sm:py-24 lg:py-28">
@@ -67,14 +67,14 @@ export function Differentiation() {
           <div className="mt-8 flex items-center gap-2 rounded-full border border-ap-line bg-ap-surface p-1 max-w-fit shadow-2xs">
             <button
               type="button"
-              onClick={() => setMode("applypilot")}
+              onClick={() => setMode("applyfocus")}
               className={`rounded-full px-3.5 py-1.5 font-ui text-xs font-medium transition-all ${
-                mode === "applypilot"
+                mode === "applyfocus"
                   ? "bg-ap-ink text-ap-paper shadow-xs"
                   : "text-ap-muted hover:text-ap-ink"
               }`}
             >
-              ApplyPilot Way
+              ApplyFocus Way
             </button>
             <button
               type="button"
@@ -93,14 +93,14 @@ export function Differentiation() {
         <div className="rounded-panel border border-ap-line bg-ap-surface p-6 sm:p-8 shadow-xs">
           <div className="flex items-center justify-between border-b border-ap-line pb-4">
             <p className="font-ui text-sm font-semibold text-ap-ink">
-              {mode === "applypilot"
+              {mode === "applyfocus"
                 ? "Fit reasoning — Backend Engineer, Northstar Systems"
                 : "Typical Bot Output — Unregulated Mass Submissions"}
             </p>
             <span className={`font-mono text-xs px-2.5 py-0.5 rounded-full ${
-              mode === "applypilot" ? "bg-ap-sage-soft text-ap-sage" : "bg-red-100 text-red-700"
+              mode === "applyfocus" ? "bg-ap-sage-soft text-ap-sage" : "bg-red-100 text-red-700"
             }`}>
-              {mode === "applypilot" ? "High Quality" : "Spam Risk"}
+              {mode === "applyfocus" ? "High Quality" : "Spam Risk"}
             </span>
           </div>
 
@@ -113,7 +113,7 @@ export function Differentiation() {
               transition={{ duration: 0.2 }}
               className="mt-5 space-y-4"
             >
-              {(mode === "applypilot" ? APPLYPILOT_EVIDENCE : BOT_EVIDENCE).map(
+              {(mode === "applyfocus" ? APPLYFOCUS_EVIDENCE : BOT_EVIDENCE).map(
                 ({ icon: Icon, tone, label, body }) => (
                   <li key={label} className="flex items-start gap-3">
                     <Icon className={`mt-0.5 h-5 w-5 flex-shrink-0 ${tone}`} strokeWidth={1.75} aria-hidden="true" />
@@ -128,7 +128,7 @@ export function Differentiation() {
           </AnimatePresence>
 
           <p className="mt-6 border-t border-ap-line/70 pt-4 font-mono text-[11px] text-ap-muted">
-            {mode === "applypilot"
+            {mode === "applyfocus"
               ? "Illustrative match evidence — shown as transparent reasoning, not arbitrary black-box scores."
               : "Generic bots submit low-quality duplicates that trigger automatic ATS blacklisting."}
           </p>

@@ -108,7 +108,7 @@ export function Hero() {
           </p>
         </div>
 
-        {/* ApplyPilot Connected Career Cockpit */}
+        {/* ApplyFocus Connected Career Cockpit */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -128,7 +128,7 @@ export function Hero() {
                 <div className="flex items-center gap-2">
                   <Layers className="h-4 w-4 text-lp-accent" aria-hidden="true" />
                   <span className="font-ui text-[13px] font-semibold text-lp-ink">
-                    ApplyPilot Career Workspace
+                    ApplyFocus Career Workspace
                   </span>
                 </div>
                 <span className="hidden rounded-md border border-lp-border bg-white px-2 py-0.5 font-mono text-[10px] text-lp-muted sm:inline-block">

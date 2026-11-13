@@ -5,7 +5,7 @@ export default function PrivacyPage() {
     <main className="min-h-screen bg-ui-canvas px-5 py-16 sm:px-8">
       <div className="mx-auto max-w-[680px]">
         <Link href="/" className="font-ui text-sm text-ui-muted hover:text-ui-ink">
-          ← Back to ApplyPilot
+          ← Back to ApplyFocus
         </Link>
         <h1 className="mt-6 font-display text-3xl text-ui-ink">Privacy Policy</h1>
         <p className="mt-2 font-mono text-xs text-ui-muted">Last updated: November 2026</p>
@@ -14,7 +14,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-semibold text-ui-ink">1. Information We Collect</h2>
             <p className="mt-1.5">
-              ApplyPilot stores the account credentials, structured career profile details,
+              ApplyFocus stores the account credentials, structured career profile details,
               uploaded PDF/DOCX résumés, AI-tailored drafts, tracked job applications, and
               activity logs you choose to create. Every database table is scoped to your
               authenticated user account.
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
               Authentication, relational storage, and private résumé files are hosted on
               Supabase. When you upload a résumé or trigger AI tailoring, relevant text is
               sent to Anthropic Claude solely to extract your profile or draft your requested
-              material. ApplyPilot never requests or stores your third-party ATS passwords.
+              material. ApplyFocus never requests or stores your third-party ATS passwords.
             </p>
           </section>
 
@@ -46,8 +46,8 @@ export default function PrivacyPage() {
               You can download a complete JSON copy of your profile, résumés metadata, tailored
               drafts, and application history anytime in Settings, or permanently delete your
               account (including stored files and auth credentials). For questions, contact{" "}
-              <a href="mailto:hello@applypilot.app" className="text-ui-ink underline">
-                hello@applypilot.app
+              <a href="mailto:hello@applyfocus.app" className="text-ui-ink underline">
+                hello@applyfocus.app
               </a>
               .
             </p>

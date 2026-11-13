@@ -335,7 +335,7 @@ function SettingsContent() {
         <Card>
           <CardHeader
             title="Notification Preferences"
-            description="Choose which reminders and job-matching notifications ApplyPilot surfaces for you."
+            description="Choose which reminders and job-matching notifications ApplyFocus surfaces for you."
           />
           {notifStatus && (
             <div className="mb-4">
@@ -404,7 +404,7 @@ function SettingsContent() {
           <Card>
             <CardHeader
               title="Data Export & Account Deletion"
-              description="Download all of your data or permanently delete your ApplyPilot account."
+              description="Download all of your data or permanently delete your ApplyFocus account."
             />
             <div className="flex flex-col gap-6">
               <div>

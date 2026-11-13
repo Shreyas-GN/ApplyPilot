@@ -50,7 +50,7 @@ async function postAuthedJson(
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("[ApplyPilot] extension installed");
+  console.log("[ApplyFocus] extension installed");
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser } from '@/lib/supabase/auth';
 import { updatePreferences } from '@/lib/server/profile';
-import { updatePreferencesSchema } from '@applypilot/validators';
+import { updatePreferencesSchema } from '@applyfocus/validators';
 
 export async function PUT(request: NextRequest) {
   const user = await getUser();

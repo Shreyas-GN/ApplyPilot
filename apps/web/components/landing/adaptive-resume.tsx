@@ -51,7 +51,7 @@ export function AdaptiveResume() {
               Your experience stays the same. How you present it shouldn&apos;t have to.
             </p>
             <p className="mt-2 font-ui text-[15px] leading-[1.65] text-lp-body">
-              ApplyPilot helps you adapt your resume to each job description by highlighting
+              ApplyFocus helps you adapt your resume to each job description by highlighting
               relevant skills, projects and experience — without starting from scratch every time.
             </p>
           </div>

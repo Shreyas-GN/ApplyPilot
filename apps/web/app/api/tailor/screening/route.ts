@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { screeningQuestionSchema } from '@applypilot/validators';
+import { screeningQuestionSchema } from '@applyfocus/validators';
 import { getUser } from '@/lib/supabase/auth';
 import { answerScreeningQuestion } from '@/lib/server/tailoring';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@applypilot/web",
+  "name": "@applyfocus/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
-    "@applypilot/validators": "workspace:*",
+    "@applyfocus/validators": "workspace:*",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.0",
     "drizzle-orm": "^0.45.4",

@@ -35,7 +35,7 @@ export function TrustPrivacy() {
             Your career information belongs to you.
           </h2>
           <p className="mt-4 font-ui text-[16px] leading-[1.65] text-lp-body">
-            Your professional history is personal. ApplyPilot should make it easier to work with
+            Your professional history is personal. ApplyFocus should make it easier to work with
             your information without taking decisions away from you.
           </p>
         </div>

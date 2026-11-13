@@ -48,7 +48,7 @@ export function ProblemSection() {
           </p>
         </div>
 
-        {/* ApplyPilot Unique 3-Column Architecture */}
+        {/* ApplyFocus Unique 3-Column Architecture */}
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {problems.map((item) => (
             <div

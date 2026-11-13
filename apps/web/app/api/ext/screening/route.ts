@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { screeningQuestionSchema } from '@applypilot/validators';
+import { screeningQuestionSchema } from '@applyfocus/validators';
 import { extCorsHeaders, extOptionsResponse } from '@/lib/server/ext-cors';
 import { verifyExtensionBearer } from '@/lib/server/extension';
 import { answerScreeningQuestion } from '@/lib/server/tailoring';
