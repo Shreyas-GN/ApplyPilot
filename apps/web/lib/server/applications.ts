@@ -211,6 +211,7 @@ export async function createApplication(
   await recordAudit(userId, 'application_created', {
     applicationId: created.id,
     company: created.company,
+    title: created.title,
     status: created.status,
   });
 

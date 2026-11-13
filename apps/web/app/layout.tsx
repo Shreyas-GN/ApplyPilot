@@ -25,6 +25,8 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://applypilot.app"),
   title: {
