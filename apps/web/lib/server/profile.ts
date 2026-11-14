@@ -355,7 +355,7 @@ export async function applyParsedResumeData(userId: string, parsed: ResumeParsed
     await tx.educationEntry.deleteMany({ where: { userId } })
     if (parsed.education.length > 0) {
       await tx.educationEntry.createMany({
-        data: parsed.education.map((item: { institution: string; degree?: string | null; fieldOfStudy?: string | null; startDate?: string | null; endDate?: string | null; description?: string | null; source: string; confidence: number }) => ({
+        data: (parsed.education as unknown as Array<{ institution: string; degree?: string | null; fieldOfStudy?: string | null; startDate?: string | null; endDate?: string | null; description?: string | null; source: string; confidence: number }>).map((item) => ({
           userId, institution: item.institution, degree: item.degree ?? null,
           fieldOfStudy: item.fieldOfStudy ?? null, startDate: parseLooseDate(item.startDate),
           endDate: parseLooseDate(item.endDate), description: item.description ?? null,
@@ -378,7 +378,7 @@ export async function applyParsedResumeData(userId: string, parsed: ResumeParsed
     await tx.project.deleteMany({ where: { userId } })
     if (parsed.projects.length > 0) {
       await tx.project.createMany({
-        data: parsed.projects.map((item: { name: string; description?: string | null; url?: string | null; startDate?: string | null; endDate?: string | null; source: string; confidence: number }) => ({
+        data: (parsed.projects as unknown as Array<{ name: string; description?: string | null; url?: string | null; startDate?: string | null; endDate?: string | null; source: string; confidence: number }>).map((item) => ({
           userId, name: item.name, description: item.description ?? null,
           url: item.url || null, startDate: parseLooseDate(item.startDate),
           endDate: parseLooseDate(item.endDate), source: item.source as 'user' | 'ai',
@@ -390,7 +390,7 @@ export async function applyParsedResumeData(userId: string, parsed: ResumeParsed
     await tx.certification.deleteMany({ where: { userId } })
     if (parsed.certifications.length > 0) {
       await tx.certification.createMany({
-        data: parsed.certifications.map((item: { name: string; issuer?: string | null; issueDate?: string | null; expiryDate?: string | null; credentialUrl?: string | null; source: string; confidence: number }) => ({
+        data: (parsed.certifications as unknown as Array<{ name: string; issuer?: string | null; issueDate?: string | null; expiryDate?: string | null; credentialUrl?: string | null; source: string; confidence: number }>).map((item) => ({
           userId, name: item.name, issuer: item.issuer ?? null,
           issueDate: parseLooseDate(item.issueDate), expiryDate: parseLooseDate(item.expiryDate),
           credentialUrl: item.credentialUrl || null, source: item.source as 'user' | 'ai',

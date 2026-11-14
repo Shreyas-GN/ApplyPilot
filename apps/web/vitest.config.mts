@@ -11,10 +11,15 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
+    env: {
+      DATABASE_URL: "postgresql://test:test@localhost:5432/test",
+    },
   },
   resolve: {
     alias: {
       "@": rootDir,
+      "@applypilot/validators": path.resolve(rootDir, "../../packages/validators/src/index.ts"),
+      "zod": path.resolve(rootDir, "node_modules/zod"),
     },
   },
 });
