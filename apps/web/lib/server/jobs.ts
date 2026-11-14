@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import {
   applicationEvents,
   applications,
+  jobBoards,
   jobs,
   jobStates,
   tailoredDocuments,
@@ -64,7 +65,30 @@ interface LeverPosting {
 export async function syncPublicJobs(
   customBoards?: BoardSource[]
 ): Promise<{ synced: number; boardsChecked: number }> {
-  const boards = customBoards && customBoards.length > 0 ? customBoards : DEFAULT_BOARDS;
+  let boards: BoardSource[];
+  if (customBoards && customBoards.length > 0) {
+    boards = customBoards;
+  } else {
+    try {
+      const dbBoards = await db
+        .select({
+          provider: jobBoards.provider,
+          slug: jobBoards.slug,
+          companyName: jobBoards.companyName,
+        })
+        .from(jobBoards)
+        .where(eq(jobBoards.isEnabled, true));
+      boards = dbBoards.length > 0
+        ? dbBoards.map(b => ({
+            provider: b.provider as BoardSource['provider'],
+            slug: b.slug,
+            companyName: b.companyName,
+          }))
+        : DEFAULT_BOARDS;
+    } catch {
+      boards = DEFAULT_BOARDS;
+    }
+  }
   let totalSynced = 0;
 
   for (const board of boards) {
