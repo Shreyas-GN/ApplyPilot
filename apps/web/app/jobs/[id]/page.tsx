@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Badge, StatusBadge } from "@/components/ui/badge";
 import { api, ApiError } from "@/lib/api-client";
-import { barTone, formatFreshness, scoreTone } from "@/lib/job-ui";
+import { barTone, formatExperienceLevel, formatFreshness, scoreTone } from "@/lib/job-ui";
 
 export default function JobDetailPage() {
   return (
@@ -221,8 +221,9 @@ function JobDetailContent() {
 
             <p className="mt-2 text-sm text-ui-body">
               <span className="font-semibold text-ui-ink">{job.company}</span>
-              {job.location ? ` · ${job.location}` : ""}
+              {(job.normalizedLocation ?? job.location) ? ` · ${job.normalizedLocation ?? job.location}` : ""}
               {job.workMode ? ` · ${job.workMode}` : ""}
+              {job.isIndiaRemote ? " · India Remote" : ""}
               {" · "}
               <span>{formatFreshness(job.postedAt, job.createdAt)}</span>
             </p>
@@ -234,6 +235,16 @@ function JobDetailContent() {
               {job.intelligence.expectedExperienceYears && (
                 <Badge className="bg-ui-linen text-ui-ink">
                   {`Experience: ${job.intelligence.expectedExperienceYears}`}
+                </Badge>
+              )}
+              {job.experienceLevel && (
+                <Badge className="bg-ui-linen text-ui-ink">
+                  {`Req. exp: ${formatExperienceLevel(job.experienceLevel)}`}
+                </Badge>
+              )}
+              {job.salaryText && (
+                <Badge className="bg-emerald-50 text-emerald-700">
+                  {`Salary: ${job.salaryCurrency ? job.salaryCurrency + " " : ""}${job.salaryText}`}
                 </Badge>
               )}
               <Badge className="bg-ui-linen text-ui-ink">{`Source: ${job.source}`}</Badge>

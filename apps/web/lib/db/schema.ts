@@ -425,6 +425,16 @@ export const jobs = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
+    normalizedLocation: text('normalized_location'),
+    locationCountry: text('location_country'),
+    isIndiaRemote: boolean('is_india_remote'),
+    salaryMin: integer('salary_min'),
+    salaryMax: integer('salary_max'),
+    salaryCurrency: text('salary_currency'),
+    salaryPeriod: text('salary_period'),
+    salaryText: text('salary_text'),
+    experienceLevel: text('experience_level'),
+    experienceText: text('experience_text'),
   },
   (table) => [
     uniqueIndex('jobs_source_external_id_idx').on(
@@ -432,6 +442,8 @@ export const jobs = pgTable(
       table.externalId
     ),
     index('jobs_company_idx').on(table.company),
+    index('jobs_experience_level_idx').on(table.experienceLevel),
+    index('jobs_location_country_idx').on(table.locationCountry),
     pgPolicy('jobs_authenticated_read_policy', {
       for: 'select',
       to: authenticatedRole,

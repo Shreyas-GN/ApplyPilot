@@ -3,7 +3,10 @@ import {
   analyzeJobIntelligence,
   computeJobMatch,
   extractJobSkills,
+  extractSalary,
+  inferExperienceLevel,
   inferWorkMode,
+  normalizeIndianLocation,
   stripHtml,
 } from './job-matching';
 import type { ProfileDto } from '@/lib/types';
@@ -166,5 +169,159 @@ describe('job-matching utilities', () => {
 
     expect(match.matchedSkills).toEqual([]);
     expect(match.missingSkills).toEqual(['TypeScript', 'React']);
+  });
+});
+
+describe('India-specific job intelligence', () => {
+  describe('normalizeIndianLocation', () => {
+    it('normalizes Bangalore to Bengaluru', () => {
+      const result = normalizeIndianLocation('Bangalore, India');
+      expect(result.normalizedLocation).toBe('Bengaluru');
+      expect(result.locationCountry).toBe('IN');
+      expect(result.isIndiaRemote).toBe(false);
+    });
+
+    it('normalizes Bengaluru variant spellings', () => {
+      expect(normalizeIndianLocation('Bengaluru, KA')?.normalizedLocation).toBe('Bengaluru');
+      expect(normalizeIndianLocation('BLR')?.normalizedLocation).toBe('Bengaluru');
+    });
+
+    it('normalizes Gurgaon to Gurugram', () => {
+      const result = normalizeIndianLocation('Gurgaon, Haryana');
+      expect(result.normalizedLocation).toBe('Gurugram');
+      expect(result.locationCountry).toBe('IN');
+    });
+
+    it('normalizes Mumbai aliases', () => {
+      expect(normalizeIndianLocation('Bombay')?.normalizedLocation).toBe('Mumbai');
+      expect(normalizeIndianLocation('Mumbai, Maharashtra')?.normalizedLocation).toBe('Mumbai');
+    });
+
+    it('detects India-remote from description when location is null', () => {
+      const result = normalizeIndianLocation(null, 'This is an India-remote position for candidates based in India.');
+      expect(result.isIndiaRemote).toBe(true);
+      expect(result.locationCountry).toBe('IN');
+    });
+
+    it('returns null for a US location', () => {
+      const result = normalizeIndianLocation('San Francisco, CA');
+      expect(result.normalizedLocation).toBeNull();
+      expect(result.locationCountry).toBe('US');
+      expect(result.isIndiaRemote).toBe(false);
+    });
+
+    it('returns nulls for unrecognized location', () => {
+      const result = normalizeIndianLocation('Some Random City, XY');
+      expect(result.normalizedLocation).toBeNull();
+      expect(result.locationCountry).toBeNull();
+      expect(result.isIndiaRemote).toBe(false);
+    });
+
+    it('handles null location with no India hint in description', () => {
+      const result = normalizeIndianLocation(null, 'A remote role for US candidates.');
+      expect(result.isIndiaRemote).toBe(false);
+      expect(result.locationCountry).toBeNull();
+    });
+  });
+
+  describe('extractSalary', () => {
+    it('extracts INR salary in LPA range format', () => {
+      const result = extractSalary('CTC: 15-20 LPA for the right candidate.');
+      expect(result.currency).toBe('INR');
+      expect(result.min).toBe(1500000);
+      expect(result.max).toBe(2000000);
+      expect(result.period).toBe('annual');
+      expect(result.text).toBeTruthy();
+    });
+
+    it('extracts INR salary with lakhs per annum wording', () => {
+      const result = extractSalary('Salary: 12-18 lakhs per annum.');
+      expect(result.currency).toBe('INR');
+      expect(result.min).toBe(1200000);
+      expect(result.max).toBe(1800000);
+    });
+
+    it('extracts USD salary range', () => {
+      const result = extractSalary('Compensation: $120k - $150k per year.');
+      expect(result.currency).toBe('USD');
+      expect(result.min).toBe(120000);
+      expect(result.max).toBe(150000);
+      expect(result.period).toBe('annual');
+    });
+
+    it('returns empty when no salary information is present', () => {
+      const result = extractSalary('We are building the next generation of AI tooling.');
+      expect(result.min).toBeNull();
+      expect(result.max).toBeNull();
+      expect(result.currency).toBeNull();
+      expect(result.text).toBeNull();
+    });
+
+    it('does not confuse funding rounds or revenue figures with salary', () => {
+      const result = extractSalary('Our company raised $50M Series B and generates $10M ARR.');
+      expect(result.currency).toBeNull();
+    });
+
+    it('never invents salary for a description with no salary text', () => {
+      const result = extractSalary('5+ years of experience with React and TypeScript required.');
+      expect(result.min).toBeNull();
+      expect(result.max).toBeNull();
+    });
+  });
+
+  describe('inferExperienceLevel', () => {
+    it('detects internship from title', () => {
+      const result = inferExperienceLevel('Software Engineering Intern', '');
+      expect(result.level).toBe('internship');
+    });
+
+    it('detects fresher from title', () => {
+      const result = inferExperienceLevel('Fresher Software Engineer', '');
+      expect(result.level).toBe('fresher');
+    });
+
+    it('detects 0-2 years from description', () => {
+      const result = inferExperienceLevel('Software Engineer', 'We require 0-2 years of experience.');
+      expect(result.level).toBe('0_2');
+    });
+
+    it('detects 2-5 years from description', () => {
+      const result = inferExperienceLevel('Software Engineer', 'Looking for 3-5 years of professional experience.');
+      expect(result.level).toBe('2_5');
+    });
+
+    it('detects 5-8 years from description', () => {
+      const result = inferExperienceLevel('Senior Engineer', 'Must have 5+ years of relevant experience.');
+      expect(result.level).toBe('5_8');
+    });
+
+    it('detects 8+ years from description', () => {
+      const result = inferExperienceLevel('Principal Engineer', 'Requires 10+ years of experience.');
+      expect(result.level).toBe('8_plus');
+    });
+
+    it('returns null when experience cannot be determined', () => {
+      const result = inferExperienceLevel('Software Engineer', 'Join our team and build great products.');
+      expect(result.level).toBeNull();
+    });
+
+    it('detects senior level from title when no yoe info available', () => {
+      const result = inferExperienceLevel('Senior Software Engineer', 'Join our backend team.');
+      expect(result.level).toBe('5_8');
+    });
+  });
+
+  describe('combined India intelligence', () => {
+    it('correctly processes a Bengaluru job with INR salary and 2-5 yrs experience', () => {
+      const location = normalizeIndianLocation('Bangalore, Karnataka');
+      const salary = extractSalary('Salary: 12-20 LPA. Looking for 2-4 years of experience.');
+      const exp = inferExperienceLevel('Backend Engineer', 'Salary: 12-20 LPA. Looking for 2-4 years of experience.');
+
+      expect(location.normalizedLocation).toBe('Bengaluru');
+      expect(location.locationCountry).toBe('IN');
+      expect(salary.currency).toBe('INR');
+      expect(salary.min).toBe(1200000);
+      expect(exp.level).toBe('2_5');
+    });
   });
 });

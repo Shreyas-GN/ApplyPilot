@@ -29,6 +29,11 @@ export async function GET(request: NextRequest) {
         ? (rawFreshness as 'all' | '24h' | '7d' | '30d')
         : 'all';
     const includeDismissed = searchParams.get('includeDismissed') === 'true';
+    const experienceLevel = searchParams.get('experienceLevel') ?? undefined;
+    const locationCountry = searchParams.get('locationCountry') ?? undefined;
+    const source = searchParams.get('source') ?? undefined;
+    const rawSkills = searchParams.get('skills');
+    const skillsFilter = rawSkills ? rawSkills.split(',').filter(Boolean) : undefined;
 
     const results = await listMatchedJobs(user.id, {
       tab,
@@ -37,6 +42,10 @@ export async function GET(request: NextRequest) {
       minScore,
       freshness,
       seniority,
+      experienceLevel,
+      locationCountry,
+      source,
+      skillsFilter,
       includeDismissed,
     });
     return NextResponse.json(results);

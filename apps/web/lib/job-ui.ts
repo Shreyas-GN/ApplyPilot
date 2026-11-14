@@ -10,6 +10,19 @@ export function barTone(score: number): string {
   return "bg-slate-400";
 }
 
+export function formatExperienceLevel(level: string | null): string {
+  if (!level) return '';
+  const map: Record<string, string> = {
+    internship: 'Internship',
+    fresher: 'Fresher / Entry',
+    '0_2': '0–2 yrs',
+    '2_5': '2–5 yrs',
+    '5_8': '5–8 yrs',
+    '8_plus': '8+ yrs',
+  };
+  return map[level] ?? level;
+}
+
 export function formatFreshness(
   postedAt: string | null,
   createdAt: string

@@ -22,7 +22,7 @@ import { Badge, StatusBadge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { api, ApiError } from "@/lib/api-client";
-import { formatFreshness, scoreTone } from "@/lib/job-ui";
+import { formatExperienceLevel, formatFreshness, scoreTone } from "@/lib/job-ui";
 
 type UiTab = "for-you" | "search" | "adjacent" | "saved";
 
@@ -71,6 +71,9 @@ function buildJobsQuery(params: {
   freshness: string;
   minScore: string;
   seniority: string;
+  experienceLevel: string;
+  locationCountry: string;
+  source: string;
   includeDismissed: boolean;
 }): string {
   const apiTab = UI_TABS.find((t) => t.id === params.tab)?.apiTab ?? "for_you";
@@ -81,6 +84,9 @@ function buildJobsQuery(params: {
   if (params.freshness !== "all") sp.set("freshness", params.freshness);
   if (params.minScore !== "0") sp.set("minScore", params.minScore);
   if (params.seniority !== "all") sp.set("seniority", params.seniority);
+  if (params.experienceLevel !== "all") sp.set("experienceLevel", params.experienceLevel);
+  if (params.locationCountry !== "all") sp.set("locationCountry", params.locationCountry);
+  if (params.source !== "all") sp.set("source", params.source);
   if (params.includeDismissed) sp.set("includeDismissed", "true");
   return `/jobs?${sp.toString()}`;
 }
@@ -118,6 +124,9 @@ function JobsContent() {
   const [freshness, setFreshness] = useState("all");
   const [minScore, setMinScore] = useState("0");
   const [seniority, setSeniority] = useState("all");
+  const [experienceLevel, setExperienceLevel] = useState("all");
+  const [locationCountry, setLocationCountry] = useState("all");
+  const [source, setSource] = useState("all");
   const [includeDismissed, setIncludeDismissed] = useState(false);
   const [busyJobId, setBusyJobId] = useState<string | null>(null);
 
@@ -129,6 +138,9 @@ function JobsContent() {
       freshness?: string;
       minScore?: string;
       seniority?: string;
+      experienceLevel?: string;
+      locationCountry?: string;
+      source?: string;
       includeDismissed?: boolean;
     }) => {
       setLoading(true);
@@ -141,6 +153,9 @@ function JobsContent() {
           freshness: overrides?.freshness ?? freshness,
           minScore: overrides?.minScore ?? minScore,
           seniority: overrides?.seniority ?? seniority,
+          experienceLevel: overrides?.experienceLevel ?? experienceLevel,
+          locationCountry: overrides?.locationCountry ?? locationCountry,
+          source: overrides?.source ?? source,
           includeDismissed: overrides?.includeDismissed ?? includeDismissed,
         });
         const data = await api.get<JobDto[]>(url);
@@ -151,7 +166,7 @@ function JobsContent() {
         setLoading(false);
       }
     },
-    [activeTab, freshness, includeDismissed, minScore, query, seniority, workMode]
+    [activeTab, experienceLevel, freshness, includeDismissed, locationCountry, minScore, query, seniority, source, workMode]
   );
 
   useEffect(() => {
@@ -163,6 +178,9 @@ function JobsContent() {
       freshness,
       minScore,
       seniority,
+      experienceLevel,
+      locationCountry,
+      source,
       includeDismissed,
     });
     api
@@ -453,6 +471,56 @@ function JobsContent() {
               <option value="staff">Staff / Lead</option>
             </select>
 
+            <select
+              aria-label="Experience level filter"
+              value={experienceLevel}
+              onChange={(e) => {
+                const next = e.target.value;
+                setExperienceLevel(next);
+                void fetchJobs({ experienceLevel: next });
+              }}
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
+            >
+              <option value="all">All experience levels</option>
+              <option value="internship">Internship</option>
+              <option value="fresher">Fresher / Entry-level</option>
+              <option value="0_2">0–2 years</option>
+              <option value="2_5">2–5 years</option>
+              <option value="5_8">5–8 years</option>
+              <option value="8_plus">8+ years</option>
+            </select>
+
+            <select
+              aria-label="Location country filter"
+              value={locationCountry}
+              onChange={(e) => {
+                const next = e.target.value;
+                setLocationCountry(next);
+                void fetchJobs({ locationCountry: next });
+              }}
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
+            >
+              <option value="all">All locations</option>
+              <option value="IN">India</option>
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+            </select>
+
+            <select
+              aria-label="Job source filter"
+              value={source}
+              onChange={(e) => {
+                const next = e.target.value;
+                setSource(next);
+                void fetchJobs({ source: next });
+              }}
+              className="rounded-lg border border-ui-border bg-white px-3 py-1.5 text-xs font-medium text-ui-ink focus:border-ui-violet focus:outline-none"
+            >
+              <option value="all">All sources</option>
+              <option value="greenhouse">Greenhouse</option>
+              <option value="lever">Lever</option>
+            </select>
+
             {activeTab !== "saved" && (
               <label className="ml-auto flex cursor-pointer items-center gap-2 text-xs text-ui-body">
                 <input
@@ -532,8 +600,9 @@ function JobsContent() {
 
                     <p className="mt-1 text-sm text-ui-body">
                       <span className="font-medium text-ui-ink">{job.company}</span>
-                      {job.location ? ` · ${job.location}` : ""}
+                      {(job.normalizedLocation ?? job.location) ? ` · ${job.normalizedLocation ?? job.location}` : ""}
                       {job.workMode ? ` · ${job.workMode}` : ""}
+                      {job.isIndiaRemote ? " · India Remote" : ""}
                       {" · "}
                       <span className="text-ui-muted">
                         {formatFreshness(job.postedAt, job.createdAt)}
@@ -543,6 +612,12 @@ function JobsContent() {
                     <div className="mt-2 flex flex-wrap items-center gap-4 text-xs text-ui-muted">
                       <span>Skills fit: {job.match.skillsScore}%</span>
                       <span>Experience fit: {job.match.experienceScore}%</span>
+                      {job.experienceLevel && (
+                        <span>Exp: {formatExperienceLevel(job.experienceLevel)}</span>
+                      )}
+                      {job.salaryText && (
+                        <span>{job.salaryCurrency ? `${job.salaryCurrency} ` : ""}{job.salaryText}</span>
+                      )}
                     </div>
 
                     {job.match.adjacencyReason && activeTab === "adjacent" ? (

@@ -55,6 +55,78 @@ const KNOWN_SKILLS = [
   'Linux',
   'Swift',
   'Kotlin',
+  // Additional skills for India-focused engineering roles
+  'Spring Boot',
+  'Hibernate',
+  'Maven',
+  'Gradle',
+  'Angular',
+  'Vue.js',
+  'Svelte',
+  'Flutter',
+  'Dart',
+  'React Native',
+  'Ionic',
+  'MySQL',
+  'Oracle',
+  'Cassandra',
+  'Elasticsearch',
+  'DynamoDB',
+  'Kafka',
+  'RabbitMQ',
+  'Celery',
+  'Ansible',
+  'Helm',
+  'ArgoCD',
+  'Jenkins',
+  'GitHub Actions',
+  'Spark',
+  'Hadoop',
+  'Airflow',
+  'dbt',
+  'Pandas',
+  'NumPy',
+  'Scikit-learn',
+  'Langchain',
+  'RAG',
+  'OpenAI',
+  'Hugging Face',
+  'Cypress',
+  'Selenium',
+  'JUnit',
+  'Pytest',
+  'PHP',
+  'Laravel',
+  'Scala',
+  'Clojure',
+  'Elixir',
+  'C#',
+  '.NET',
+  'ASP.NET',
+  'Microservices',
+  'REST API',
+  'gRPC',
+  'WebSockets',
+  'Nginx',
+  'Webpack',
+  'Vite',
+  'Babel',
+  'Tailwind CSS',
+  'Material UI',
+  'Storybook',
+  'Adobe XD',
+  'Jira',
+  'Confluence',
+  'Notion',
+  'Vercel',
+  'Netlify',
+  'Heroku',
+  'DigitalOcean',
+  'Firebase',
+  'Amplify',
+  'Stripe',
+  'Twilio',
+  'SendGrid',
 ];
 
 const TRANSFERABLE_SKILL_RULES: Array<{
@@ -182,6 +254,324 @@ export function extractExpectedExperienceYears(description: string): string | nu
   );
   if (!match?.[1]) return null;
   return `${match[1].replace(/\s+/g, ' ')} years`;
+}
+
+// ─── India-specific location intelligence ────────────────────────────────────
+
+export interface LocationIntelligence {
+  normalizedLocation: string | null;
+  locationCountry: string | null;
+  isIndiaRemote: boolean;
+}
+
+const INDIA_CITY_MAP: Record<string, string> = {
+  bengaluru: 'Bengaluru',
+  bangalore: 'Bengaluru',
+  bengalore: 'Bengaluru',
+  blr: 'Bengaluru',
+  mumbai: 'Mumbai',
+  bombay: 'Mumbai',
+  bom: 'Mumbai',
+  pune: 'Pune',
+  hyderabad: 'Hyderabad',
+  hyd: 'Hyderabad',
+  chennai: 'Chennai',
+  madras: 'Chennai',
+  delhi: 'Delhi NCR',
+  'new delhi': 'Delhi NCR',
+  'delhi ncr': 'Delhi NCR',
+  ncr: 'Delhi NCR',
+  gurugram: 'Gurugram',
+  gurgaon: 'Gurugram',
+  noida: 'Noida',
+  'greater noida': 'Noida',
+  faridabad: 'Faridabad',
+  ghaziabad: 'Ghaziabad',
+  kolkata: 'Kolkata',
+  calcutta: 'Kolkata',
+  ahmedabad: 'Ahmedabad',
+  amdavad: 'Ahmedabad',
+  jaipur: 'Jaipur',
+  kochi: 'Kochi',
+  cochin: 'Kochi',
+  thiruvananthapuram: 'Thiruvananthapuram',
+  trivandrum: 'Thiruvananthapuram',
+  coimbatore: 'Coimbatore',
+  indore: 'Indore',
+  bhopal: 'Bhopal',
+  nagpur: 'Nagpur',
+  visakhapatnam: 'Visakhapatnam',
+  vizag: 'Visakhapatnam',
+  chandigarh: 'Chandigarh',
+  lucknow: 'Lucknow',
+  bhubaneswar: 'Bhubaneswar',
+  mysuru: 'Mysuru',
+  mysore: 'Mysuru',
+  surat: 'Surat',
+  vadodara: 'Vadodara',
+  baroda: 'Vadodara',
+  patna: 'Patna',
+  ranchi: 'Ranchi',
+};
+
+const INDIA_INDICATORS = [
+  'india',
+  'karnataka',
+  'maharashtra',
+  'telangana',
+  'tamil nadu',
+  'andhra pradesh',
+  'uttar pradesh',
+  'haryana',
+  'rajasthan',
+  'gujarat',
+  'west bengal',
+  'kerala',
+];
+
+export function normalizeIndianLocation(
+  location: string | null,
+  description?: string
+): LocationIntelligence {
+  if (!location) {
+    const descLower = (description ?? '').toLowerCase();
+    const isIndiaRemote =
+      /india[\s-]*remote|remote.*india|based in india/i.test(descLower);
+    return {
+      normalizedLocation: null,
+      locationCountry: isIndiaRemote ? 'IN' : null,
+      isIndiaRemote,
+    };
+  }
+
+  const loc = location.toLowerCase().trim();
+
+  // Multi-word keys must be checked before single-word keys to avoid partial matches
+  const sortedKeys = Object.keys(INDIA_CITY_MAP).sort((a, b) => b.length - a.length);
+  for (const key of sortedKeys) {
+    if (loc.includes(key)) {
+      return {
+        normalizedLocation: INDIA_CITY_MAP[key] ?? null,
+        locationCountry: 'IN',
+        isIndiaRemote: false,
+      };
+    }
+  }
+
+  if (INDIA_INDICATORS.some((ind) => loc.includes(ind))) {
+    const isIndiaRemote = /remote/i.test(location);
+    return {
+      normalizedLocation: isIndiaRemote ? null : location,
+      locationCountry: 'IN',
+      isIndiaRemote,
+    };
+  }
+
+  if (
+    /\b(united states|usa|u\.s\.a?|new york|san francisco|seattle|austin|boston|chicago|los angeles|mountain view|palo alto|menlo park|sf bay area)\b/i.test(
+      location
+    )
+  ) {
+    return { normalizedLocation: null, locationCountry: 'US', isIndiaRemote: false };
+  }
+
+  if (
+    /\b(united kingdom|uk|london|manchester|cambridge|oxford|edinburgh)\b/i.test(location)
+  ) {
+    return { normalizedLocation: null, locationCountry: 'GB', isIndiaRemote: false };
+  }
+
+  return { normalizedLocation: null, locationCountry: null, isIndiaRemote: false };
+}
+
+// ─── Salary extraction ────────────────────────────────────────────────────────
+
+export interface SalaryIntelligence {
+  min: number | null;
+  max: number | null;
+  currency: string | null;
+  period: string | null;
+  text: string | null;
+}
+
+export function extractSalary(description: string): SalaryIntelligence {
+  const empty: SalaryIntelligence = {
+    min: null,
+    max: null,
+    currency: null,
+    period: null,
+    text: null,
+  };
+  if (!description) return empty;
+
+  const lpaRangePattern =
+    /(?:ctc|salary|package|compensation)?[\s:]*(?:inr|₹|rs\.?)?\s*(\d+(?:[.,]\d+)?)\s*[-–to]+\s*(\d+(?:[.,]\d+)?)\s*(?:l\.?p\.?a\.?|lakhs?\s*per\s*annum|lakh\s*per\s*year)/i;
+  const lpaPatternSingle =
+    /(?:ctc|salary|package|compensation)?[\s:]*(?:inr|₹|rs\.?)?\s*(\d+(?:[.,]\d+)?)\s*(?:l\.?p\.?a\.?|lakhs?\s*per\s*annum|lakh\s*per\s*year)/i;
+  const inrRangePattern =
+    /(?:inr|₹|rs\.?)\s*(\d+(?:[,\d]*)?)\s*[-–to]+\s*(?:inr|₹|rs\.?)?\s*(\d+(?:[,\d]*)?)\s*(?:per\s*(?:annum|year|month|hour|hr))?/i;
+  const usdRangePattern =
+    /\$\s*(\d+(?:[.,]\d+)?)\s*k?\s*[-–to]+\s*\$\s*(\d+(?:[.,]\d+)?)\s*k?\s*(?:per\s*(?:year|annum|month|hour|hr))?/i;
+  const eurRangePattern =
+    /€\s*(\d+(?:[.,\d]*)?)\s*[-–to]+\s*€?\s*(\d+(?:[.,\d]*)?)\s*(?:per\s*(?:year|annum|month|hour|hr))?/i;
+
+  function parseLakhsToInt(val: string): number {
+    return Math.round(parseFloat(val.replace(/,/g, '')) * 100000);
+  }
+
+  function parseMoneyStr(val: string, isKilo: boolean): number {
+    const num = parseFloat(val.replace(/,/g, ''));
+    return isKilo ? Math.round(num * 1000) : Math.round(num);
+  }
+
+  function detectPeriod(text: string): string {
+    const t = text.toLowerCase();
+    if (/per\s*hour|\/hour|\/hr|\bhr\b/.test(t)) return 'hourly';
+    if (/per\s*month|\/month|\bmonthly\b/.test(t)) return 'monthly';
+    if (/per\s*annum|per\s*year|\/year|\bpa\b|\blpa\b|\bannual/.test(t)) return 'annual';
+    return 'annual';
+  }
+
+  let m = description.match(lpaRangePattern);
+  if (m?.[1] && m?.[2]) {
+    return {
+      min: parseLakhsToInt(m[1]),
+      max: parseLakhsToInt(m[2]),
+      currency: 'INR',
+      period: 'annual',
+      text: m[0].trim(),
+    };
+  }
+
+  m = description.match(lpaPatternSingle);
+  if (m?.[1]) {
+    return {
+      min: null,
+      max: parseLakhsToInt(m[1]),
+      currency: 'INR',
+      period: 'annual',
+      text: m[0].trim(),
+    };
+  }
+
+  m = description.match(inrRangePattern);
+  if (m?.[1] && m?.[2]) {
+    const v1 = parseMoneyStr(m[1], false);
+    const v2 = parseMoneyStr(m[2], false);
+    if (v1 > 1000 && v2 > 1000) {
+      return {
+        min: Math.min(v1, v2),
+        max: Math.max(v1, v2),
+        currency: 'INR',
+        period: detectPeriod(m[0]),
+        text: m[0].trim(),
+      };
+    }
+  }
+
+  m = description.match(usdRangePattern);
+  if (m?.[1] && m?.[2]) {
+    const isKilo = /k/i.test(m[0]);
+    const v1 = parseMoneyStr(m[1], isKilo || parseInt(m[1]) < 1000);
+    const v2 = parseMoneyStr(m[2], isKilo || parseInt(m[2]) < 1000);
+    return {
+      min: Math.min(v1, v2),
+      max: Math.max(v1, v2),
+      currency: 'USD',
+      period: detectPeriod(m[0]),
+      text: m[0].trim(),
+    };
+  }
+
+  m = description.match(eurRangePattern);
+  if (m?.[1] && m?.[2]) {
+    const v1 = parseMoneyStr(m[1], false);
+    const v2 = parseMoneyStr(m[2], false);
+    if (v1 > 1000 && v2 > 1000) {
+      return {
+        min: Math.min(v1, v2),
+        max: Math.max(v1, v2),
+        currency: 'EUR',
+        period: detectPeriod(m[0]),
+        text: m[0].trim(),
+      };
+    }
+  }
+
+  return empty;
+}
+
+// ─── Experience level inference ───────────────────────────────────────────────
+
+export interface ExperienceLevelIntelligence {
+  level: string | null;
+  text: string | null;
+}
+
+export function inferExperienceLevel(
+  title: string,
+  description: string
+): ExperienceLevelIntelligence {
+  const titleLower = title.toLowerCase();
+  const desc = description.slice(0, 3000).toLowerCase();
+
+  if (/\b(intern|internship|trainee)\b/.test(titleLower)) {
+    return { level: 'internship', text: 'Internship' };
+  }
+
+  if (
+    /\b(fresher|fresh graduate|new grad|entry.?level|associate|graduate engineer|junior|jr\.?)\b/.test(
+      titleLower
+    )
+  ) {
+    return { level: 'fresher', text: 'Fresher / Entry-level' };
+  }
+
+  if (/\b(internship|intern position)\b/.test(desc)) {
+    return { level: 'internship', text: 'Internship' };
+  }
+  if (/\b(fresher|fresh graduate|0 year|no experience required|entry.?level)\b/.test(desc)) {
+    return { level: 'fresher', text: 'Fresher / Entry-level' };
+  }
+
+  // Range pattern: "3-5 years experience"
+  const rangeMatch = desc.match(
+    /(\d{1,2})\s*[-–]\s*(\d{1,2})\s*years?\s*(?:of\s*)?(?:relevant|professional|industry|software|engineering|work\s*)?(?:experience)?/i
+  );
+  if (rangeMatch?.[1] && rangeMatch?.[2]) {
+    const lo = parseInt(rangeMatch[1]);
+    const hi = parseInt(rangeMatch[2]);
+    const textMatch = rangeMatch[0];
+    if (lo === 0 || (lo <= 2 && hi <= 3)) return { level: '0_2', text: textMatch };
+    if (lo <= 5 && hi <= 6) return { level: '2_5', text: textMatch };
+    if (lo <= 8 && hi <= 9) return { level: '5_8', text: textMatch };
+    if (lo >= 7 || hi >= 8) return { level: '8_plus', text: textMatch };
+    return { level: '2_5', text: textMatch };
+  }
+
+  // Plus pattern: "5+ years of experience"
+  const plusMatch = desc.match(
+    /(\d{1,2})\+\s*years?\s*(?:of\s*)?(?:relevant|professional|industry|software|engineering|work\s*)?(?:experience)?/i
+  );
+  if (plusMatch?.[1]) {
+    const n = parseInt(plusMatch[1]);
+    const textMatch = plusMatch[0];
+    if (n >= 8) return { level: '8_plus', text: textMatch };
+    if (n >= 5) return { level: '5_8', text: textMatch };
+    if (n >= 2) return { level: '2_5', text: textMatch };
+    return { level: '0_2', text: textMatch };
+  }
+
+  if (
+    /\b(senior|sr\.?|staff|principal|architect|lead|manager|head|director|vp)\b/.test(titleLower)
+  ) {
+    return { level: '5_8', text: null };
+  }
+  if (/\bmid.?level\b/.test(titleLower)) {
+    return { level: '2_5', text: null };
+  }
+
+  return { level: null, text: null };
 }
 
 export function findTransferableSkills(

@@ -18,8 +18,11 @@ import {
   analyzeJobIntelligence,
   computeJobMatch,
   extractJobSkills,
+  extractSalary,
+  inferExperienceLevel,
   inferSeniorityLevel,
   inferWorkMode,
+  normalizeIndianLocation,
   stripHtml,
 } from './job-matching';
 
@@ -107,6 +110,16 @@ async function upsertJobBatch(rows: UpsertJobRow[]): Promise<number> {
         description: sql`excluded.description`,
         skills: sql`excluded.skills`,
         postedAt: sql`excluded.posted_at`,
+        normalizedLocation: sql`excluded.normalized_location`,
+        locationCountry: sql`excluded.location_country`,
+        isIndiaRemote: sql`excluded.is_india_remote`,
+        salaryMin: sql`excluded.salary_min`,
+        salaryMax: sql`excluded.salary_max`,
+        salaryCurrency: sql`excluded.salary_currency`,
+        salaryPeriod: sql`excluded.salary_period`,
+        salaryText: sql`excluded.salary_text`,
+        experienceLevel: sql`excluded.experience_level`,
+        experienceText: sql`excluded.experience_text`,
       },
     });
 
@@ -134,6 +147,9 @@ async function ingestGreenhouseBoard(
     const workMode = inferWorkMode(item.title, location, cleanDescription);
     const skills = extractJobSkills(item.title, cleanDescription);
     const postedAt = item.updated_at ? new Date(item.updated_at) : null;
+    const locationIntel = normalizeIndianLocation(location, cleanDescription);
+    const salary = extractSalary(cleanDescription);
+    const expLevel = inferExperienceLevel(item.title, cleanDescription);
     return {
       source: 'greenhouse',
       externalId: `${slug}:${item.id}`,
@@ -146,6 +162,16 @@ async function ingestGreenhouseBoard(
       description: cleanDescription.slice(0, 12000),
       skills,
       postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
+      normalizedLocation: locationIntel.normalizedLocation,
+      locationCountry: locationIntel.locationCountry,
+      isIndiaRemote: locationIntel.isIndiaRemote,
+      salaryMin: salary.min,
+      salaryMax: salary.max,
+      salaryCurrency: salary.currency,
+      salaryPeriod: salary.period,
+      salaryText: salary.text,
+      experienceLevel: expLevel.level,
+      experienceText: expLevel.text,
     };
   });
 
@@ -173,6 +199,9 @@ async function ingestLeverBoard(
     const workMode = inferWorkMode(item.text, location, cleanDescription);
     const skills = extractJobSkills(item.text, cleanDescription);
     const postedAt = item.createdAt ? new Date(item.createdAt) : null;
+    const locationIntel = normalizeIndianLocation(location, cleanDescription);
+    const salary = extractSalary(cleanDescription);
+    const expLevel = inferExperienceLevel(item.text, cleanDescription);
     return {
       source: 'lever',
       externalId: `${slug}:${item.id}`,
@@ -185,6 +214,16 @@ async function ingestLeverBoard(
       description: cleanDescription.slice(0, 12000),
       skills,
       postedAt: postedAt && !Number.isNaN(postedAt.getTime()) ? postedAt : null,
+      normalizedLocation: locationIntel.normalizedLocation,
+      locationCountry: locationIntel.locationCountry,
+      isIndiaRemote: locationIntel.isIndiaRemote,
+      salaryMin: salary.min,
+      salaryMax: salary.max,
+      salaryCurrency: salary.currency,
+      salaryPeriod: salary.period,
+      salaryText: salary.text,
+      experienceLevel: expLevel.level,
+      experienceText: expLevel.text,
     };
   });
 
@@ -200,6 +239,10 @@ export interface ListJobsOptions {
   minScore?: number;
   freshness?: 'all' | '24h' | '7d' | '30d';
   seniority?: string;
+  experienceLevel?: string;
+  locationCountry?: string;
+  source?: string;
+  skillsFilter?: string[];
   includeDismissed?: boolean;
   limit?: number;
 }
@@ -249,6 +292,10 @@ export async function listMatchedJobs(
     minScore = 0,
     freshness = 'all',
     seniority = 'all',
+    experienceLevel,
+    locationCountry,
+    source,
+    skillsFilter,
     includeDismissed = false,
     limit = 100,
   } = options;
@@ -273,6 +320,24 @@ export async function listMatchedJobs(
     const hours = freshness === '24h' ? 24 : freshness === '7d' ? 24 * 7 : 24 * 30;
     const cutoff = new Date(now - hours * 60 * 60 * 1000);
     conditions.push(or(gte(jobs.postedAt, cutoff), gte(jobs.createdAt, cutoff)));
+  }
+  if (experienceLevel && experienceLevel !== 'all') {
+    conditions.push(eq(jobs.experienceLevel, experienceLevel));
+  }
+  if (locationCountry && locationCountry !== 'all') {
+    conditions.push(eq(jobs.locationCountry, locationCountry));
+  }
+  if (source && source !== 'all') {
+    conditions.push(eq(jobs.source, source));
+  }
+  if (skillsFilter && skillsFilter.length > 0) {
+    conditions.push(
+      or(
+        ...skillsFilter.map(
+          (s) => sql`${jobs.skills} @> ARRAY[${s}]::text[]`
+        )
+      )
+    );
   }
 
   const [jobRows, userProfile, userApps, userStates] = await Promise.all([
@@ -327,11 +392,21 @@ export async function listMatchedJobs(
       company: job.company,
       title: job.title,
       location: job.location,
+      normalizedLocation: job.normalizedLocation,
+      locationCountry: job.locationCountry,
+      isIndiaRemote: job.isIndiaRemote,
       workMode: job.workMode,
       employmentType: job.employmentType,
       url: job.url,
       description: job.description,
       skills: job.skills,
+      salaryMin: job.salaryMin,
+      salaryMax: job.salaryMax,
+      salaryCurrency: job.salaryCurrency,
+      salaryPeriod: job.salaryPeriod,
+      salaryText: job.salaryText,
+      experienceLevel: job.experienceLevel,
+      experienceText: job.experienceText,
       postedAt: job.postedAt ? job.postedAt.toISOString() : null,
       createdAt: job.createdAt.toISOString(),
       match,
@@ -406,11 +481,21 @@ export async function getJobDetail(
     company: jobRow.company,
     title: jobRow.title,
     location: jobRow.location,
+    normalizedLocation: jobRow.normalizedLocation,
+    locationCountry: jobRow.locationCountry,
+    isIndiaRemote: jobRow.isIndiaRemote,
     workMode: jobRow.workMode,
     employmentType: jobRow.employmentType,
     url: jobRow.url,
     description: jobRow.description,
     skills: jobRow.skills,
+    salaryMin: jobRow.salaryMin,
+    salaryMax: jobRow.salaryMax,
+    salaryCurrency: jobRow.salaryCurrency,
+    salaryPeriod: jobRow.salaryPeriod,
+    salaryText: jobRow.salaryText,
+    experienceLevel: jobRow.experienceLevel,
+    experienceText: jobRow.experienceText,
     postedAt: jobRow.postedAt ? jobRow.postedAt.toISOString() : null,
     createdAt: jobRow.createdAt.toISOString(),
     match,
