@@ -1,5 +1,5 @@
 {
-  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "id": "ccb34fd1-b66a-4909-8007-215f50791600",
   "prevId": "23b4caa4-d174-4c87-9a7f-0fc4becea907",
   "version": "7",
   "dialect": "postgresql",
@@ -191,6 +191,25 @@
         },
         "applied_at": {
           "name": "applied_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'manual'"
+        },
+        "rejection_reason": {
+          "name": "rejection_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archived_at": {
+          "name": "archived_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
@@ -975,66 +994,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "normalized_location": {
-          "name": "normalized_location",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "location_country": {
-          "name": "location_country",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_india_remote": {
-          "name": "is_india_remote",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary_min": {
-          "name": "salary_min",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary_max": {
-          "name": "salary_max",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary_currency": {
-          "name": "salary_currency",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary_period": {
-          "name": "salary_period",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary_text": {
-          "name": "salary_text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "experience_level": {
-          "name": "experience_level",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "experience_text": {
-          "name": "experience_text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {
@@ -1064,36 +1023,6 @@
           "columns": [
             {
               "expression": "company",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "jobs_experience_level_idx": {
-          "name": "jobs_experience_level_idx",
-          "columns": [
-            {
-              "expression": "experience_level",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "jobs_location_country_idx": {
-          "name": "jobs_location_country_idx",
-          "columns": [
-            {
-              "expression": "location_country",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2255,9 +2184,12 @@
       "values": [
         "saved",
         "applied",
+        "phone_screen",
         "interviewing",
+        "background_check",
         "offer",
-        "rejected"
+        "rejected",
+        "withdrawn"
       ]
     },
     "public.item_source": {

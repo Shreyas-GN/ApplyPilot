@@ -35,9 +35,12 @@ export const itemSourceEnum = pgEnum('item_source', ['user', 'ai']);
 export const applicationStatusEnum = pgEnum('application_status', [
   'saved',
   'applied',
+  'phone_screen',
   'interviewing',
+  'background_check',
   'offer',
   'rejected',
+  'withdrawn',
 ]);
 
 export const jobStateEnum = pgEnum('job_state', ['saved', 'dismissed']);
@@ -422,6 +425,9 @@ export const jobs = pgTable(
       .notNull()
       .default(sql`'{}'::text[]`),
     postedAt: timestamp('posted_at', { withTimezone: true }),
+    isActive: boolean('is_active').notNull().default(true),
+    closedAt: timestamp('closed_at', { withTimezone: true }),
+    missCount: integer('miss_count').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -452,7 +458,31 @@ export const jobs = pgTable(
   ]
 );
 
-// 11. Applications (User's tracked jobs)
+// 11. Job Boards (ATS provider configurations for ingestion)
+export const jobBoards = pgTable(
+  'job_boards',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    provider: text('provider').notNull(),
+    slug: text('slug').notNull(),
+    companyName: text('company_name').notNull(),
+    isEnabled: boolean('is_enabled').notNull().default(true),
+    lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+    errorCount: integer('error_count').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('job_boards_provider_slug_idx').on(table.provider, table.slug),
+    index('job_boards_enabled_idx').on(table.isEnabled),
+  ]
+);
+
+// 12. Applications (User's tracked jobs)
 export const applications = pgTable(
   'applications',
   {
@@ -471,6 +501,9 @@ export const applications = pgTable(
     followUpAt: timestamp('follow_up_at', { withTimezone: true }),
     checklist: jsonb('checklist'),
     appliedAt: timestamp('applied_at', { withTimezone: true }),
+    source: text('source').notNull().default('manual'),
+    rejectionReason: text('rejection_reason'),
+    archivedAt: timestamp('archived_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -489,7 +522,7 @@ export const applications = pgTable(
   ]
 );
 
-// 12. Application Events (Timeline log)
+// 13. Application Events (Timeline log)
 export const applicationEvents = pgTable(
   'application_events',
   {
@@ -517,7 +550,7 @@ export const applicationEvents = pgTable(
   ]
 );
 
-// 13. Tailored Documents (AI tailored resumes & cover letters)
+// 14. Tailored Documents (AI tailored resumes & cover letters)
 export const tailoredDocuments = pgTable(
   'tailored_documents',
   {
@@ -553,7 +586,7 @@ export const tailoredDocuments = pgTable(
   ]
 );
 
-// 14. Extension Sessions (Paired browser extension tokens)
+// 15. Extension Sessions (Paired browser extension tokens)
 export const extensionSessions = pgTable(
   'extension_sessions',
   {
@@ -581,7 +614,7 @@ export const extensionSessions = pgTable(
   ]
 );
 
-// 15. Job States (Saved bookmarks & dismissed jobs per user)
+// 16. Job States (Saved bookmarks & dismissed jobs per user)
 export const jobStates = pgTable(
   'job_states',
   {
