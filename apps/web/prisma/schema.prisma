@@ -1,0 +1,366 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ResumeProcessingStatus {
+  uploaded
+  extracting
+  parsing
+  parsed
+  failed
+
+  @@map("resume_processing_status")
+}
+
+enum ReviewStatus {
+  pending_review
+  confirmed
+  rejected
+
+  @@map("review_status")
+}
+
+enum ItemSource {
+  user
+  ai
+
+  @@map("item_source")
+}
+
+enum ApplicationStatus {
+  saved
+  applied
+  interviewing
+  offer
+  rejected
+
+  @@map("application_status")
+}
+
+enum JobState {
+  saved
+  dismissed
+
+  @@map("job_state")
+}
+
+model Profile {
+  id                       String   @id @db.Uuid
+  fullName                 String?  @map("full_name")
+  phone                    String?
+  location                 String?
+  linkedinUrl              String?  @map("linkedin_url")
+  githubUrl                String?  @map("github_url")
+  portfolioUrl             String?  @map("portfolio_url")
+  headline                 String?
+  summary                  String?
+  yearsOfExperience        Int?     @map("years_of_experience")
+  employmentStatus         String?  @map("employment_status")
+  preferredTitles          String[] @default([]) @map("preferred_titles")
+  preferredLocations       String[] @default([]) @map("preferred_locations")
+  workMode                 String?  @map("work_mode")
+  employmentTypes          String[] @default([]) @map("employment_types")
+  expectedSalaryMin        Int?     @map("expected_salary_min")
+  expectedSalaryMax        Int?     @map("expected_salary_max")
+  preferredIndustries      String[] @default([]) @map("preferred_industries")
+  excludedCompanies        String[] @default([]) @map("excluded_companies")
+  contactEmail             String?  @map("contact_email")
+  careerStage              String?  @map("career_stage")
+  preferredExperienceLevel String?  @map("preferred_experience_level")
+  desiredRoles             String[] @default([]) @map("desired_roles")
+  adjacentRoles            String[] @default([]) @map("adjacent_roles")
+  excludedRoles            String[] @default([]) @map("excluded_roles")
+  intelligenceMetadata     Json?    @map("intelligence_metadata")
+  notificationPreferences  Json?    @map("notification_preferences")
+  updatedAt                DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  WorkExperience WorkExperience[]
+  EducationEntry EducationEntry[]
+  Skill          Skill[]
+  Project        Project[]
+  Certification  Certification[]
+
+  @@map("profiles")
+}
+
+model WorkExperience {
+  id               String     @id @default(uuid()) @db.Uuid
+  userId           String     @map("user_id") @db.Uuid
+  profile          Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company          String
+  title            String
+  location         String?
+  startDate        DateTime?  @map("start_date") @db.Timestamptz
+  endDate          DateTime?  @map("end_date") @db.Timestamptz
+  isCurrent        Boolean    @default(false) @map("is_current")
+  description      String?
+  responsibilities String[]   @default([])
+  achievements     String[]   @default([])
+  technologies     String[]   @default([])
+  source           ItemSource @default(user)
+  confidence       Float?
+  createdAt        DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([userId], name: "work_experiences_user_id_idx")
+  @@map("work_experiences")
+}
+
+model EducationEntry {
+  id             String     @id @default(uuid()) @db.Uuid
+  userId         String     @map("user_id") @db.Uuid
+  profile        Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution    String
+  degree         String?
+  fieldOfStudy   String?    @map("field_of_study")
+  startDate      DateTime?  @map("start_date") @db.Timestamptz
+  endDate        DateTime?  @map("end_date") @db.Timestamptz
+  graduationYear Int?       @map("graduation_year")
+  grade          String?
+  description    String?
+  source         ItemSource @default(user)
+  confidence     Float?
+  createdAt      DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([userId], name: "education_entries_user_id_idx")
+  @@map("education_entries")
+}
+
+model Skill {
+  id                String     @id @default(uuid()) @db.Uuid
+  userId            String     @map("user_id") @db.Uuid
+  profile           Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  category          String?
+  proficiency       String?
+  yearsOfExperience Float?     @map("years_of_experience")
+  evidence          String?
+  source            ItemSource @default(user)
+  confidence        Float?
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([userId, name], name: "skills_user_id_name_idx")
+  @@index([userId], name: "skills_user_id_idx")
+  @@map("skills")
+}
+
+model Project {
+  id            String     @id @default(uuid()) @db.Uuid
+  userId        String     @map("user_id") @db.Uuid
+  profile       Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  role          String?
+  technologies  String[]   @default([])
+  contributions String[]   @default([])
+  url           String?
+  githubUrl     String?    @map("github_url")
+  liveUrl       String?    @map("live_url")
+  startDate     DateTime?  @map("start_date") @db.Timestamptz
+  endDate       DateTime?  @map("end_date") @db.Timestamptz
+  source        ItemSource @default(user)
+  confidence    Float?
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([userId], name: "projects_user_id_idx")
+  @@map("projects")
+}
+
+model Certification {
+  id            String     @id @default(uuid()) @db.Uuid
+  userId        String     @map("user_id") @db.Uuid
+  profile       Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  issuer        String?
+  issueDate     DateTime?  @map("issue_date") @db.Timestamptz
+  expiryDate    DateTime?  @map("expiry_date") @db.Timestamptz
+  credentialUrl String?    @map("credential_url")
+  source        ItemSource @default(user)
+  confidence    Float?
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId], name: "certifications_user_id_idx")
+  @@map("certifications")
+}
+
+model Resume {
+  id               String                 @id @db.Uuid
+  userId           String                 @map("user_id") @db.Uuid
+  versionLabel     String                 @map("version_label")
+  originalFilename String                 @map("original_filename")
+  mimeType         String                 @map("mime_type")
+  fileSizeBytes    Int                    @map("file_size_bytes")
+  storageKey       String                 @map("storage_key")
+  checksum         String?
+  isPrimary        Boolean                @default(false) @map("is_primary")
+  processingStatus ResumeProcessingStatus @default(uploaded) @map("processing_status")
+  parseAttempts    Int                    @default(0) @map("parse_attempts")
+  extractedText    String?                @map("extracted_text")
+  processingError  String?                @map("processing_error")
+  createdAt        DateTime               @default(now()) @map("created_at") @db.Timestamptz
+
+  parsedData ResumeParsedData?
+
+  @@index([userId], name: "resumes_user_id_idx")
+  @@map("resumes")
+}
+
+model ResumeParsedData {
+  id                String       @id @default(uuid()) @db.Uuid
+  resumeId          String       @unique @map("resume_id") @db.Uuid
+  userId            String       @map("user_id") @db.Uuid
+  structuredData    Json         @map("structured_data")
+  overallConfidence Float?       @map("overall_confidence")
+  reviewStatus      ReviewStatus @default(pending_review) @map("review_status")
+  confirmedAt       DateTime?    @map("confirmed_at") @db.Timestamptz
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "resume_parsed_data_user_id_idx")
+  @@map("resume_parsed_data")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String
+  metadata  Json?
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt], name: "audit_logs_user_id_created_at_idx")
+  @@map("audit_logs")
+}
+
+model Job {
+  id             String    @id @default(uuid()) @db.Uuid
+  source         String
+  externalId     String    @map("external_id")
+  company        String
+  title          String
+  location       String?
+  workMode       String?   @map("work_mode")
+  employmentType String?   @map("employment_type")
+  url            String
+  description    String
+  skills         String[]  @default([])
+  postedAt       DateTime? @map("posted_at") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  applications      Application[]
+  tailoredDocuments TailoredDocument[]
+  userJobStates     UserJobState[]
+
+  @@unique([source, externalId], name: "jobs_source_external_id_idx")
+  @@index([company], name: "jobs_company_idx")
+  @@map("jobs")
+}
+
+model Application {
+  id         String            @id @default(uuid()) @db.Uuid
+  userId     String            @map("user_id") @db.Uuid
+  jobId      String?           @map("job_id") @db.Uuid
+  company    String
+  title      String
+  location   String?
+  url        String?
+  status     ApplicationStatus @default(saved)
+  matchScore Int?              @map("match_score")
+  notes      String?
+  followUpAt DateTime?         @map("follow_up_at") @db.Timestamptz
+  checklist  Json?
+  appliedAt  DateTime?         @map("applied_at") @db.Timestamptz
+  createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  job               Job?               @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  events            ApplicationEvent[]
+  tailoredDocuments TailoredDocument[]
+
+  @@index([userId], name: "applications_user_id_idx")
+  @@map("applications")
+}
+
+model ApplicationEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  applicationId String   @map("application_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  type          String
+  description   String
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId], name: "application_events_app_id_idx")
+  @@map("application_events")
+}
+
+model TailoredDocument {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  jobId         String?  @map("job_id") @db.Uuid
+  applicationId String?  @map("application_id") @db.Uuid
+  company       String
+  jobTitle      String   @map("job_title")
+  type          String
+  tone          String?
+  content       Json
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  job         Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([userId], name: "tailored_documents_user_id_idx")
+  @@index([userId, jobId], name: "tailored_documents_user_job_idx")
+  @@map("tailored_documents")
+}
+
+model ExtensionSession {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @map("user_id") @db.Uuid
+  label      String    @default("Chrome Extension")
+  tokenHash  String    @map("token_hash")
+  lastUsedAt DateTime? @map("last_used_at") @db.Timestamptz
+  revokedAt  DateTime? @map("revoked_at") @db.Timestamptz
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([tokenHash], name: "extension_sessions_token_hash_idx")
+  @@index([userId], name: "extension_sessions_user_id_idx")
+  @@map("extension_sessions")
+}
+
+model UserJobState {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  jobId     String   @map("job_id") @db.Uuid
+  state     JobState
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId], name: "job_states_user_job_idx")
+  @@index([userId, state], name: "job_states_user_state_idx")
+  @@map("job_states")
+}
+
+model JobBoard {
+  id          String  @id @default(uuid()) @db.Uuid
+  provider    String
+  slug        String
+  companyName String  @map("company_name")
+  enabled     Boolean @default(true)
+
+  @@unique([provider, slug], name: "job_boards_provider_slug_idx")
+  @@map("job_boards")
+}
